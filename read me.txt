@@ -1,7 +1,4 @@
-# Custom-Field-Propagator
-This is my thesis's work, an user interface that allows the simulation of the propagation and focusing of a gaussian beam, after being modulated by a phase mask.
-
-To execute the interface run "main.py". Para interfase y figuras en espaÃ±ol, correr "main_esp.py".
+To execute the interface run "main.py". Para interfase y figuras en español, correr "main_esp.py".
 
 Before runing, have installed the packages tqdm and configparser (usually with pip install)
 
