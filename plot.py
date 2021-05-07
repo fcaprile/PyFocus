@@ -8,16 +8,18 @@ import numpy as np
 from matplotlib import pyplot as plt
 from plot_polarization_elipses import polarization_elipse
 
-def plot_XZ_XY(ex1,ey1,ez1,ex2,ey2,ez2,zsteps,rsteps,field_of_view_x, field_of_view_z,n,wavelength,I_0,alpha,figure_name):
+def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view,figure_name):
+    '''
+    Plot the calculated fields ont the XY and XZ planes
+    '''
+    zmax=z_field_of_view/2
+    rmax=field_of_view*2**0.5/2
     
-    zmax=field_of_view_z/2
-    rmax=field_of_view_x*2**0.5/2
-    
-    x,y=np.shape(ex1)
+    x,y=np.shape(ex_XZ)
     Ifield_xz=np.zeros((x,y))
     for i in range(x):
         for j in range(y):
-            Ifield_xz[i,j]=np.real(ex1[i,j]*np.conj(ex1[i,j]) + ey1[i,j]*np.conj(ey1[i,j]) +ez1[i,j]*np.conj(ez1[i,j]))
+            Ifield_xz[i,j]=np.real(ex_XZ[i,j]*np.conj(ex_XZ[i,j]) + ey_XZ[i,j]*np.conj(ey_XZ[i,j]) +ez_XZ[i,j]*np.conj(ez_XZ[i,j]))
 
 
     plt.rcParams['font.size']=14
@@ -33,13 +35,13 @@ def plot_XZ_XY(ex1,ey1,ez1,ex2,ey2,ez2,zsteps,rsteps,field_of_view_x, field_of_v
     cbar1.ax.set_ylabel('Intensity (kW/cm\u00b2)')
 
     
-    x2,y2=np.shape(ex2)
+    x2,y2=np.shape(ex_XY)
     Ifield_xy=np.zeros((x2,y2))
     for i in range(x2):
         for j in range(y2):
-            Ifield_xy[i,j]=np.real(ex2[i,j]*np.conj(ex2[i,j]) + ey2[i,j]*np.conj(ey2[i,j]) +ez2[i,j]*np.conj(ez2[i,j]))
+            Ifield_xy[i,j]=np.real(ex_XY[i,j]*np.conj(ex_XY[i,j]) + ey_XY[i,j]*np.conj(ey_XY[i,j]) +ez_XY[i,j]*np.conj(ez_XY[i,j]))
 
-    xmax=field_of_view_x/2
+    xmax=field_of_view/2
     ax2 = fig.add_subplot(spec[0, 1])
     ax2.set_title('Intensity on xy')
     pos2=ax2.imshow(Ifield_xy,extent=[-xmax,xmax,-xmax,xmax],interpolation='none', aspect='auto')
@@ -68,18 +70,18 @@ def plot_XZ_XY(ex1,ey1,ez1,ex2,ey2,ez2,zsteps,rsteps,field_of_view_x, field_of_v
     ax4.axis('square')
     x_pos=np.linspace(-xmax*0.95,xmax*0.95,10)
     y_pos=np.linspace(-xmax*0.95,xmax*0.95,10)
-    x_values=np.linspace(-xmax,xmax,np.shape(ex2)[0])
-    y_values=np.linspace(xmax,-xmax,np.shape(ex2)[0])
+    x_values=np.linspace(-xmax,xmax,np.shape(ex_XY)[0])
+    y_values=np.linspace(xmax,-xmax,np.shape(ex_XY)[0])
     AMP=np.abs(xmax/6)
     for x_coor in x_pos:
         for y_coor in y_pos:
             x_index = (np.abs(x_values - x_coor)).argmin()
             y_index = (np.abs(y_values - y_coor)).argmin()
-            if np.abs(Ifield_xy[y_index,x_index]/np.max(Ifield_xy))>0.15 and np.abs(ez2[y_index,x_index])**2/np.max(Ifield_xy)<0.9:
+            if np.abs(Ifield_xy[y_index,x_index]/np.max(Ifield_xy))>0.15 and np.abs(ez_XY[y_index,x_index])**2/np.max(Ifield_xy)<0.9:
                 if x_coor==x_pos[5] and y_coor==y_pos[5]: #at x,y=0,0 usually the atan2 does not work well
                     x_index+=1
                     y_index+=1
-                polarization_elipse(ax4,x_coor,y_coor,ex2[y_index,x_index],ey2[y_index,x_index],AMP)
+                polarization_elipse(ax4,x_coor,y_coor,ex_XY[y_index,x_index],ey_XY[y_index,x_index],AMP)
     '''
     #formula to calculate fwhm
     fwhm=np.abs(2*x_values[np.where(np.abs(Ifield_axis-np.max(Ifield_axis)/2)<0.05*np.max(Ifield_xy))[0]])
@@ -88,12 +90,12 @@ def plot_XZ_XY(ex1,ey1,ez1,ex2,ey2,ez2,zsteps,rsteps,field_of_view_x, field_of_v
     fig.tight_layout()
     fig.subplots_adjust(top=0.90)
     #Amplitud de  and fase plot 
-    Amp_max=np.abs(np.max([np.max(np.abs(ex2)),np.max(np.abs(ey2)),np.max(np.abs(ez2))]))**2
+    Amp_max=np.abs(np.max([np.max(np.abs(ex_XY)),np.max(np.abs(ey_XY)),np.max(np.abs(ez_XY))]))**2
     plt.rcParams['font.size']=14
     #ex
-    fig2, ((ax_x1,ax_y1,ax_z1),(ax_x2,ax_y2,ax_z2)) = plt.subplots(figsize=(15, 8),nrows=2, ncols=3)
+    fig2, ((ax_x1,ax_y1,ax_z1),(ax_x2,ax_y2,ax_z2)) = plt.subplots(num=str(figure_name)+': Amplitude',figsize=(15, 8),nrows=2, ncols=3)
     ax_x1.set_title('$|E_{f_x}|^2$')
-    pos_x1=ax_x1.imshow(np.abs(ex2)**2/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_x1=ax_x1.imshow(np.abs(ex_XY)**2/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_x1.set_xlabel('x (nm)')
     ax_x1.set_ylabel('y (nm)')
     ax_x1.axis('square')
@@ -101,7 +103,7 @@ def plot_XZ_XY(ex1,ey1,ez1,ex2,ey2,ez2,zsteps,rsteps,field_of_view_x, field_of_v
     cbar_1_1.ax.set_ylabel('Relative intensity')
     
     ax_x2.set_title('$E_{f_x}$ phase')
-    pos_x2=ax_x2.imshow(np.angle(ex2, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_x2=ax_x2.imshow(np.angle(ex_XY, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_x2.set_xlabel('x (nm)')
     ax_x2.set_ylabel('y (nm)')
     ax_x2.axis('square')
@@ -110,7 +112,7 @@ def plot_XZ_XY(ex1,ey1,ez1,ex2,ey2,ez2,zsteps,rsteps,field_of_view_x, field_of_v
 
     #ey
     ax_y1.set_title('$|E_{f_y}|^2$')
-    pos_y1=ax_y1.imshow(np.abs(ey2)**2/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_y1=ax_y1.imshow(np.abs(ey_XY)**2/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_y1.set_xlabel('x (nm)')
     ax_y1.set_ylabel('y (nm)')
     ax_y1.axis('square')
@@ -118,7 +120,7 @@ def plot_XZ_XY(ex1,ey1,ez1,ex2,ey2,ez2,zsteps,rsteps,field_of_view_x, field_of_v
     cbar_1_1.ax.set_ylabel('Relative intensity')
     
     ax_y2.set_title('$E_{f_y}$ phase')
-    pos_y2=ax_y2.imshow(np.angle(ey2, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_y2=ax_y2.imshow(np.angle(ey_XY, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_y2.set_xlabel('x (nm)')
     ax_y2.set_ylabel('y (nm)')
     ax_y2.axis('square')
@@ -127,7 +129,7 @@ def plot_XZ_XY(ex1,ey1,ez1,ex2,ey2,ez2,zsteps,rsteps,field_of_view_x, field_of_v
 
     #ez
     ax_z1.set_title('$|E_{f_z}|^2$')
-    pos_z1=ax_z1.imshow(np.abs(ez2)**2/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_z1=ax_z1.imshow(np.abs(ez_XY)**2/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_z1.set_xlabel('x (nm)')
     ax_z1.set_ylabel('y (nm)')
     ax_z1.axis('square')
@@ -135,7 +137,7 @@ def plot_XZ_XY(ex1,ey1,ez1,ex2,ey2,ez2,zsteps,rsteps,field_of_view_x, field_of_v
     cbar_1_1.ax.set_ylabel('Relative intensity')
     
     ax_z2.set_title('$E_{f_z}$ phase')
-    pos_z2=ax_z2.imshow(np.angle(ez2, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_z2=ax_z2.imshow(np.angle(ez_XY, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_z2.set_xlabel('x (nm)')
     ax_z2.set_ylabel('y (nm)')
     ax_z2.axis('square')
@@ -143,16 +145,19 @@ def plot_XZ_XY(ex1,ey1,ez1,ex2,ey2,ez2,zsteps,rsteps,field_of_view_x, field_of_v
     cbar_1_1.ax.set_ylabel('Phase (º)')
     fig2.tight_layout()
 
-def plot_XY(ex2,ey2,ez2,rsteps,field_of_view,n,wavelength,I_0,alpha,f,figure_name):   
+def plot_XY(ex_XY,ey_XY,ez_XY,field_of_view,figure_name):   
+    '''
+    Plot the calculated fields ont the XY plane
+    '''
     plt.rcParams['font.size']=14
     #intensity plot
     fig, (ax2, ax3) = plt.subplots(num=str(figure_name)+': Intensity',figsize=(12, 4), ncols=2)
 
-    x2,y2=np.shape(ex2)
+    x2,y2=np.shape(ex_XY)
     Ifield_xy=np.zeros((x2,y2))
     for i in range(x2):
         for j in range(y2):
-            Ifield_xy[i,j]=np.real(ex2[i,j]*np.conj(ex2[i,j]) + ey2[i,j]*np.conj(ey2[i,j]) +ez2[i,j]*np.conj(ez2[i,j]))
+            Ifield_xy[i,j]=np.real(ex_XY[i,j]*np.conj(ex_XY[i,j]) + ey_XY[i,j]*np.conj(ey_XY[i,j]) +ez_XY[i,j]*np.conj(ez_XY[i,j]))
 
     xmax=field_of_view/2
     ax2.set_title('Intensity on xy')
@@ -174,11 +179,11 @@ def plot_XY(ex2,ey2,ez2,rsteps,field_of_view,n,wavelength,I_0,alpha,f,figure_nam
     fig.subplots_adjust(top=0.80)
 
     #amplitude and phase plot 
-    Amp_max=np.abs(np.max([np.max(np.abs(ex2)),np.max(np.abs(ey2)),np.max(np.abs(ez2))]))
+    Amp_max=np.abs(np.max([np.max(np.abs(ex_XY)),np.max(np.abs(ey_XY)),np.max(np.abs(ez_XY))]))
     #ex
     fig2, ((ax_x1,ax_y1,ax_z1),(ax_x2,ax_y2,ax_z2)) = plt.subplots(num=str(figure_name)+': Amplitudes',figsize=(18, 8),nrows=2, ncols=3)
     ax_x1.set_title('Ex amplitude')
-    pos_x1=ax_x1.imshow(np.abs(ex2)/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_x1=ax_x1.imshow(np.abs(ex_XY)/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_x1.set_xlabel('x (nm)')
     ax_x1.set_ylabel('y (nm)')
     ax_x1.axis('square')
@@ -186,7 +191,7 @@ def plot_XY(ex2,ey2,ez2,rsteps,field_of_view,n,wavelength,I_0,alpha,f,figure_nam
     cbar_1_1.ax.set_ylabel('Relative amplitude')
     
     ax_x2.set_title('Ex phase')
-    pos_x2=ax_x2.imshow(np.angle(ex2, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_x2=ax_x2.imshow(np.angle(ex_XY, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_x2.set_xlabel('x (nm)')
     ax_x2.set_ylabel('y (nm)')
     ax_x2.axis('square')
@@ -195,7 +200,7 @@ def plot_XY(ex2,ey2,ez2,rsteps,field_of_view,n,wavelength,I_0,alpha,f,figure_nam
 
     #ey
     ax_y1.set_title('Ey amplitude')
-    pos_y1=ax_y1.imshow(np.abs(ey2)/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_y1=ax_y1.imshow(np.abs(ey_XY)/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_y1.set_xlabel('x (nm)')
     ax_y1.set_ylabel('y (nm)')
     ax_y1.axis('square')
@@ -203,7 +208,7 @@ def plot_XY(ex2,ey2,ez2,rsteps,field_of_view,n,wavelength,I_0,alpha,f,figure_nam
     cbar_1_1.ax.set_ylabel('Relative amplitude')
     
     ax_y2.set_title('Ey phase')
-    pos_y2=ax_y2.imshow(np.angle(ey2, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_y2=ax_y2.imshow(np.angle(ey_XY, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_y2.set_xlabel('x (nm)')
     ax_y2.set_ylabel('y (nm)')
     ax_y2.axis('square')
@@ -212,7 +217,7 @@ def plot_XY(ex2,ey2,ez2,rsteps,field_of_view,n,wavelength,I_0,alpha,f,figure_nam
 
     #ez
     ax_z1.set_title('Ez amplitude')
-    pos_z1=ax_z1.imshow(np.abs(ez2)/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_z1=ax_z1.imshow(np.abs(ez_XY)/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_z1.set_xlabel('x (nm)')
     ax_z1.set_ylabel('y (nm)')
     ax_z1.axis('square')
@@ -220,7 +225,7 @@ def plot_XY(ex2,ey2,ez2,rsteps,field_of_view,n,wavelength,I_0,alpha,f,figure_nam
     cbar_1_1.ax.set_ylabel('Relative amplitude')
     
     ax_z2.set_title('Ez phase')
-    pos_z2=ax_z2.imshow(np.angle(ez2, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_z2=ax_z2.imshow(np.angle(ez_XY, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
     ax_z2.set_xlabel('x (nm)')
     ax_z2.set_ylabel('y (nm)')
     ax_z2.axis('square')

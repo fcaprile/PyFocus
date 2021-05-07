@@ -14,7 +14,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import time
 from scipy.optimize import minimize_scalar as minim
 
-def generate_incident_field(maskfunction,alpha,focus,resolution_phi,resolution_theta,h,psi,delta,radius,I0,wavelength):
+def generate_incident_field(maskfunction,alpha,focus,resolution_phi,resolution_theta,h,gamma,beta,radius,I0,wavelength):
     '''
     Generate a matrix for the field X and Y direction of the incident field on the lens, given the respective maskfunction
     
@@ -34,8 +34,8 @@ def generate_incident_field(maskfunction,alpha,focus,resolution_phi,resolution_t
             phase=maskfunction(rhop,phip,radius,focus,k)
             ex_lens[i,j]=gaussian(rhop)*phase
             ey_lens[i,j]=gaussian(rhop)*phase
-    ex_lens*=np.cos(psi*np.pi/180)*I0**0.5
-    ey_lens*=np.sin(psi*np.pi/180)*np.exp(1j*delta*np.pi/180)*I0**0.5
+    ex_lens*=np.cos(gamma*np.pi/180)*I0**0.5
+    ey_lens*=np.sin(gamma*np.pi/180)*np.exp(1j*beta*np.pi/180)*I0**0.5
     return ex_lens,ey_lens
 
 def plot_in_cartesian(Ex,Ey,xmax,alpha,focus,figure_name):
@@ -70,7 +70,7 @@ def plot_in_cartesian(Ex,Ey,xmax,alpha,focus,figure_name):
     I_cartesian=np.abs(Ex_cartesian)**2+np.abs(Ey_cartesian)**2
     
     #colorbar plot for the field:
-    plt.rcParams['font.size']=20#tamaño de fuente
+    plt.rcParams['font.size']=12#tamaño de fuente
     fig1, (ax1, ax2) = plt.subplots(num=str(figure_name)+': Incident intensity',figsize=(12, 5), ncols=2)
     fig1.suptitle('Field at the objective using 2D integration')
     
@@ -129,11 +129,12 @@ def plot_in_cartesian(Ex,Ey,xmax,alpha,focus,figure_name):
     
     return I_cartesian,Ex_cartesian,Ey_cartesian
 
-def custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N_rho,N_phi,alpha,mask_function,h,L,I0,Lambda,radius,fig_name,plot=True):
+def custom_mask_objective_field(gamma,beta,resolution_theta,resolution_phi,N_rho,N_phi,alpha,mask_function,h,L,I0,wavelength,radius,fig_name,plot=True):
     '''
-    Difraction for an arbitrary phase mask under the paraxial approximation, using the GPU
-    
-    The resultant matrix Ex and Ey are outputed in polar coordinates (each row is a different value of phi and each column a different rho)  
+    Calculate the inciding field on the objective by fraunhofer's difraction formula for a custom phase mask
+    N_rho and N_phi are the resolution for the integral's calculus
+    resolution_theta,resolution_phi are the spatial resolution for the obtained field inciding on the objective
+    The resultant matrix Ex and Ey are returned in polar coordinates (each row is a different value of phi and each column a different rho)  
     '''
     
     print('Calculating field at the objective:')
@@ -163,13 +164,13 @@ def custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N_rho,
 
     #Define function to integrate and field matrix:    
     Ex=np.zeros((resolution_phi,resolution_theta),dtype=complex)
-    kl=np.pi/Lambda/L
+    kl=np.pi/wavelength/L
     '''
     #the function to integrate is:
-    f=lambda rho,phi: rho*np.exp(-(rho/radius)**2)*mask_function(rho,phi)*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))
+    f=wavelength rho,phi: rho*np.exp(-(rho/radius)**2)*mask_function(rho,phi)*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))
     '''
     
-    k=2*np.pi/Lambda
+    k=2*np.pi/wavelength
     #in order to save computing time, i do separatedly the calculation of terms that would otherwise e claculated multiple times, since they do not depend on rhop,phip (the coordinates at which the field is calculated)
     prefactor=rho*np.exp(-(rho/radius)**2+1j*(k*L+kl*rho**2))*mask_function(rho,phi,radius,focus,k)*weight
     #numerical 2D integration: 
@@ -179,18 +180,18 @@ def custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N_rho,
             phase=np.exp(1j*k*rhop**2/2/L)*np.exp(-1j*kl*(2*rho*rhop*np.cos(phi-phip)))         
             Ex[j,i]=np.sum(prefactor*phase)
     
-    Ex*=-1j/Lambda/L
+    Ex*=-1j/wavelength/L
     
     #on this approximation, the field in the Y direction is the same as the field on the X direction with a different global phase and amplitude        
-    Ey=Ex*np.exp(1j*np.pi/180*delta)
-    Ex*=np.cos(np.pi/180*psi)*I0**0.5
-    Ey*=np.sin(np.pi/180*psi)*I0**0.5
+    Ey=Ex*np.exp(1j*np.pi/180*beta)
+    Ex*=np.cos(np.pi/180*gamma)*I0**0.5
+    Ey*=np.sin(np.pi/180*gamma)*I0**0.5
     
     I_cartesian,Ex_cartesian,Ey_cartesian=plot_in_cartesian(Ex,Ey,h,alpha,focus,fig_name)
         
     return Ex,Ey,I_cartesian,Ex_cartesian,Ey_cartesian
 
-def test_custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N_rho,N_phi,alpha,mask_function,h,L,I0,Lambda,radius,plot=True):
+def test_custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N_rho,N_phi,alpha,mask_function,h,L,I0,wavelength,radius,plot=True):
     '''
     Quick run for testing if the resolution used to do the 2D integration is high enought.
     Meant for difraction for an arbitrary phase mask under the paraxial approximation, using the GPU
@@ -223,12 +224,12 @@ def test_custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N
 
     #Define function to integrate and field matrix:    
     Ex=np.zeros((resolution_phi,resolution_theta),dtype=complex)
-    kl=np.pi/Lambda/L
+    kl=np.pi/wavelength/L
     '''
     #the function to integrate is:
-    f=lambda rho,phi: rho*np.exp(-(rho/radius)**2)*mask_function(rho,phi)*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))
+    f=wavelength rho,phi: rho*np.exp(-(rho/radius)**2)*mask_function(rho,phi)*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))
     '''
-    k=2*np.pi/Lambda
+    k=2*np.pi/wavelength
     #in order to save computing time, i do separatedly the calculation of terms that would otherwise e claculated multiple times, since they do not depend on rhop,phip (the coordinates at which the field is calculated)
     prefactor=rho*np.exp(-(rho/radius)**2)*mask_function(rho,phi)*weight
 
@@ -239,7 +240,7 @@ def test_custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N
             phase=np.exp(1j*k*(L+rhop**2/2/L))*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))         
             Ex[j,i]=np.sum(prefactor*phase)
     
-    Ex*=-1j/Lambda/L
+    Ex*=-1j/wavelength/L
 
     #on this approximation, the field in the Y direction is the same as the field on the X direction with a different global phase and amplitude        
     Ey=Ex*np.exp(1j*np.pi/180*delta)
@@ -250,10 +251,16 @@ def test_custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N
 
     return Ex,Ey,I_cartesian,Ex_cartesian,Ey_cartesian
 
-def custom_mask_focus_field(ex_lens,ey_lens,alpha,h,Lambda,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,countdown=True,x0=0,y0=0):
+def custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,countdown=True,x0=0,y0=0):
     '''
-    High apperture difraction for an arbitrary incident field. Only calculates the field on the XY focal plane.
+    2D integration to calculate the field at the focus of a high aperture lens
+    ex_lens,ey_lens are the x and y component of the inciding field
+    Calculates the field on the XY focal plane.
     
+    resolution_focus is the resolution for the field at the focus, the same for x and y
+    resolution_theta,resolution_phi is the resolution for the 2D calculus (must be the same as the sie of ex_lens and ey_lens) 
+    
+    wavelength is given in the medium (equals wavelength in vacuum/n)
     countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation
     
     x0 and y0 are used for calculating the field centered at an x0, y0 position
@@ -262,7 +269,8 @@ def custom_mask_focus_field(ex_lens,ey_lens,alpha,h,Lambda,zp0,resolution_focus,
     if countdown==True:
         print('Calculating field at the focal plane:')
         time.sleep(0.5)
-    Lambda*=10**6
+    wavelength*=10**6
+    h*=10**-6
     focus=h/np.sin(alpha)*10**6
         
     #The Y component of incident field must be evaluated at phi-pi-pi/2, which is equivalent to moving the rows of the matrix    
@@ -277,12 +285,12 @@ def custom_mask_focus_field(ex_lens,ey_lens,alpha,h,Lambda,zp0,resolution_focus,
     
     '''
     # the functions i am going to integrate are:
-    fun1=lambda phi,theta: np.cos(theta)**0.5*np.sin(theta)*(np.cos(theta) + (1 - np.cos(theta))*np.sin(phi)**2)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
-    fun2=lambda phi,theta: np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*np.cos(phi)*np.sin(phi)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
-    fun3=lambda phi,theta: np.cos(theta)**0.5*np.sin(theta)**2*np.cos(phi)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
-    fun4=lambda phi,theta: np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*np.cos(phi)*np.sin(phi)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
-    fun5=lambda phi,theta: np.cos(theta)**0.5*np.sin(theta)*(np.cos(theta) + (1 - np.cos(theta))*np.sin(phi)**2)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
-    fun6=lambda phi,theta: np.cos(theta)**0.5*np.sin(theta)**2*np.cos(phi)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
+    fun1=wavelength phi,theta: np.cos(theta)**0.5*np.sin(theta)*(np.cos(theta) + (1 - np.cos(theta))*np.sin(phi)**2)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
+    fun2=wavelength phi,theta: np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*np.cos(phi)*np.sin(phi)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
+    fun3=wavelength phi,theta: np.cos(theta)**0.5*np.sin(theta)**2*np.cos(phi)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
+    fun4=wavelength phi,theta: np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*np.cos(phi)*np.sin(phi)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
+    fun5=wavelength phi,theta: np.cos(theta)**0.5*np.sin(theta)*(np.cos(theta) + (1 - np.cos(theta))*np.sin(phi)**2)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
+    fun6=wavelength phi,theta: np.cos(theta)**0.5*np.sin(theta)**2*np.cos(phi)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
     '''  
     #2D trapezoidal method weight:
     h_theta=alpha/resolution_theta
@@ -308,7 +316,7 @@ def custom_mask_focus_field(ex_lens,ey_lens,alpha,h,Lambda,zp0,resolution_focus,
     phi_values=np.linspace(0,2*np.pi,resolution_phi)      #divisions of phi in which the trapezoidal 2D integration is done
     theta,phi=np.meshgrid(theta_values,phi_values)        #turn the divisions into a matrix in order to apply the function more easily
 
-    kz=zp0*2*np.pi/Lambda
+    kz=zp0*2*np.pi/wavelength
 
     #now begins the integration, in order to save computing time i do the trigonometric functions separatedly and save the value into another variable
     cos_theta=np.cos(theta)
@@ -327,9 +335,9 @@ def custom_mask_focus_field(ex_lens,ey_lens,alpha,h,Lambda,zp0,resolution_focus,
     Axy=prefactor_y*ex_lens*weight_trapezoid
     Axz=prefactor_z*ex_lens*weight_trapezoid
 
-    Ayx=prefactor_y*ey_lens*weight_trapezoid
-    Ayy=-prefactor_x*ey_lens*weight_trapezoid
-    Ayz=prefactor_z*ey_lens*weight_trapezoid
+    Ayx=-prefactor_y*ey_lens*weight_trapezoid
+    Ayy=prefactor_x*ey_lens*weight_trapezoid
+    Ayz=-prefactor_z*ey_lens*weight_trapezoid
 
     cos_theta_kz=cos_theta*kz
     #now for each position in which i calculate the field i do the integration
@@ -339,7 +347,7 @@ def custom_mask_focus_field(ex_lens,ey_lens,alpha,h,Lambda,zp0,resolution_focus,
             for j,y in enumerate(y_values):#idea, rotar en phi es correr las columnas de la matriz ex, ey
                 rhop=(x**2+y**2)**0.5
                 phip=np.arctan2(y,x)
-                kr=rhop*2*np.pi/Lambda
+                kr=rhop*2*np.pi/wavelength
                 sin_theta_kr=sin_theta*kr
                 phase_inc_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip) + cos_theta_kz))#phase for the X incident component
                 phase_inc_y=np.exp(1j*(-sin_theta_kr*np.sin(phi - phip) + cos_theta_kz))#phase for the Y incident component
@@ -352,7 +360,7 @@ def custom_mask_focus_field(ex_lens,ey_lens,alpha,h,Lambda,zp0,resolution_focus,
             for j,y in enumerate(y_values):
                 rhop=(x**2+y**2)**0.5
                 phip=np.arctan2(y,x)
-                kr=rhop*2*np.pi/Lambda
+                kr=rhop*2*np.pi/wavelength
                 sin_theta_kr=sin_theta*kr
                 phase_inc_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip) + cos_theta_kz))#phase for the X incident component
                 phase_inc_y=np.exp(1j*(-sin_theta_kr*np.sin(phi - phip) + cos_theta_kz))#phase for the Y incident component
@@ -361,28 +369,35 @@ def custom_mask_focus_field(ex_lens,ey_lens,alpha,h,Lambda,zp0,resolution_focus,
                 ey[j,i]=np.sum(Axy*phase_inc_x)+np.sum(Ayy*phase_inc_y)
                 ez[j,i]=np.sum(Axz*phase_inc_x)+np.sum(Ayz*phase_inc_y)
         
-    ex*=-1j*focus/Lambda
-    ey*=1j*focus/Lambda
-    ez*=1j*focus/Lambda
+    ex*=-1j*focus/wavelength
+    ey*=1j*focus/wavelength
+    ez*=1j*focus/wavelength
     
     return ex,ey,ez
 
-def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,Lambda,z_FOV,resolution_z,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,x0=0,y0=0,plot_plane='X'):
+def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_FOV,resolution_z,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,x0=0,y0=0,plot_plane='X'):
     '''
-    High apperture difraction for an arbitrary incident field. Calculates the field on the XY and XZ focal planes.
-        
-    x0 and y0 are used for calculating the field centered at an x0, y0 position
+    2D integration to calculate the field at the focus of a high aperture lens
+    ex_lens,ey_lens are the x and y component of the inciding field
+    Calculates the field on the XY focal plane and the XZ plane.
     
-    plot_plane='X' is used for calculating the XZ plane, otherwise plot_plane='Y' calculates the YZ plane
+    resolution_focus is the resolution for the field at the focus, the same for x and y
+    resolution_theta,resolution_phi is the resolution for the 2D calculus (must be the same as the sie of ex_lens and ey_lens) 
+    
+    wavelength is given in the medium (equals wavelength in vacuum/n)
+    countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation
+    
+    x0 and y0 are used for calculating the field centered at an x0, y0 position
     '''
     #XY plane: 
-    Ex_XY,Ey_XY,Ez_XY=custom_mask_focus_field(ex_lens,ey_lens,alpha,h,Lambda,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,countdown=True,x0=x0,y0=y0)
+    Ex_XY,Ey_XY,Ez_XY=custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,countdown=True,x0=x0,y0=y0)
     
     #XZ plane:
     if int(resolution_z%2)==0:
         resolution_z+=1    #make the middle coordinate on Z be Z=0
         
-    Lambda*=10**6               #passage from mm to nm
+    wavelength*=10**6               #passage from mm to nm
+    h*=10**-6
     focus=h/np.sin(alpha)*10**6 #passage from mm to nm
         
     #The Y component of incident field must be evaluated at phi-pi/2, which is equivalent to moving the rows of the matrix    
@@ -397,12 +412,12 @@ def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,Lambda,z_FOV,resolutio
 
     '''
     # the functions i am going to integrate are:
-    fun1=lambda theta, phi: np.cos(theta)**0.5*np.sin(theta)*(np.cos(theta) + (1 - np.cos(theta))*np.sin(phi)**2)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
-    fun2=lambda theta, phi: np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*np.cos(phi)*np.sin(phi)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
-    fun3=lambda theta, phi: np.cos(theta)**0.5*np.sin(theta)**2*np.cos(phi)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
-    fun4=lambda theta, phi: np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*np.cos(phi)*np.sin(phi)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
-    fun5=lambda theta, phi: np.cos(theta)**0.5*np.sin(theta)*(np.cos(theta) + (1 - np.cos(theta))*np.sin(phi)**2)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
-    fun6=lambda theta, phi: np.cos(theta)**0.5*np.sin(theta)**2*np.cos(phi)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
+    fun1=wavelength theta, phi: np.cos(theta)**0.5*np.sin(theta)*(np.cos(theta) + (1 - np.cos(theta))*np.sin(phi)**2)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
+    fun2=wavelength theta, phi: np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*np.cos(phi)*np.sin(phi)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
+    fun3=wavelength theta, phi: np.cos(theta)**0.5*np.sin(theta)**2*np.cos(phi)*np.exp(1j*(np.sin(theta)*kr*np.cos(phi - phip) + np.cos(theta)*kz))
+    fun4=wavelength theta, phi: np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*np.cos(phi)*np.sin(phi)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
+    fun5=wavelength theta, phi: np.cos(theta)**0.5*np.sin(theta)*(np.cos(theta) + (1 - np.cos(theta))*np.sin(phi)**2)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
+    fun6=wavelength theta, phi: np.cos(theta)**0.5*np.sin(theta)**2*np.cos(phi)*np.exp(1j*(-np.sin(theta)*kr*np.sin(phi - phip) + np.cos(theta)*kz))
     '''  
         
     #2D trapezoidal method weight:
@@ -447,9 +462,9 @@ def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,Lambda,z_FOV,resolutio
     Axy=prefactor_y*ex_lens*weight_trapezoid
     Axz=prefactor_z*ex_lens*weight_trapezoid
 
-    Ayx=prefactor_y*ey_lens*weight_trapezoid
-    Ayy=-prefactor_x*ey_lens*weight_trapezoid
-    Ayz=prefactor_z*ey_lens*weight_trapezoid
+    Ayx=-prefactor_y*ey_lens*weight_trapezoid
+    Ayy=prefactor_x*ey_lens*weight_trapezoid
+    Ayz=-prefactor_z*ey_lens*weight_trapezoid
 
     if plot_plane=='X':
         for j in tqdm(range(resolution_z),desc='XZ plane'):
@@ -457,8 +472,8 @@ def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,Lambda,z_FOV,resolutio
             for i,x in enumerate(x_values):#idea, rotar en phi es correr las columnas de la matriz ex, ey
                 rhop=np.abs(x)
                 phip=np.arctan2(0,x)
-                kr=rhop*2*np.pi/Lambda
-                kz=zp0*2*np.pi/Lambda
+                kr=rhop*2*np.pi/wavelength
+                kz=zp0*2*np.pi/wavelength
                 sin_theta_kr=sin_theta*kr
                 cos_theta_kz=cos_theta*kz
                 phase_inc_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip) + cos_theta_kz))#phase for the X incident component
@@ -474,8 +489,8 @@ def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,Lambda,z_FOV,resolutio
                 for i,y in enumerate(x_values):#idea, rotar en phi es correr las columnas de la matriz ex, ey
                     rhop=np.abs(y)
                     phip=np.arctan2(y,0)
-                    kr=rhop*2*np.pi/Lambda
-                    kz=zp0*2*np.pi/Lambda
+                    kr=rhop*2*np.pi/wavelength
+                    kz=zp0*2*np.pi/wavelength
                     sin_theta_kr=sin_theta*kr
                     cos_theta_kz=cos_theta*kz
                     phase_inc_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip) + cos_theta_kz))#phase for the X incident component
@@ -486,9 +501,9 @@ def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,Lambda,z_FOV,resolutio
                     Ez_XZ[j,i]=np.sum(Axz*phase_inc_x)+np.sum(Ayz*phase_inc_y)
         else:
             print('Options for plot_plane are \'X\' and \'Y\' ')
-    Ex_XZ*=-1j*focus/Lambda
-    Ey_XZ*=1j*focus/Lambda
-    Ez_XZ*=1j*focus/Lambda
+    Ex_XZ*=-1j*focus/wavelength
+    Ey_XZ*=1j*focus/wavelength
+    Ez_XZ*=1j*focus/wavelength
     
     return Ex_XZ,Ey_XZ,Ez_XZ,Ex_XY,Ey_XY,Ez_XY
 

@@ -14,12 +14,17 @@ from matplotlib import pyplot as plt
 from scipy.integrate import quad
 from scipy import interpolate
 
-def VPP_integration(alpha,n,f,radius_VPP,lambda1,zsteps,rsteps,field_of_view,z_field_of_view,radius):    
-
+def VPP_integration(alpha,n,f,w0,wavelength,rsteps,zsteps,field_of_view,z_field_of_view):    
+    '''
+    Generate the II matrixes, which are the result of the integration for different positions along the radius and z
+    This matrixes are later used to calculate the field
+    
+    wavelength is given in the medium (equals wavelength in vacuum/n)
+    '''
     ztotalsteps=np.int(np.rint(z_field_of_view/zsteps/2))
     rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2)) #the actual field of view of the X axis in the XZ plane will be field_of_view*2**0.5
     
-    gaussian=lambda theta:np.exp(-(np.sin(theta)*f/radius)**2)
+    gaussian=lambda theta:np.exp(-(np.sin(theta)*f/w0)**2)#inciding gaussian beam's amplitude
     
     I1=np.zeros((ztotalsteps,rtotalsteps),dtype=complex)
     I2=np.copy(I1)
@@ -32,20 +37,18 @@ def VPP_integration(alpha,n,f,radius_VPP,lambda1,zsteps,rsteps,field_of_view,z_f
     fun6=lambda theta: gaussian(theta)*np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*jv(3,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
     fun7=lambda theta: gaussian(theta)*np.cos(theta)**0.5*np.sin(theta)**2*jv(0,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
     fun8=lambda theta: gaussian(theta)*np.cos(theta)**0.5*np.sin(theta)**2*jv(2,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
-    
-    # alpha_VPP=np.arctan(radius_VPP/(f*lambda1))#since radius_VPP is given in nm, i translate f to nm
-    
+        
     for zz in tqdm(range(ztotalsteps),desc='VPP field calculation'):
         for rr in range(rtotalsteps):
-            kz=zz*2*np.pi/lambda1/ztotalsteps*z_field_of_view/2 
-            kr=rr*2*np.pi/lambda1/rtotalsteps*field_of_view/2*2**0.5
+            kz=zz*2*np.pi/wavelength/ztotalsteps*z_field_of_view/2 
+            kr=rr*2*np.pi/wavelength/rtotalsteps*field_of_view/2*2**0.5
             I1[zz,rr]=complex_quadrature(fun4,0,alpha)[0]
             I2[zz,rr]=complex_quadrature(fun5,0,alpha)[0]
             I3[zz,rr]=complex_quadrature(fun6,0,alpha)[0]
             I4[zz,rr]=complex_quadrature(fun7,0,alpha)[0]
             I5[zz,rr]=complex_quadrature(fun8,0,alpha)[0]
 
-    #since the calculus is the same for all 4 cuadrants, we calculate only one and now we mirror it upside-down
+    #since the calculus is the same for all 4 cuadrants, we calculate only one and now we mirror it ugammade-down
     II1=np.vstack((np.flipud(np.conj(I1)),I1[1:,:]))
     II2=np.vstack((np.flipud(np.conj(I2)),I2[1:,:]))
     II3=np.vstack((np.flipud(np.conj(I3)),I3[1:,:]))
@@ -53,7 +56,12 @@ def VPP_integration(alpha,n,f,radius_VPP,lambda1,zsteps,rsteps,field_of_view,z_f
     II5=np.vstack((np.flipud(np.conj(I5)),I5[1:,:]))
     return II1,II2,II3,II4,II5
 
-def VPP_fields(II1,II2,II3,II4,II5,lambda1,I0,beta,polarization,zsteps,rsteps,field_of_view,z_field_of_view,phip0,n,f,zp0):
+def VPP_fields(II1,II2,II3,II4,II5,wavelength,I0,gamma,beta,rsteps,zsteps,field_of_view,z_field_of_view,phip0,n,f,zp0):
+    '''
+    Given the II matrixes calculate the field on the focus
+    parameter phip0 gives an azimutal offset for the XZ plane calculus
+    wavelength is given in the medium (equals wavelength in vacuum/n)
+    '''
     ztotalsteps=np.int(np.rint(z_field_of_view/zsteps/2))
     rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2))
 
@@ -62,18 +70,18 @@ def VPP_fields(II1,II2,II3,II4,II5,lambda1,I0,beta,polarization,zsteps,rsteps,fi
         t = np.arctan2(y,x)
         return t,r
     #transform to radians:
-    pol=polarization/ 180*np.pi
+    beta*= np.pi/180
     phip=phip0 / 180*np.pi
-    beta=beta / 180*np.pi
+    gamma*= np.pi/180
     
     #E1,E2 are the components of the polarization
-    E1=np.sqrt(I0)*np.cos(beta)/lambda1*np.pi*f
-    E2=np.sqrt(I0)*np.sin(beta)/lambda1*np.pi*f
+    E1=np.sqrt(I0)*np.cos(gamma)/wavelength*np.pi*f
+    E2=np.sqrt(I0)*np.sin(gamma)/wavelength*np.pi*f
     a1=np.copy(E1)
-    a2=E2*np.exp(1j*pol)
+    a2=E2*np.exp(1j*beta)
     
     ######################xz plane#######################
-       
+    #for negative z values there is a minus sign that comes out, and so the first part of the vstack has a - multiplyed
     exx=a1*np.hstack((- np.fliplr(II1)*np.exp(1j*phip) + 0.5*np.fliplr(II2)*np.exp(- 1j*phip) - 0.5*np.fliplr(II3)*np.exp(3j*phip),II1[:,1:rtotalsteps-1]*np.exp(1j*phip) - 0.5*II2[:,1:rtotalsteps-1]*np.exp(- 1j*phip) + 0.5*II3[:,1:rtotalsteps-1]*np.exp(3j*phip)))
     eyx=-0.5*1j*a1*np.hstack((- np.fliplr(II2)*np.exp(- 1j*phip) - np.fliplr(II3)*np.exp(3j*phip),II2[:,1:rtotalsteps-1]*np.exp(- 1j*phip) + II3[:,1:rtotalsteps-1]*np.exp(3j*phip)))
     ezx=a1*1j*np.hstack((np.fliplr(II4) - np.fliplr(II5)*np.exp(2j*phip),II4[:,1:rtotalsteps-1] - II5[:,1:rtotalsteps-1]*np.exp(2j*phip)))
@@ -117,38 +125,16 @@ def VPP_fields(II1,II2,II3,II4,II5,lambda1,I0,beta,polarization,zsteps,rsteps,fi
 
 
     
-def VPP_integration_with_L(alpha,n,f,radius_VPP,lambda1,zp0,zsteps,rsteps,field_of_view,laser_width,E_rho,div):    
 
-    E_theta=lambda theta: E_rho(np.sin(theta)*f*10**-6)     #10**-6 is for passage from mm to nm
+def VPP_fraunhofer(gamma=45,beta=-90,steps=500,h=5,L=100,I_0=1,Lambda=0.00075,FOV=20000,radius=10,limit=2000,div=1,plot=True,save=False,folder='',figure_name=''):
+    '''
+    Calculate and plot the field inciding on the lens by Fraunhofer's difraction formula
+    Returns E_rho, the inciding amplitude along the radial coordinate for an x polarized beam
+    Returns Ex and Ey, the x and y components of this amplitude, in a matrix over the x and y coordinates so it can be ploted easily
+    plot=True plots the inciding field's intensity and amplitude'
+    wavelength is given in the medium (equals wavelength in vacuum/n)
+    '''
     
-    rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2))
-    
-    I1=np.zeros(rtotalsteps,dtype=complex)
-    I2=np.copy(I1)
-    I3=np.copy(I1)
-    I4=np.copy(I1)
-    I5=np.copy(I1)
-    
-    fun4=lambda theta: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)*(1 + np.cos(theta))*jv(1,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
-    fun5=lambda theta: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*jv(1,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
-    fun6=lambda theta: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*jv(3,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
-    fun7=lambda theta: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)**2*jv(0,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
-    fun8=lambda theta: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)**2*jv(2,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
-    
-    # alpha_VPP=np.arctan(radius_VPP/(f*lambda1))#since radius_VPP is given in nm, i translate f to nm    
-    for rr in tqdm(range(rtotalsteps),desc='Focal plane field calculation'):
-        kz=zp0*2*np.pi/lambda1 
-        kr=rr*2*np.pi/lambda1/rtotalsteps*field_of_view/2*2**0.5
-        for l in range(div):
-            I1[rr]+=complex_quadrature(fun4,alpha*l/div,alpha*(l+1)/div)[0]
-            I2[rr]+=complex_quadrature(fun5,alpha*l/div,alpha*(l+1)/div)[0]
-            I3[rr]+=complex_quadrature(fun6,alpha*l/div,alpha*(l+1)/div)[0]
-            I4[rr]+=complex_quadrature(fun7,alpha*l/div,alpha*(l+1)/div)[0]
-            I5[rr]+=complex_quadrature(fun8,alpha*l/div,alpha*(l+1)/div)[0]
-
-    return I1,I2,I3,I4,I5
-
-def VPP_pre_focus_opt(psi=45,delta=-90,steps=500,h=5,L=100,I_0=1,Lambda=0.00075,FOV=20000,radius=10,limit=2000,div=1,plot=True,save=False,folder='',figure_name=''):
     def complex_quadrature(func, a, b, eabs=1.49e-08, erel=1.49e-08,lim=50):
         def real_func(x):
             return np.real(func(x))
@@ -167,8 +153,8 @@ def VPP_pre_focus_opt(psi=45,delta=-90,steps=500,h=5,L=100,I_0=1,Lambda=0.00075,
     #E0x, E0y are the polarization elements of the incident wave
     #E_xy is the amplitude distribution along the xy plane for the incident wave (asumed constant but can be switched for a gaussian)
     E_xy=lambda rho: np.exp(-(rho/radius)**2) 
-    Ax=I_0**0.5*np.cos(np.pi*psi/180)  
-    Ay=I_0**0.5*np.sin(np.pi*psi/180)*np.exp(1j*np.pi*delta/180)
+    Ax=I_0**0.5*np.cos(np.pi*gamma/180)  
+    Ay=I_0**0.5*np.sin(np.pi*gamma/180)*np.exp(1j*np.pi*beta/180)
     
     fun=lambda rho: E_xy(rho)*rho*np.exp(1j*np.pi/Lambda/L*rho**2)*jv(1,k/L*rho*rhop)
            
@@ -282,8 +268,49 @@ def VPP_pre_focus_opt(psi=45,delta=-90,steps=500,h=5,L=100,I_0=1,Lambda=0.00075,
     '''    
     return E_fun,Ex,Ey
 
-def VPP_fields_with_L(I1,I2,I3,I4,I5,lambda1,I0,beta,polarization,zsteps,rsteps,field_of_view,phip0,n,f,zp0):
+def VPP_integration_with_propagation(alpha,n,f,radius_VPP,wavelength,zp0,zsteps,rsteps,field_of_view,laser_width,E_rho,div):    
+    '''
+    Given the inciding field E_rho, which only depends on the radial coordinate, generate the I matrixes, which are the same as in VPP_integration
+    Since the calculus takes a long time, only the field along the XY plane is calculated
+    wavelength is given in the medium (equals wavelength in vacuum/n)
+    '''
+    E_theta=lambda theta: E_rho(np.sin(theta)*f*10**-6)     #10**-6 is for passage from mm to nm
+    
+    rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2))
+    
+    I1=np.zeros(rtotalsteps,dtype=complex)
+    I2=np.copy(I1)
+    I3=np.copy(I1)
+    I4=np.copy(I1)
+    I5=np.copy(I1)
+    
+    fun4=lambda theta: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)*(1 + np.cos(theta))*jv(1,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
+    fun5=lambda theta: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*jv(1,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
+    fun6=lambda theta: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*jv(3,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
+    fun7=lambda theta: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)**2*jv(0,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
+    fun8=lambda theta: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)**2*jv(2,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
+    
+    # alpha_VPP=np.arctan(radius_VPP/(f*wavelength))#since radius_VPP is given in nm, i translate f to nm    
+    for rr in tqdm(range(rtotalsteps),desc='Focal plane field calculation'):
+        kz=zp0*2*np.pi/wavelength 
+        kr=rr*2*np.pi/wavelength/rtotalsteps*field_of_view/2*2**0.5
+        for l in range(div):
+            I1[rr]+=complex_quadrature(fun4,alpha*l/div,alpha*(l+1)/div)[0]
+            I2[rr]+=complex_quadrature(fun5,alpha*l/div,alpha*(l+1)/div)[0]
+            I3[rr]+=complex_quadrature(fun6,alpha*l/div,alpha*(l+1)/div)[0]
+            I4[rr]+=complex_quadrature(fun7,alpha*l/div,alpha*(l+1)/div)[0]
+            I5[rr]+=complex_quadrature(fun8,alpha*l/div,alpha*(l+1)/div)[0]
 
+    return I1,I2,I3,I4,I5
+
+
+def VPP_fields_with_propagation(I1,I2,I3,I4,I5,wavelength,I0,gamma,beta,rsteps,zsteps,field_of_view,phip0,n,f,zp0):
+    '''
+    Given the I matrixes calculate the field on the focus
+    Since the calculus takes a long time, only the field along the XY plane is calculated
+    parameter phip0 has no purpose, is only left to have the same variables for the functions
+    wavelength is given in the medium (equals wavelength in vacuum/n)
+    '''
     rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2))
 
     def cart2pol(x,y):    
@@ -291,15 +318,15 @@ def VPP_fields_with_L(I1,I2,I3,I4,I5,lambda1,I0,beta,polarization,zsteps,rsteps,
         t = np.arctan2(y,x)
         return t,r
     #transform to radians:
-    pol=polarization/ 180*np.pi
+    beta*= np.pi/180
     phip=phip0 / 180*np.pi
-    beta=beta / 180*np.pi
+    gamma*= np.pi/180
     
     #E1,E2 are the components of the polarization
-    E1=np.cos(beta)/lambda1*np.pi*f     #removed sqrt Io, it is given by the integration calculation
-    E2=np.sin(beta)/lambda1*np.pi*f
+    E1=np.sqrt(I0)*np.cos(gamma)/wavelength*np.pi*f
+    E2=np.sqrt(I0)*np.sin(gamma)/wavelength*np.pi*f
     a1=np.copy(E1)
-    a2=E2*np.exp(1j*pol)
+    a2=E2*np.exp(1j*beta)
         
 
     x,y=(np.int(np.rint(field_of_view/rsteps)-2),np.int(np.rint(field_of_view/rsteps))-2)#el -2 es para que no haya problemas con el paso a polare

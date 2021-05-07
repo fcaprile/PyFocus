@@ -9,12 +9,17 @@ from complex_quadrature import complex_quadrature
 from tqdm import tqdm
 from scipy.special import jv
 
-def no_mask_integration(alpha,n,f,lambda1,field_of_view,z_field_of_view,zsteps,rsteps,radius):
+def no_mask_integration(alpha,n,f,w0,wavelength,field_of_view,z_field_of_view,zsteps,rsteps):
+    '''
+    Generate the II matrixes, which are the result of the integration for different positions along the radius and z
+    This matrixes are later used to calculate the field
+    wavelength is given in the medium (equals wavelength in vacuum/n)
+    '''
 
     ztotalsteps=np.int(np.rint(z_field_of_view/zsteps/2))
     rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2)) #the actual field of view of the X axis in the XZ plane will be field_of_view*2**0.5
 
-    gaussian=lambda theta:np.exp(-(np.sin(theta)*f/radius)**2)
+    gaussian=lambda theta:np.exp(-(np.sin(theta)*f/w0)**2)
 
     I1=np.zeros((ztotalsteps,rtotalsteps),dtype=complex)
     I2=np.copy(I1)
@@ -26,8 +31,8 @@ def no_mask_integration(alpha,n,f,lambda1,field_of_view,z_field_of_view,zsteps,r
 
     for zz in tqdm(range(ztotalsteps),desc='No mask calulation'):
         for rr in range(rtotalsteps):
-            kz=zz*2*np.pi/lambda1/ztotalsteps*z_field_of_view/2 
-            kr=rr*2*np.pi/lambda1/rtotalsteps*field_of_view/2*2**0.5
+            kz=zz*2*np.pi/wavelength/ztotalsteps*z_field_of_view/2 
+            kr=rr*2*np.pi/wavelength/rtotalsteps*field_of_view/2*2**0.5
             I1[zz,rr]= complex_quadrature(fun1,0,alpha)[0]
             I2[zz,rr]= complex_quadrature(fun2,0,alpha)[0]
             I3[zz,rr]= complex_quadrature(fun3,0,alpha)[0]
@@ -41,7 +46,13 @@ def no_mask_integration(alpha,n,f,lambda1,field_of_view,z_field_of_view,zsteps,r
     return II1,II2,II3
 
 
-def no_mask_fields(II1,II2,II3,lambda1,I0,beta,polarization,zsteps,rsteps,field_of_view,z_field_of_view,phip0,n,f,zp0):
+def no_mask_fields(II1,II2,II3,wavelength,I0,beta,gamma,zsteps,rsteps,field_of_view,z_field_of_view,phip0,n,f,zp0):
+    '''
+    Given the II matrixes calculate the field on the focus
+    parameter phip0 gives an azimutal offset for the XZ plane calculus
+    wavelength is given in the medium (equals wavelength in vacuum/n)
+    '''
+
     ztotalsteps=np.int(np.rint(z_field_of_view/zsteps/2))
     rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2))
 
@@ -50,18 +61,18 @@ def no_mask_fields(II1,II2,II3,lambda1,I0,beta,polarization,zsteps,rsteps,field_
         t = np.arctan2(y,x)
         return t,r
     #transform to radians:
-    pol=polarization/ 180*np.pi
+    beta*= np.pi/180
     phip=phip0 / 180*np.pi
-    beta=beta / 180*np.pi
-
-    E1=np.sqrt(I0)*np.cos(beta)/lambda1*np.pi*f
-    E2=np.sqrt(I0)*np.sin(beta)/lambda1*np.pi*f
-
-    a1=E1
-    a2=E2*np.exp(1j*pol)
+    gamma*= np.pi/180
+    
+    #E1,E2 are the components of the polarization
+    E1=np.sqrt(I0)*np.cos(gamma)/wavelength*np.pi*f
+    E2=np.sqrt(I0)*np.sin(gamma)/wavelength*np.pi*f
+    a1=np.copy(E1)
+    a2=E2*np.exp(1j*beta)
 
     ######################xz plane#######################
-
+    #for negative z values there is a minus sign that comes out, and so the first part of the vstack has a - multiplyed
     exx=-a1*1j*np.hstack((np.fliplr(II1)+np.cos(2*phip)*np.fliplr(II3), II1[:,1:rtotalsteps-1]+np.cos(2*phip)*II3[:,1:rtotalsteps-1]))
     eyx=-a1*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:rtotalsteps-1]))
     ezx=-a1*2*np.hstack((-np.fliplr(II2)*np.cos(phip), np.cos(phip)*II2[:,1:rtotalsteps-1]))

@@ -1,0 +1,18 @@
+[Parameters]
+na = 1.4
+refraction indexes = 1.5
+aperture radius (mm) = 3.0
+focal distance (mm) = 3.2142857142857144
+incident beam radius (mm) = 5.0
+wavelength at vacuum (nm) = 640.0
+gamma, arctan(ey ex) (degrees) = 45.0
+beta, delta phase (degrees) = 90.0
+axial distance from focus for the xy plane (nm) = 0.0
+radial pixel size (nm) = 50.0
+axial pixel size (nm) = 80.0
+radial field of view (nm) = 1000.0
+axial field of view (nm) = 2000.0
+laser intensity = 1.0
+distance from phase plate to objective (mm) = Not implemented
+phase mask radius (mm) = Not implemented
+
