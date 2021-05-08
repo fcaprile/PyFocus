@@ -1,13 +1,13 @@
-# Custom-Field-Propagator
-This is my thesis's work, an user interface that allows the simulation of the propagation and focusing of a gaussian beam, after being modulated by a phase mask.
+# PyFocus
+This is PyFocus, an user interface that allows the simulation of the propagation and focusing of a gaussian beam, after being modulated by a custom phase mask.
 
-To execute the interface run "main.py". Para interfase y figuras en español, correr "main_esp.py".
+To execute the interface run "main.py".
 
-Before runing, have installed the packages tqdm and configparser (usually with pip install)
+Required packages: tqdm and configparser (usually with pip install)
 
 In case of simulating a custom phase mask, replace the function defined in "maskfunction_goes_here.py".
 
-For circular polarization, the parameters are tan-1(ey/ex)=45, phase=90 for right polarization (which gives the minimal intensity at the center with the VPP) and phase=-90 for left polarization.
+For circular polarization, the parameters are arctan(ey/ex)=45, phase=90 for right polarization (which gives the minimal intensity at the center with the VPP) and phase=-90 for left polarization.
 
 Saving the values matrix with the data for the intensity of the XZ and XY plane of the field near the focus is available at the lower part of the user interface. The coordinates are as ploted, with x going from -(radial field of view)/2 to (radial field of view)/2 on each column, and z going from (axial field of view)/2 to -(axial field of view)/2 on each row. The total number of rows and columns is given by the resolution, being the integer part of (radial field of view)/(radial resolution) for columns and of (axial field of view)/(axial resolution) for rows of the XZ plane.
 
