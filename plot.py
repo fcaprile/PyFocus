@@ -14,8 +14,9 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     '''
     zmax=z_field_of_view/2
     rmax=field_of_view*2**0.5/2
-    
     x,y=np.shape(ex_XZ)
+
+    radial_pixel_width=field_of_view*2**0.5/2/y
     Ifield_xz=np.zeros((x,y))
     for i in range(x):
         for j in range(y):
@@ -24,11 +25,11 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
 
     plt.rcParams['font.size']=14
     #intensity plot
-    fig = plt.figure(num=str(figure_name)+': Intensity',figsize=(16, 8))
+    fig = plt.figure(num=str(figure_name)+'_Intensity',figsize=(16, 8))
     spec = fig.add_gridspec(ncols=3, nrows=2)
     ax1 = fig.add_subplot(spec[0, 0])
-    ax1.set_title('Intensity on xz')
-    pos=ax1.imshow(Ifield_xz,extent=[-rmax,rmax,-zmax,zmax], interpolation='none', aspect='equal')
+    ax1.set_title('Normalized intensity')
+    pos=ax1.imshow(Ifield_xz,extent=[-rmax-radial_pixel_width,rmax-radial_pixel_width,-zmax,zmax], interpolation='none', aspect='equal')
     ax1.set_xlabel('x (nm)')
     ax1.set_ylabel('z (nm)')
     cbar1= fig.colorbar(pos, ax=ax1, shrink=0.75)
@@ -42,9 +43,10 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
             Ifield_xy[i,j]=np.real(ex_XY[i,j]*np.conj(ex_XY[i,j]) + ey_XY[i,j]*np.conj(ey_XY[i,j]) +ez_XY[i,j]*np.conj(ez_XY[i,j]))
 
     xmax=field_of_view/2
+    extent=[-xmax-radial_pixel_width,xmax-radial_pixel_width,-xmax+radial_pixel_width,xmax+radial_pixel_width]
     ax2 = fig.add_subplot(spec[0, 1])
     ax2.set_title('Intensity on xy')
-    pos2=ax2.imshow(Ifield_xy,extent=[-xmax,xmax,-xmax,xmax],interpolation='none', aspect='auto')
+    pos2=ax2.imshow(Ifield_xy,extent=extent,interpolation='none', aspect='auto')
     cbar2=fig.colorbar(pos2, ax=ax2)
     ax2.set_xlabel('x (nm)')
     ax2.set_ylabel('y (nm)')  
@@ -53,16 +55,17 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     
     x2=np.shape(Ifield_xy)[0]
     Ifield_axis=Ifield_xy[int(x2/2),:]
-    axis=np.linspace(-xmax,xmax,x2)
+    axis=np.linspace(-xmax-radial_pixel_width,xmax-radial_pixel_width,x2)
     ax3 = fig.add_subplot(spec[0, 2])
     ax3.set_title('Intensity along x')
     ax3.plot(axis,Ifield_axis)
+    ax3.grid(True)
     ax3.set_xlabel('x (nm)')
     ax3.set_ylabel('Intensity  (kW/cm\u00b2)')  
     
     ax4 = fig.add_subplot(spec[1, 1])
     ax4.set_title('Polarization on xy')
-    pos4=ax4.imshow(Ifield_xy,extent=[-xmax,xmax,-xmax,xmax],interpolation='none', aspect='auto',alpha=0.5)
+    pos4=ax4.imshow(Ifield_xy,extent=extent,interpolation='none', aspect='auto',alpha=0.5)
     cbar4=fig.colorbar(pos4, ax=ax4)
     cbar4.ax.set_ylabel('Intensidad (kW/cm\u00b2)')
     ax4.set_xlabel('x (nm)')
@@ -89,13 +92,14 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     '''
     fig.tight_layout()
     fig.subplots_adjust(top=0.90)
+
     #Amplitud de  and fase plot 
     Amp_max=np.abs(np.max([np.max(np.abs(ex_XY)),np.max(np.abs(ey_XY)),np.max(np.abs(ez_XY))]))**2
     plt.rcParams['font.size']=14
     #ex
-    fig2, ((ax_x1,ax_y1,ax_z1),(ax_x2,ax_y2,ax_z2)) = plt.subplots(num=str(figure_name)+': Amplitude',figsize=(15, 8),nrows=2, ncols=3)
+    fig2, ((ax_x1,ax_y1,ax_z1),(ax_x2,ax_y2,ax_z2)) = plt.subplots(num=str(figure_name)+'_Amplitude',figsize=(15, 8),nrows=2, ncols=3)
     ax_x1.set_title('$|E_{f_x}|^2$')
-    pos_x1=ax_x1.imshow(np.abs(ex_XY)**2/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_x1=ax_x1.imshow(np.abs(ex_XY)**2/Amp_max,extent=extent, interpolation='none', aspect='auto')
     ax_x1.set_xlabel('x (nm)')
     ax_x1.set_ylabel('y (nm)')
     ax_x1.axis('square')
@@ -103,7 +107,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     cbar_1_1.ax.set_ylabel('Relative intensity')
     
     ax_x2.set_title('$E_{f_x}$ phase')
-    pos_x2=ax_x2.imshow(np.angle(ex_XY, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_x2=ax_x2.imshow(np.angle(ex_XY, deg=True)+180,extent=extent, interpolation='none', aspect='auto')
     ax_x2.set_xlabel('x (nm)')
     ax_x2.set_ylabel('y (nm)')
     ax_x2.axis('square')
@@ -112,7 +116,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
 
     #ey
     ax_y1.set_title('$|E_{f_y}|^2$')
-    pos_y1=ax_y1.imshow(np.abs(ey_XY)**2/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_y1=ax_y1.imshow(np.abs(ey_XY)**2/Amp_max,extent=extent, interpolation='none', aspect='auto')
     ax_y1.set_xlabel('x (nm)')
     ax_y1.set_ylabel('y (nm)')
     ax_y1.axis('square')
@@ -120,7 +124,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     cbar_1_1.ax.set_ylabel('Relative intensity')
     
     ax_y2.set_title('$E_{f_y}$ phase')
-    pos_y2=ax_y2.imshow(np.angle(ey_XY, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_y2=ax_y2.imshow(np.angle(ey_XY, deg=True)+180,extent=extent, interpolation='none', aspect='auto')
     ax_y2.set_xlabel('x (nm)')
     ax_y2.set_ylabel('y (nm)')
     ax_y2.axis('square')
@@ -129,7 +133,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
 
     #ez
     ax_z1.set_title('$|E_{f_z}|^2$')
-    pos_z1=ax_z1.imshow(np.abs(ez_XY)**2/Amp_max,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_z1=ax_z1.imshow(np.abs(ez_XY)**2/Amp_max,extent=extent, interpolation='none', aspect='auto')
     ax_z1.set_xlabel('x (nm)')
     ax_z1.set_ylabel('y (nm)')
     ax_z1.axis('square')
@@ -137,7 +141,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     cbar_1_1.ax.set_ylabel('Relative intensity')
     
     ax_z2.set_title('$E_{f_z}$ phase')
-    pos_z2=ax_z2.imshow(np.angle(ez_XY, deg=True)+180,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    pos_z2=ax_z2.imshow(np.angle(ez_XY, deg=True)+180,extent=extent, interpolation='none', aspect='auto')
     ax_z2.set_xlabel('x (nm)')
     ax_z2.set_ylabel('y (nm)')
     ax_z2.axis('square')

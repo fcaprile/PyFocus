@@ -15,9 +15,12 @@ def no_mask_integration(alpha,n,f,w0,wavelength,field_of_view,z_field_of_view,zs
     This matrixes are later used to calculate the field
     wavelength is given in the medium (equals wavelength in vacuum/n)
     '''
+    #passage to nm:
+    f*=10**6
+    w0*=10**6
 
-    ztotalsteps=np.int(np.rint(z_field_of_view/zsteps/2))
-    rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2)) #the actual field of view of the X axis in the XZ plane will be field_of_view*2**0.5
+    ztotalsteps=int(np.rint(z_field_of_view/zsteps/2))
+    rtotalsteps=int(np.rint(field_of_view/rsteps/2**0.5)) #the actual field of view of the X axis in the XZ plane will be field_of_view*2**0.5
 
     gaussian=lambda theta:np.exp(-(np.sin(theta)*f/w0)**2)
 
@@ -52,9 +55,11 @@ def no_mask_fields(II1,II2,II3,wavelength,I0,beta,gamma,zsteps,rsteps,field_of_v
     parameter phip0 gives an azimutal offset for the XZ plane calculus
     wavelength is given in the medium (equals wavelength in vacuum/n)
     '''
+    #passage to nm:
+    f*=10**6
 
-    ztotalsteps=np.int(np.rint(z_field_of_view/zsteps/2))
-    rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2))
+    ztotalsteps=int(np.rint(z_field_of_view/zsteps/2))
+    rtotalsteps=int(np.rint(field_of_view/rsteps/2**0.5))
 
     def cart2pol(x,y):    
         r = np.sqrt(x**2+y**2)
@@ -98,8 +103,8 @@ def no_mask_fields(II1,II2,II3,wavelength,I0,beta,gamma,zsteps,rsteps,field_of_v
     zz=ztotalsteps + int(np.rint(zp0/z_field_of_view*2*ztotalsteps))  #zz signals to the row of kz=kz0 in each II
     for xx in range(x2):
         for yy in range(y2):
-            xcord=xx - np.rint(2*rtotalsteps /2**0.5)/2#not sure of multipliing by 2 and dividing by 2 outside the int, i thought it was to be sure to get the 0,0 at xx=np.rint(2*rtotalsteps /np.sqrt(2))/2
-            ycord=-yy + np.rint(2*rtotalsteps /2**0.5)/2-1
+            xcord=xx - int(np.rint(field_of_view/2/rsteps))+1
+            ycord=-yy + int(np.rint(field_of_view/2/rsteps))-1
             phip,rp=cart2pol(xcord,ycord)#nuevamente el +1 es para no tener problemas
             rp=int(np.rint(rp))
             exx2[yy,xx]=-a1*1j*(II1[zz,rp]+np.cos(2*phip)*II3[zz,rp])

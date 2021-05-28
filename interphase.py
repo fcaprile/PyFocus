@@ -181,7 +181,7 @@ def interphase_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,
     prefactor_y_t=prefactor_general_t*(-ts_t_theta+tp_t_theta*cos_theta_t)*cos_phi*sin_phi
     prefactor_z_t=-prefactor_general_t*tp_t_theta*sin_theta_t*cos_phi
     
-    phase_z_t=np.exp(1j*(k1-k2)*z_interface*cos_theta_t)
+    phase_z_t=np.exp(1j*z_interface*(k2*cos_theta_t+k1*cos_theta))
     
     Axx_t=-phase_z_t*prefactor_x_t*ex_lens*weight_trapezoid
     Axy_t=phase_z_t*prefactor_y_t*ex_lens*weight_trapezoid
@@ -419,7 +419,7 @@ def interphase_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha
     prefactor_y_t=prefactor_general_t*(-ts_t_theta+tp_t_theta*cos_theta_t)*cos_phi*sin_phi
     prefactor_z_t=-prefactor_general_t*tp_t_theta*sin_theta_t*cos_phi
     
-    phase_z_t=np.exp(1j*(k1-k2)*z_interface*cos_theta_t)
+    phase_z_t=np.exp(1j*z_interface*(k2*cos_theta_t+k1*cos_theta))
     
     Axx_t=-phase_z_t*prefactor_x_t*ex_lens*weight_trapezoid
     Axy_t=phase_z_t*prefactor_y_t*ex_lens*weight_trapezoid

@@ -21,8 +21,13 @@ def VPP_integration(alpha,n,f,w0,wavelength,rsteps,zsteps,field_of_view,z_field_
     
     wavelength is given in the medium (equals wavelength in vacuum/n)
     '''
-    ztotalsteps=np.int(np.rint(z_field_of_view/zsteps/2))
-    rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2)) #the actual field of view of the X axis in the XZ plane will be field_of_view*2**0.5
+    
+    #passage to nm:
+    f*=10**6
+    w0*=10**6
+    
+    ztotalsteps=int(np.rint(z_field_of_view/zsteps/2))
+    rtotalsteps=int(np.rint(field_of_view/rsteps/2**0.5)) #the actual field of view of the X axis in the XZ plane will be field_of_view*2**0.5
     
     gaussian=lambda theta:np.exp(-(np.sin(theta)*f/w0)**2)#inciding gaussian beam's amplitude
     
@@ -62,8 +67,11 @@ def VPP_fields(II1,II2,II3,II4,II5,wavelength,I0,gamma,beta,rsteps,zsteps,field_
     parameter phip0 gives an azimutal offset for the XZ plane calculus
     wavelength is given in the medium (equals wavelength in vacuum/n)
     '''
-    ztotalsteps=np.int(np.rint(z_field_of_view/zsteps/2))
-    rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2))
+    #passage to nm:
+    f*=10**6
+
+    ztotalsteps=int(np.rint(z_field_of_view/zsteps/2))
+    rtotalsteps=int(np.rint(field_of_view/rsteps/2**0.5))
 
     def cart2pol(x,y):    
         r = np.sqrt(x**2+y**2)
@@ -93,11 +101,11 @@ def VPP_fields(II1,II2,II3,II4,II5,wavelength,I0,gamma,beta,rsteps,zsteps,field_
     Ex=exx + exy
     Ey=eyx + eyy
     Ez=ezx + ezy
-    
+
     ######################xy plane#######################
     #index 2 represents it's calculated on the xy plane
 
-    x2,y2=(np.int(np.rint(field_of_view/rsteps)-2),np.int(np.rint(field_of_view/rsteps))-2)#el -2 es para que no haya problemas con el paso a polare
+    x2,y2=(int(np.rint(field_of_view/rsteps/2-1)*2),int(np.rint(field_of_view/rsteps/2-1)*2))
     exx2=np.zeros((x2,y2),dtype=complex)
     eyx2=np.zeros((x2,y2),dtype=complex)
     ezx2=np.zeros((x2,y2),dtype=complex)
@@ -107,8 +115,8 @@ def VPP_fields(II1,II2,II3,II4,II5,wavelength,I0,gamma,beta,rsteps,zsteps,field_
     zz=ztotalsteps + int(np.rint(zp0/z_field_of_view*2*ztotalsteps))  #zz signals to the row of kz=kz0 in each II
     for xx in range(x2):
         for yy in range(y2):
-            xcord=xx - np.rint(2*rtotalsteps /2**0.5)/2#not sure of multipliing by 2 and dividing by 2 outside the int, i thought it was to be sure to get the 0,0 at xx=np.rint(2*rtotalsteps /np.sqrt(2))/2
-            ycord=-yy + np.rint(2*rtotalsteps /2**0.5)/2-1
+            xcord=xx - int(np.rint(field_of_view/2/rsteps))+1
+            ycord=-yy + int(np.rint(field_of_view/2/rsteps))-1
             phip,rp=cart2pol(xcord,ycord)#nuevamente el +1 es para no tener problemas
             rp=int(np.rint(rp))
             exx2[yy,xx]=a1*(II1[zz,rp]*np.exp(1j*phip) - 0.5*II2[zz,rp]*np.exp(-1j*phip) + 0.5*II3[zz,rp]*np.exp(3j*phip))
@@ -126,16 +134,24 @@ def VPP_fields(II1,II2,II3,II4,II5,wavelength,I0,gamma,beta,rsteps,zsteps,field_
 
     
 
-def VPP_fraunhofer(gamma=45,beta=-90,steps=500,h=5,L=100,I_0=1,Lambda=0.00075,FOV=20000,radius=10,limit=2000,div=1,plot=True,save=False,folder='',figure_name=''):
+def VPP_fraunhofer(gamma=45,beta=-90,steps=500,R=5,L=100,I_0=1,wavelength=640,FOV=11,w0=5,limit=2000,div=1,plot=True,folder='',figure_name=''):
     '''
     Calculate and plot the field inciding on the lens by Fraunhofer's difraction formula
     Returns E_rho, the inciding amplitude along the radial coordinate for an x polarized beam
     Returns Ex and Ey, the x and y components of this amplitude, in a matrix over the x and y coordinates so it can be ploted easily
+    
+    limit is the ammount of iterations the scipy.quad command can do
+    div is the ammount of divisions in which the integration is divided in order to avoid the scipy.quad function from failing to converge
+    
     plot=True plots the inciding field's intensity and amplitude'
     wavelength is given in the medium (equals wavelength in vacuum/n)
+    
     '''
     
-    def complex_quadrature(func, a, b, eabs=1.49e-08, erel=1.49e-08,lim=50):
+    #passage to mm:
+    wavelength*=10**-6
+    
+    def complex_quadrature(func, a, b, eabs=1.49e-02, erel=1.49e-02,lim=50):
         def real_func(x):
             return np.real(func(x))
         def imag_func(x):
@@ -146,17 +162,17 @@ def VPP_fraunhofer(gamma=45,beta=-90,steps=500,h=5,L=100,I_0=1,Lambda=0.00075,FO
         
     # calculating the rho values in wich to integrate
     rmax=FOV
-    k=2*np.pi/Lambda 
+    k=2*np.pi/wavelength 
     rvalues=np.linspace(0,rmax*2**0.5,steps)
     
     
     #E0x, E0y are the polarization elements of the incident wave
     #E_xy is the amplitude distribution along the xy plane for the incident wave (asumed constant but can be switched for a gaussian)
-    E_xy=lambda rho: np.exp(-(rho/radius)**2) 
+    E_xy=lambda rho: np.exp(-(rho/w0)**2) 
     Ax=I_0**0.5*np.cos(np.pi*gamma/180)  
     Ay=I_0**0.5*np.sin(np.pi*gamma/180)*np.exp(1j*np.pi*beta/180)
     
-    fun=lambda rho: E_xy(rho)*rho*np.exp(1j*np.pi/Lambda/L*rho**2)*jv(1,k/L*rho*rhop)
+    fun=lambda rho: E_xy(rho)*rho*np.exp(1j*np.pi/wavelength/L*rho**2)*jv(1,k/L*rho*rhop)
            
     tot=len(rvalues)
     
@@ -165,7 +181,7 @@ def VPP_fraunhofer(gamma=45,beta=-90,steps=500,h=5,L=100,I_0=1,Lambda=0.00075,FO
     for i in tqdm(range(tot),desc='Calculating field at the objective'):
         rhop=rvalues[i]
         for l in range(div):
-            Int[i]+=complex_quadrature(fun,h*l/div,h*(l+1)/div,lim=limit)[0]
+            Int[i]+=complex_quadrature(fun,R*l/div,R*(l+1)/div,lim=limit)[0]
     
     #interpolating the Integration for values of rho:
     Int_interpolated=interpolate.interp1d(rvalues,Int,kind='cubic')    
@@ -178,7 +194,7 @@ def VPP_fraunhofer(gamma=45,beta=-90,steps=500,h=5,L=100,I_0=1,Lambda=0.00075,FO
     Ex=np.zeros((tot_xy,tot_xy),dtype=complex)
     Ey=np.copy(Ex)
     
-    E_fun=lambda rho:2*np.pi*np.exp(1j*k*(L+rho**2/2/L))/Lambda/L*Int_interpolated(rho)
+    E_fun=lambda rho:2*np.pi*np.exp(1j*k*(L+rho**2/2/L))/wavelength/L*Int_interpolated(rho)
 
 
     for i,xp in enumerate(xyvalues): 
@@ -194,7 +210,8 @@ def VPP_fraunhofer(gamma=45,beta=-90,steps=500,h=5,L=100,I_0=1,Lambda=0.00075,FO
     for i in range(x):
         for j in range(y):
             Ifield[j,i]=np.real(Ex[j,i]*np.conj(Ex[j,i])+Ey[j,i]*np.conj(Ey[j,i]))
-        
+    
+    #quick checking if the calculus was correct, the total intensity should be 1*inciding intensity (if the pahse mask is transparent), this is called the transmission variable
     # xy_res=xyvalues[1]-xyvalues[0]
     # Int_final=np.sum(Ifield)*(xy_res)**2
     # transmission=Int_final/(np.pi*h**2*I_0)        
@@ -274,7 +291,8 @@ def VPP_integration_with_propagation(alpha,n,f,radius_VPP,wavelength,zp0,zsteps,
     Since the calculus takes a long time, only the field along the XY plane is calculated
     wavelength is given in the medium (equals wavelength in vacuum/n)
     '''
-    E_theta=lambda theta: E_rho(np.sin(theta)*f*10**-6)     #10**-6 is for passage from mm to nm
+    
+    E_theta=lambda theta: E_rho(np.sin(theta)*f)
     
     rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2))
     
