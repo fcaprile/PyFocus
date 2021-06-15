@@ -147,7 +147,7 @@ class Ui_MainWindow(object):
         self.label_22.setGeometry(QtCore.QRect(280, 370, 111, 20))
         self.label_22.setObjectName("label_22")
         self.label_8 = QtWidgets.QLabel(self.centralwidget)
-        self.label_8.setGeometry(QtCore.QRect(10, 560, 241, 20))
+        self.label_8.setGeometry(QtCore.QRect(10, 560, 251, 21))
         self.label_8.setObjectName("label_8")
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_4.setGeometry(QtCore.QRect(260, 560, 75, 21))

@@ -34,11 +34,11 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     fig = plt.figure(num=str(figure_name)+'_Intensity',figsize=(16, 8))
     spec = fig.add_gridspec(ncols=3, nrows=2)
     ax1 = fig.add_subplot(spec[0, 0])
-    ax1.set_title('Normalized intensity')
+    ax1.set_title('Normalized intensity',pad=20)
     pos=ax1.imshow(Ifield_xz,extent=[-rmax-radial_pixel_width,rmax-radial_pixel_width,-zmax,zmax], interpolation='none', aspect='equal')
     ax1.set_xlabel('x (nm)')
     ax1.set_ylabel('z (nm)')
-    cbar1= fig.colorbar(pos, ax=ax1, shrink=0.75)
+    cbar1= fig.colorbar(pos, ax=ax1)
     cbar1.ax.set_ylabel('Intensity (kW/cm\u00b2)')
 
     
@@ -51,7 +51,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     xmax=field_of_view/2
     extent=[-xmax-radial_pixel_width,xmax-radial_pixel_width,-xmax+radial_pixel_width,xmax+radial_pixel_width]
     ax2 = fig.add_subplot(spec[0, 1])
-    ax2.set_title('Intensity on xy')
+    ax2.set_title('Intensity on xy',pad=20)
     pos2=ax2.imshow(Ifield_xy,extent=extent,interpolation='none', aspect='auto')
     cbar2=fig.colorbar(pos2, ax=ax2)
     ax2.set_xlabel('x (nm)')
@@ -63,7 +63,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     Ifield_axis=Ifield_xy[int(x2/2),:]
     axis=np.linspace(-xmax-radial_pixel_width,xmax-radial_pixel_width,x2)
     ax3 = fig.add_subplot(spec[0, 2])
-    ax3.set_title('Intensity along x')
+    ax3.set_title('Intensity along x',pad=20)
     ax3.plot(axis,Ifield_axis)
     ax3.grid(True)
     ax3.set_xlabel('x (nm)')

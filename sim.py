@@ -190,7 +190,7 @@ def no_mask(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavel
 
     return ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY
 
-def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength=640,gamma=45,beta=90,zp0=0,rsteps=5,zsteps=8,field_of_view=1000,z_field_of_view=2000,I0=1,L='',R='',ds='',zint='',figure_name=''):#f (the focal distance) is given by the sine's law, but can be modified if desired
+def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength=640,gamma=45,beta=90,zp0=0,rsteps=5,zsteps=8,field_of_view=1000,z_field_of_view=2000,I0=1,L='',R='',ds='',zint='',figure_name='',resolution_theta=200,resolution_phi=200):#f (the focal distance) is given by the sine's law, but can be modified if desired
     '''
     Simulate the field obtained by focusing a gaussian beam modulated by a custom phase mask
     The amplitude term of a gaussian beam is already multiplyed to the integral despite the phase mask used, if this is not desired w0=100 (a big number) makes this term essentially 1
@@ -212,6 +212,8 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3
     interface=Flase calculates the field obtained without an interface
 
     Parameters: 
+    mask_function: custom mask's description, the real part defines the incident field's amplitude and the complex part the phase. Can be given as a function or as a matrix. For this last case each value of the matrix is given by a coordinate for theta and phi: mask_function[phi_position,theta_position]
+    for phi_position an index from np.linspace(0,2*np.pi,resolution_phi) and theta_position an index from np.linspace(0,alpha,resolution_theta). With resolution_phi and resolution_theta 2 integers that ill define the resolution of the 2D integration (and also how long it takes)
     NA: numerical aperture
     n: refraction medium for the optical system. If interface=True it must be given as a numpy array
     h: radius of aperture (mm)
@@ -231,16 +233,11 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3
     ds: thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
     zint: axial position of the interphase. Only used if interface=True
     figure_name: name for the images of the field. Also used as saving name if using the UI
-   
+    resolution_theta, resolution_phi: resolution for the 2D integration of the incident field for the theta and phi variables respectively, default is set to 200. Higher values ensure less error in the integratin but require higher integration times.
+    
     Returns the ampitude of each component on the y=0 plane (XZ) and z=cte (XY) with the constant given by the user on ''axial distance from focus'', named on the code as zp0
     Returns the amplitude as ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY with for example ex the amplitude matrix (each place of the matrix is a different spacial position) of the X component and XZ or XY the plane in which they where calculated
-
-    If the incident field comes from an outside matrix obtaned in some other way:
-    ex_lens=np.loadtxt(filename for X component of the field)
-    ey_lens=np.loadtxt(filename for Y component of the field)
     
-    IMPORTANT: Each value of the matrix is given by a coordinate for theta and phi: ex_lens[phi_position,theta_position]
-    for phi_position a alue in np.linspace(0,2*np.pi,resolution_phi) and theta_position a value in np.linspace(0,alpha,resolution_theta) 
     '''
     #moving to wavelength in the optical system's medium
     if interface==False:
@@ -264,8 +261,6 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3
     
     if callable(mask_function)==True:#if a function is given, turn it into the ex_lens and ey_lens variables
         #resolution for field at objective
-        resolution_theta=200
-        resolution_phi=200
         if propagation==False:
             #calculate field inciding on the lens by multiplying the phase mask's function and the gaussian amplitude
             #(ex_lens,ey_lens) are 2 matrixes with the values of the incident amplitude for each value in phi,theta                   

@@ -15,7 +15,7 @@ import time
 def generate_incident_field(maskfunction,alpha,focus,resolution_phi,resolution_theta,gamma,beta,w0,I0,wavelength):
     '''
     Generate a matrix for the field X and Y direction of the incident field on the lens, given the respective maskfunction
-    maskfunction: function that defines the phase mask
+    maskfunction: function that defines the phase mask. The real part also defines the incident field's amplitude
     resolution_phi,resolution_theta: number of divisions in the phi and theta coordinates to use the 2D integration for the calculation of the focused field
  
     The rest of the parameters are specified in sim.py
@@ -25,7 +25,6 @@ def generate_incident_field(maskfunction,alpha,focus,resolution_phi,resolution_t
     '''
 
     k=2*np.pi/wavelength #k is given in nm, the same as wavelength
-    gaussian= lambda rho: np.exp(-(rho/w0)**2)
     ex_lens=np.zeros((resolution_phi,resolution_theta),dtype=complex)
     ey_lens=np.zeros((resolution_phi,resolution_theta),dtype=complex)
 
@@ -35,8 +34,8 @@ def generate_incident_field(maskfunction,alpha,focus,resolution_phi,resolution_t
     for i,phip in enumerate(phip_values):
         for j,rhop in enumerate(rhop_values):
             phase=maskfunction(rhop,phip,w0,focus,k)
-            ex_lens[i,j]=gaussian(rhop)*phase
-            ey_lens[i,j]=gaussian(rhop)*phase
+            ex_lens[i,j]=phase
+            ey_lens[i,j]=phase
     ex_lens*=np.cos(gamma*np.pi/180)*I0**0.5
     ey_lens*=np.sin(gamma*np.pi/180)*np.exp(1j*beta*np.pi/180)*I0**0.5
     
@@ -178,12 +177,12 @@ def custom_mask_objective_field(h,gamma,beta,resolution_theta,resolution_phi,N_r
     kl=np.pi/wavelength/L
     '''
     #the function to integrate is:
-    f=wavelength rho,phi: rho*np.exp(-(rho/w0)**2)*mask_function(rho,phi)*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))
+    f=wavelength rho,phi: rho*mask_function(rho,phi)*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))
     '''
     
     k=2*np.pi/wavelength
     #in order to save computing time, i do separatedly the calculation of terms that would otherwise e claculated multiple times, since they do not depend on rhop,phip (the coordinates at which the field is calculated)
-    prefactor=rho*np.exp(-(rho/w0)**2+1j*(k*L+kl*rho**2))*mask_function(rho,phi,w0,focus,k)*weight
+    prefactor=rho*np.exp(1j*(k*L+kl*rho**2))*mask_function(rho,phi,w0,focus,k)*weight
     #numerical 2D integration: 
     for j in tqdm(range(resolution_phi)):
         phip=phip_values[j]
@@ -238,11 +237,11 @@ def test_custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N
     kl=np.pi/wavelength/L
     '''
     #the function to integrate is:
-    f=wavelength rho,phi: rho*np.exp(-(rho/w0)**2)*mask_function(rho,phi)*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))
+    f=wavelength rho,phi: rho*mask_function(rho,phi)*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))
     '''
     k=2*np.pi/wavelength
     #in order to save computing time, i do separatedly the calculation of terms that would otherwise e claculated multiple times, since they do not depend on rhop,phip (the coordinates at which the field is calculated)
-    prefactor=rho*np.exp(-(rho/w0)**2)*mask_function(rho,phi)*weight
+    prefactor=rho*mask_function(rho,phi)*weight
 
     #numerical 2D integration: 
     for j in tqdm(range(resolution_phi)):
@@ -269,7 +268,7 @@ def custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution
     Calculates the field on the XY focal plane.
     
     resolution_focus: resolution for the field at the focus, the same for x and y
-    resolution_theta,resolution_phi: resolution for the 2D calculus (must be the same as the sie of ex_lens and ey_lens) 
+    resolution_theta,resolution_phi: resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens) 
     
     wavelength: wavelength (nm) in the medium (equals wavelength in vacuum/n) 
         

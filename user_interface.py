@@ -273,7 +273,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         
             if selected==2: #Custom mask
                 if config.y==True: #internal variable used to check if given mask function is a functionor a matrix
-                    aux='self.mask_function=lambda rho,phi,wo,f,k:'+config.x                       
+                    aux='self.mask_function=lambda rho,phi,w0,f,k:'+config.x                       
                     exec(aux)
                 else:
                     self.mask_function=config.x
