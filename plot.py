@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Created on Thu Jun 11 18:18:37 2020
 
@@ -154,6 +154,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     cbar_1_1=fig2.colorbar(pos_z2, ax=ax_z2,ticks=[5, 90,180,270,355])
     cbar_1_1.ax.set_ylabel('Phase (º)')
     fig2.tight_layout()
+    plt.show()
 
 def plot_XY(ex_XY,ey_XY,ez_XY,field_of_view,figure_name):   
     '''

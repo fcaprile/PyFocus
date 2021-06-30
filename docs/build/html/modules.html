@@ -1,0 +1,609 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PyFocus documentation &mdash; Test  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to Test’s documentation!" href="index.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Test
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PyFocus documentation</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-user_interface">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-sim">High-level simulation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-auxiliary.VPP_functions">Internal functions for VPP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-auxiliary.no_mask_functions">Internal functions for no mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-auxiliary.custom_mask_functions">Internal functions for a custom mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-auxiliary.interface">Internal functions for an interface</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Test</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>PyFocus documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pyfocus-documentation">
+<h1>PyFocus documentation<a class="headerlink" href="#pyfocus-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="module-user_interface">
+<span id="user-interface"></span><h1>User interface<a class="headerlink" href="#module-user_interface" title="Permalink to this headline">¶</a></h1>
+<p>User interface class, allows setting up simulations and saving the obtained fields as .txt files</p>
+<dl class="class">
+<dt id="user_interface.UI">
+<em class="property">class </em><code class="sig-prename descclassname">user_interface.</code><code class="sig-name descname">UI</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="user_interface.UI.selectsavefolder">
+<code class="sig-name descname">selectsavefolder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.selectsavefolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows selecting a save folder for the txt files</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="user_interface.UI.get_parameters">
+<code class="sig-name descname">get_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.get_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read parameters from the UI</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="user_interface.UI.save_parameters">
+<code class="sig-name descname">save_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.save_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a txt file with the parameters used for the simulation with the UI, parameters can be strings</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="user_interface.UI.save_intensity">
+<code class="sig-name descname">save_intensity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.save_intensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a txt file with the intensity on the simulated planes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="user_interface.UI.save_amplitudes">
+<code class="sig-name descname">save_amplitudes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.save_amplitudes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a txt file with the amplitude of each cartesian component on the simulated planes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="user_interface.UI.clear_plots">
+<code class="sig-name descname">clear_plots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.clear_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear all existing figures</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="user_interface.UI.change_saving_name">
+<code class="sig-name descname">change_saving_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.change_saving_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change saving name for the UI, also modifying the</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="user_interface.UI.change_default_name_and_open_dialog">
+<code class="sig-name descname">change_default_name_and_open_dialog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.change_default_name_and_open_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quality of life modification, if a new mask is selected and the name has never been modified, then change the default simulation name</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="user_interface.UI.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">ex_XZ</em>, <em class="sig-param">ey_XZ</em>, <em class="sig-param">ez_XZ</em>, <em class="sig-param">ex_XY</em>, <em class="sig-param">ey_XY</em>, <em class="sig-param">ez_XY</em>, <em class="sig-param">field_of_view</em>, <em class="sig-param">z_field_of_view</em>, <em class="sig-param">figure_name=''</em><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the field along the XZ and XY planes, the y=0, z=0 axis, the polarization on the XY plane and the amplitude squared of each cartesian component on the XY field</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="user_interface.UI.simulate">
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate using the UI</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="user_interface.UI.closeEvent">
+<code class="sig-name descname">closeEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">QCloseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#user_interface.UI.closeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-sim">
+<span id="high-level-simulation-functions"></span><h1>High-level simulation functions<a class="headerlink" href="#module-sim" title="Permalink to this headline">¶</a></h1>
+<p>Created on Thu Jun  3 11:51:24 2021</p>
+<p>&#64;author: ferchi</p>
+<dl class="function">
+<dt id="sim.VPP">
+<code class="sig-prename descclassname">sim.</code><code class="sig-name descname">VPP</code><span class="sig-paren">(</span><em class="sig-param">propagation=False</em>, <em class="sig-param">interface=False</em>, <em class="sig-param">NA=1.4</em>, <em class="sig-param">n=1.5</em>, <em class="sig-param">h=3</em>, <em class="sig-param">f=3.21</em>, <em class="sig-param">w0=5</em>, <em class="sig-param">wavelength=640</em>, <em class="sig-param">gamma=45</em>, <em class="sig-param">beta=90</em>, <em class="sig-param">zp0=0</em>, <em class="sig-param">rsteps=5</em>, <em class="sig-param">zsteps=8</em>, <em class="sig-param">field_of_view=1000</em>, <em class="sig-param">z_field_of_view=2000</em>, <em class="sig-param">I0=1</em>, <em class="sig-param">L=''</em>, <em class="sig-param">R=''</em>, <em class="sig-param">ds=''</em>, <em class="sig-param">zint=''</em>, <em class="sig-param">figure_name=''</em><span class="sig-paren">)</span><a class="headerlink" href="#sim.VPP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the field obtained by focusing a gaussian beam modulated by a VPP mask</p>
+<p>Returns ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)</p>
+<p>Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
+ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
+<p>The XZ plane is given by y=0 and the XZ plane by z=zp0</p>
+<p>The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)</p>
+<p>propagation=True calculates and plots the field inciding on the lens by fraunhofer’s difractin formula, in which case R and L are needed
+propagation=False calculates the field inciding on the lens depreciating the propagation</p>
+<p>interface=True calculates the field with an interface present in the path, in which case ds and z_int are needed
+interface=Flase calculates the field obtained without an interface</p>
+<p>Parameters: 
+NA: numerical aperture
+n: refraction medium for the optical system. If interface=True it must be given as a numpy array
+h: radius of aperture (mm)
+f: focal distance (mm)
+w0: incident gaussian beam radius (mm)
+wavelength: wavelength in the medium (equals wavelength in vacuum/n)
+gamma: parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)
+beta: parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)
+zp0: Axial position in which to calculate the XY plane (given by z=zp0)
+rsteps: resolution in the x or y coordinate (nm)
+zsteps: resolution in the axial coordinate,z (nm)
+field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
+z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)
+I_0: Incident field intensity (kW/cm^2)
+L: distance between phase mask and objective lens (mm), only used if propagation=True
+R: phase mask radius (mm), only used if propagation=True
+ds: thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
+zint: axial position of the interphase. Only used if interface=True
+figure_name: name for the images of the field. Also used as saving name if using the UI</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sim.no_mask">
+<code class="sig-prename descclassname">sim.</code><code class="sig-name descname">no_mask</code><span class="sig-paren">(</span><em class="sig-param">propagation=False</em>, <em class="sig-param">interface=False</em>, <em class="sig-param">NA=1.4</em>, <em class="sig-param">n=1.5</em>, <em class="sig-param">h=3</em>, <em class="sig-param">f=3.21</em>, <em class="sig-param">w0=5</em>, <em class="sig-param">wavelength=640</em>, <em class="sig-param">gamma=45</em>, <em class="sig-param">beta=90</em>, <em class="sig-param">zp0=0</em>, <em class="sig-param">rsteps=5</em>, <em class="sig-param">zsteps=8</em>, <em class="sig-param">field_of_view=1000</em>, <em class="sig-param">z_field_of_view=2000</em>, <em class="sig-param">I0=1</em>, <em class="sig-param">L=''</em>, <em class="sig-param">R=''</em>, <em class="sig-param">ds=''</em>, <em class="sig-param">zint=''</em>, <em class="sig-param">figure_name=''</em><span class="sig-paren">)</span><a class="headerlink" href="#sim.no_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the field obtained by focusing a gaussian beam without being modulated in phase
+Since there is no phase mask, propagation is not a parameter</p>
+<p>Returns ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)</p>
+<p>Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
+ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
+<p>The XZ plane is given by y=0 and the XZ plane by z=zp0</p>
+<p>The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)</p>
+<p>propagation=True calculates and plots the field inciding on the lens by fraunhofer’s difractin formula, in which case R and L are needed
+propagation=False calculates the field inciding on the lens depreciating the propagation</p>
+<p>interface=True calculates the field with an interface present in the path, in which case ds and z_int are needed
+interface=Flase calculates the field obtained without an interface</p>
+<p>Parameters: 
+NA: numerical aperture
+n: refraction medium for the optical system. If interface=True it must be given as a numpy array
+h: radius of aperture (mm)
+f: focal distance (mm)
+w0: incident gaussian beam radius (mm)
+wavelength: wavelength in the medium (equals wavelength in vacuum/n)
+gamma: parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)
+beta: parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)
+zp0: Axial position in which to calculate the XY plane (given by z=zp0)
+rsteps: resolution in the x or y coordinate (nm)
+zsteps: resolution in the axial coordinate,z (nm)
+field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
+z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)
+I_0: Incident field intensity (kW/cm^2)
+L: distance between phase mask and objective lens (mm), only used if propagation=True
+R: phase mask radius (mm), only used if propagation=True
+ds: thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
+zint: axial position of the interphase. Only used if interface=True
+figure_name: name for the images of the field. Also used as saving name if using the UI</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sim.custom">
+<code class="sig-prename descclassname">sim.</code><code class="sig-name descname">custom</code><span class="sig-paren">(</span><em class="sig-param">mask_function</em>, <em class="sig-param">propagation=False</em>, <em class="sig-param">interface=False</em>, <em class="sig-param">NA=1.4</em>, <em class="sig-param">n=1.5</em>, <em class="sig-param">h=3</em>, <em class="sig-param">f=3.21</em>, <em class="sig-param">w0=5</em>, <em class="sig-param">wavelength=640</em>, <em class="sig-param">gamma=45</em>, <em class="sig-param">beta=90</em>, <em class="sig-param">zp0=0</em>, <em class="sig-param">rsteps=5</em>, <em class="sig-param">zsteps=8</em>, <em class="sig-param">field_of_view=1000</em>, <em class="sig-param">z_field_of_view=2000</em>, <em class="sig-param">I0=1</em>, <em class="sig-param">L=''</em>, <em class="sig-param">R=''</em>, <em class="sig-param">ds=''</em>, <em class="sig-param">zint=''</em>, <em class="sig-param">figure_name=''</em>, <em class="sig-param">resolution_theta=200</em>, <em class="sig-param">resolution_phi=200</em><span class="sig-paren">)</span><a class="headerlink" href="#sim.custom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the field obtained by focusing a gaussian beam modulated by a custom phase mask
+The amplitude term of a gaussian beam is already multiplyed to the integral despite the phase mask used, if this is not desired w0=100 (a big number) makes this term essentially 1</p>
+<p>Returns ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)</p>
+<p>Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
+ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
+<p>The XZ plane is given by y=0 and the XZ plane by z=zp0</p>
+<p>The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)</p>
+<p>propagation=True calculates and plots the field inciding on the lens by fraunhofer’s difractin formula, in which case R and L are needed
+propagation=False calculates the field inciding on the lens depreciating the propagation</p>
+<p>interface=True calculates the field with an interface present in the path, in which case ds and z_int are needed
+interface=Flase calculates the field obtained without an interface</p>
+<p>Parameters: 
+mask_function: custom mask’s description, the real part defines the incident field’s amplitude and the complex part the phase. Can be given as a function or as a matrix. For this last case each value of the matrix is given by a coordinate for theta and phi: mask_function[phi_position,theta_position]
+for phi_position an index from np.linspace(0,2*np.pi,resolution_phi) and theta_position an index from np.linspace(0,alpha,resolution_theta). With resolution_phi and resolution_theta 2 integers that ill define the resolution of the 2D integration (and also how long it takes)
+NA: numerical aperture
+n: refraction medium for the optical system. If interface=True it must be given as a numpy array
+h: radius of aperture (mm)
+f: focal distance (mm)
+w0: incident gaussian beam radius (mm)
+wavelength: wavelength in the medium (equals wavelength in vacuum/n)
+gamma: parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)
+beta: parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)
+zp0: Axial position in which to calculate the XY plane (given by z=zp0)
+rsteps: resolution in the x or y coordinate (nm)
+zsteps: resolution in the axial coordinate,z (nm)
+field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
+z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)
+I_0: Incident field intensity (kW/cm^2)
+L: distance between phase mask and objective lens (mm), only used if propagation=True
+R: phase mask radius (mm), only used if propagation=True
+ds: thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
+zint: axial position of the interphase. Only used if interface=True
+figure_name: name for the images of the field. Also used as saving name if using the UI
+resolution_theta, resolution_phi: resolution for the 2D integration of the incident field for the theta and phi variables respectively, default is set to 200. Higher values ensure less error in the integratin but require higher integration times.</p>
+<p>Returns the ampitude of each component on the y=0 plane (XZ) and z=cte (XY) with the constant given by the user on ‘’axial distance from focus’’, named on the code as zp0
+Returns the amplitude as ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY with for example ex the amplitude matrix (each place of the matrix is a different spacial position) of the X component and XZ or XY the plane in which they where calculated</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-auxiliary.VPP_functions">
+<span id="internal-functions-for-vpp"></span><h1>Internal functions for VPP<a class="headerlink" href="#module-auxiliary.VPP_functions" title="Permalink to this headline">¶</a></h1>
+<p>Created on Thu Jun 11 16:18:12 2020</p>
+<p>&#64;author: ferchi</p>
+<dl class="function">
+<dt id="auxiliary.VPP_functions.VPP_integration">
+<code class="sig-prename descclassname">auxiliary.VPP_functions.</code><code class="sig-name descname">VPP_integration</code><span class="sig-paren">(</span><em class="sig-param">alpha</em>, <em class="sig-param">n</em>, <em class="sig-param">f</em>, <em class="sig-param">w0</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">rsteps</em>, <em class="sig-param">zsteps</em>, <em class="sig-param">field_of_view</em>, <em class="sig-param">z_field_of_view</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.VPP_functions.VPP_integration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the II matrixes, which are the result of the integration for different positions along the radius and z
+This matrixes are later used to calculate the field</p>
+<p>Parameters: 
+alpha: semiangle of aperture
+n: refraction medium for the optical system
+f: focal distance (mm)
+w0: incident gaussian beam radius (mm)
+wavelength: wavelength in the medium (equals wavelength in vacuum/n)
+rsteps: resolution in the x or y coordinate (nm)
+zsteps: resolution in the axial coordinate,z (nm)
+field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
+z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)</p>
+<p>The other parameters are specified in sim.py</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.VPP_functions.VPP_fields">
+<code class="sig-prename descclassname">auxiliary.VPP_functions.</code><code class="sig-name descname">VPP_fields</code><span class="sig-paren">(</span><em class="sig-param">II1</em>, <em class="sig-param">II2</em>, <em class="sig-param">II3</em>, <em class="sig-param">II4</em>, <em class="sig-param">II5</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">I0</em>, <em class="sig-param">gamma</em>, <em class="sig-param">beta</em>, <em class="sig-param">rsteps</em>, <em class="sig-param">zsteps</em>, <em class="sig-param">field_of_view</em>, <em class="sig-param">z_field_of_view</em>, <em class="sig-param">phip0</em>, <em class="sig-param">n</em>, <em class="sig-param">f</em>, <em class="sig-param">zp0</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.VPP_functions.VPP_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the II matrixes calculate the field on the focus
+parameter phip0 gives an azimutal offset for the XZ plane calculus
+wavelength is given in the medium (equals wavelength in vacuum/n)
+The other parameters are specified in sim.py</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.VPP_functions.VPP_fraunhofer">
+<code class="sig-prename descclassname">auxiliary.VPP_functions.</code><code class="sig-name descname">VPP_fraunhofer</code><span class="sig-paren">(</span><em class="sig-param">gamma=45</em>, <em class="sig-param">beta=-90</em>, <em class="sig-param">steps=500</em>, <em class="sig-param">R=5</em>, <em class="sig-param">L=100</em>, <em class="sig-param">I_0=1</em>, <em class="sig-param">wavelength=640</em>, <em class="sig-param">FOV=11</em>, <em class="sig-param">w0=5</em>, <em class="sig-param">limit=2000</em>, <em class="sig-param">div=1</em>, <em class="sig-param">plot=True</em>, <em class="sig-param">folder=''</em>, <em class="sig-param">figure_name=''</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.VPP_functions.VPP_fraunhofer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate and plot the field inciding on the lens by Fraunhofer’s difraction formula
+Returns E_rho, the inciding amplitude along the radial coordinate for an x polarized beam
+Returns Ex and Ey, the x and y components of this amplitude, in a matrix over the x and y coordinates so it can be ploted easily</p>
+<p>limit is the ammount of iterations the scipy.quad command can do
+div is the ammount of divisions in which the integration is divided in order to avoid the scipy.quad function from failing to converge</p>
+<p>plot=True plots the inciding field’s intensity and amplitude’
+wavelength is given in the medium (equals wavelength in vacuum/n)</p>
+<p>The other parameters are specified in sim.py</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.VPP_functions.VPP_integration_with_propagation">
+<code class="sig-prename descclassname">auxiliary.VPP_functions.</code><code class="sig-name descname">VPP_integration_with_propagation</code><span class="sig-paren">(</span><em class="sig-param">alpha</em>, <em class="sig-param">n</em>, <em class="sig-param">f</em>, <em class="sig-param">radius_VPP</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">zp0</em>, <em class="sig-param">zsteps</em>, <em class="sig-param">rsteps</em>, <em class="sig-param">field_of_view</em>, <em class="sig-param">laser_width</em>, <em class="sig-param">E_rho</em>, <em class="sig-param">div</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.VPP_functions.VPP_integration_with_propagation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the inciding field E_rho, which only depends on the radial coordinate, generate the I matrixes, which are the same as in VPP_integration
+Since the calculus takes a long time, only the field along the XY plane is calculated
+wavelength is given in the medium (equals wavelength in vacuum/n)</p>
+<p>The other parameters are specified in sim.py</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.VPP_functions.VPP_fields_with_propagation">
+<code class="sig-prename descclassname">auxiliary.VPP_functions.</code><code class="sig-name descname">VPP_fields_with_propagation</code><span class="sig-paren">(</span><em class="sig-param">I1</em>, <em class="sig-param">I2</em>, <em class="sig-param">I3</em>, <em class="sig-param">I4</em>, <em class="sig-param">I5</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">I0</em>, <em class="sig-param">gamma</em>, <em class="sig-param">beta</em>, <em class="sig-param">rsteps</em>, <em class="sig-param">zsteps</em>, <em class="sig-param">field_of_view</em>, <em class="sig-param">phip0</em>, <em class="sig-param">n</em>, <em class="sig-param">f</em>, <em class="sig-param">zp0</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.VPP_functions.VPP_fields_with_propagation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the I matrixes calculate the field on the focus
+Since the calculus takes a long time, only the field along the XY plane is calculated
+parameter phip0 has no purpose, is only left to have the same variables for the functions
+wavelength is given in the medium (equals wavelength in vacuum/n)</p>
+<p>The other parameters are specified in sim.py</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-auxiliary.no_mask_functions">
+<span id="internal-functions-for-no-mask"></span><h1>Internal functions for no mask<a class="headerlink" href="#module-auxiliary.no_mask_functions" title="Permalink to this headline">¶</a></h1>
+<p>Created on Thu Jun 11 16:34:55 2020</p>
+<p>&#64;author: ferchi</p>
+<dl class="function">
+<dt id="auxiliary.no_mask_functions.no_mask_integration">
+<code class="sig-prename descclassname">auxiliary.no_mask_functions.</code><code class="sig-name descname">no_mask_integration</code><span class="sig-paren">(</span><em class="sig-param">alpha</em>, <em class="sig-param">n</em>, <em class="sig-param">f</em>, <em class="sig-param">w0</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">field_of_view</em>, <em class="sig-param">z_field_of_view</em>, <em class="sig-param">zsteps</em>, <em class="sig-param">rsteps</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.no_mask_functions.no_mask_integration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the II matrixes, which are the result of the integration for different positions along the radius and z
+This matrixes are later used to calculate the field
+wavelength is given in the medium (equals wavelength in vacuum/n)</p>
+<p>The other parameters are specified in sim.py</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.no_mask_functions.no_mask_fields">
+<code class="sig-prename descclassname">auxiliary.no_mask_functions.</code><code class="sig-name descname">no_mask_fields</code><span class="sig-paren">(</span><em class="sig-param">II1</em>, <em class="sig-param">II2</em>, <em class="sig-param">II3</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">I0</em>, <em class="sig-param">beta</em>, <em class="sig-param">gamma</em>, <em class="sig-param">zsteps</em>, <em class="sig-param">rsteps</em>, <em class="sig-param">field_of_view</em>, <em class="sig-param">z_field_of_view</em>, <em class="sig-param">phip0</em>, <em class="sig-param">n</em>, <em class="sig-param">f</em>, <em class="sig-param">zp0</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.no_mask_functions.no_mask_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the II matrixes calculate the field on the focus
+parameter phip0 gives an azimutal offset for the XZ plane calculus
+wavelength is given in the medium (equals wavelength in vacuum/n)</p>
+<p>The other parameters are specified in sim.py</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-auxiliary.custom_mask_functions">
+<span id="internal-functions-for-a-custom-mask"></span><h1>Internal functions for a custom mask<a class="headerlink" href="#module-auxiliary.custom_mask_functions" title="Permalink to this headline">¶</a></h1>
+<p>Created on Mon Jun 15 17:40:54 2020</p>
+<p>&#64;author: Fer Caprile</p>
+<p>Functions for simulation of the diffraction obtained by an arbitrary phase mask</p>
+<dl class="function">
+<dt id="auxiliary.custom_mask_functions.generate_incident_field">
+<code class="sig-prename descclassname">auxiliary.custom_mask_functions.</code><code class="sig-name descname">generate_incident_field</code><span class="sig-paren">(</span><em class="sig-param">maskfunction</em>, <em class="sig-param">alpha</em>, <em class="sig-param">focus</em>, <em class="sig-param">resolution_phi</em>, <em class="sig-param">resolution_theta</em>, <em class="sig-param">gamma</em>, <em class="sig-param">beta</em>, <em class="sig-param">w0</em>, <em class="sig-param">I0</em>, <em class="sig-param">wavelength</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.custom_mask_functions.generate_incident_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a matrix for the field X and Y direction of the incident field on the lens, given the respective maskfunction
+maskfunction: function that defines the phase mask. The real part also defines the incident field’s amplitude
+resolution_phi,resolution_theta: number of divisions in the phi and theta coordinates to use the 2D integration for the calculation of the focused field</p>
+<p>The rest of the parameters are specified in sim.py</p>
+<p>This matrix has the value of the amplitude of the incident field for each value of theta and phi: ex_lens[phi_position,theta_position]
+for phi_position a alue in np.linspace(0,2*np.pi,resolution_phi) and theta_position a value in np.linspace(0,alpha,resolution_theta)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.custom_mask_functions.plot_in_cartesian">
+<code class="sig-prename descclassname">auxiliary.custom_mask_functions.</code><code class="sig-name descname">plot_in_cartesian</code><span class="sig-paren">(</span><em class="sig-param">Ex</em>, <em class="sig-param">Ey</em>, <em class="sig-param">xmax</em>, <em class="sig-param">alpha</em>, <em class="sig-param">focus</em>, <em class="sig-param">figure_name</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.custom_mask_functions.plot_in_cartesian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the fields Ex and Ey, who are described in polar coordinates</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.custom_mask_functions.custom_mask_objective_field">
+<code class="sig-prename descclassname">auxiliary.custom_mask_functions.</code><code class="sig-name descname">custom_mask_objective_field</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">gamma</em>, <em class="sig-param">beta</em>, <em class="sig-param">resolution_theta</em>, <em class="sig-param">resolution_phi</em>, <em class="sig-param">N_rho</em>, <em class="sig-param">N_phi</em>, <em class="sig-param">alpha</em>, <em class="sig-param">focus</em>, <em class="sig-param">mask_function</em>, <em class="sig-param">R</em>, <em class="sig-param">L</em>, <em class="sig-param">I0</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">w0</em>, <em class="sig-param">fig_name</em>, <em class="sig-param">plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.custom_mask_functions.custom_mask_objective_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the inciding field on the objective by fraunhofer’s difraction formula for a custom phase mask</p>
+<p>The resultant matrix Ex and Ey are returned in polar coordinates (each row is a different value of phi and each column a different rho)</p>
+<p>N_rho and N_phi: the number of divisions for the 2D integral’s calculus in rho and phi respectively, they are not coordinates in which the field is calculated
+resolution_theta,resolution_phi: number of divisions for the field indicent on the lens on the theta and phi coordinates respectively. This field is later used to calculate the focused field.
+The incident field is calculated in the coordinates:
+theta_values=np.linspace(0,alpha,resolution_theta)  #divisions of theta in which the trapezoidal 2D integration is done
+phip_values=np.linspace(0,2*np.pi,resolution_phi)   #divisions of phi in which the trapezoidal 2D integration is done
+by using sine’s law this corresponds to the radial positions rhop_values=np.sin(theta_values)*focus</p>
+<p>The rest of the parameters are specified in sim.py</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.custom_mask_functions.test_custom_mask_objective_field">
+<code class="sig-prename descclassname">auxiliary.custom_mask_functions.</code><code class="sig-name descname">test_custom_mask_objective_field</code><span class="sig-paren">(</span><em class="sig-param">psi</em>, <em class="sig-param">delta</em>, <em class="sig-param">resolution_theta</em>, <em class="sig-param">resolution_phi</em>, <em class="sig-param">N_rho</em>, <em class="sig-param">N_phi</em>, <em class="sig-param">alpha</em>, <em class="sig-param">mask_function</em>, <em class="sig-param">h</em>, <em class="sig-param">L</em>, <em class="sig-param">I0</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">w0</em>, <em class="sig-param">plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.custom_mask_functions.test_custom_mask_objective_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quick run for testing if the resolution used to do the 2D integration is high enought.
+Meant for difraction for an arbitrary phase mask under the paraxial approximation, using the GPU</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.custom_mask_functions.custom_mask_focus_field_XY">
+<code class="sig-prename descclassname">auxiliary.custom_mask_functions.</code><code class="sig-name descname">custom_mask_focus_field_XY</code><span class="sig-paren">(</span><em class="sig-param">ex_lens</em>, <em class="sig-param">ey_lens</em>, <em class="sig-param">alpha</em>, <em class="sig-param">h</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">zp0</em>, <em class="sig-param">resolution_focus</em>, <em class="sig-param">resolution_theta</em>, <em class="sig-param">resolution_phi</em>, <em class="sig-param">FOV_focus</em>, <em class="sig-param">countdown=True</em>, <em class="sig-param">x0=0</em>, <em class="sig-param">y0=0</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.custom_mask_functions.custom_mask_focus_field_XY" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D integration to calculate the field at the focus of a high aperture lens
+ex_lens,ey_lens are the x and y component of the inciding field
+Calculates the field on the XY focal plane.</p>
+<p>resolution_focus: resolution for the field at the focus, the same for x and y
+resolution_theta,resolution_phi: resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens)</p>
+<p>wavelength: wavelength (nm) in the medium (equals wavelength in vacuum/n)</p>
+<p>x0 and y0 are used for centering the XY field at an x0, y0 position</p>
+<p>countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation</p>
+<p>The rest of the parameters are specified in sim.py</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.custom_mask_functions.custom_mask_focus_field_XZ_XY">
+<code class="sig-prename descclassname">auxiliary.custom_mask_functions.</code><code class="sig-name descname">custom_mask_focus_field_XZ_XY</code><span class="sig-paren">(</span><em class="sig-param">ex_lens</em>, <em class="sig-param">ey_lens</em>, <em class="sig-param">alpha</em>, <em class="sig-param">h</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">z_FOV</em>, <em class="sig-param">resolution_z</em>, <em class="sig-param">zp0</em>, <em class="sig-param">resolution_focus</em>, <em class="sig-param">resolution_theta</em>, <em class="sig-param">resolution_phi</em>, <em class="sig-param">FOV_focus</em>, <em class="sig-param">x0=0</em>, <em class="sig-param">y0=0</em>, <em class="sig-param">plot_plane='X'</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.custom_mask_functions.custom_mask_focus_field_XZ_XY" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D integration to calculate the field at the focus of a high aperture lens
+ex_lens,ey_lens are the x and y component of the inciding field
+Calculates the field on the XY focal plane and the XZ plane.</p>
+<p>resolution_focus is the resolution for the field at the focus, the same for x and y
+resolution_theta,resolution_phi is the resolution for the 2D calculus (must be the same as the sie of ex_lens and ey_lens)</p>
+<p>wavelength is given in the medium (equals wavelength in vacuum/n)
+countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation</p>
+<p>x0 and y0 are used for centering the XY field at an x0, y0 position</p>
+<p>The rest of the parameters are specified in sim.py</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-auxiliary.interface">
+<span id="internal-functions-for-an-interface"></span><h1>Internal functions for an interface<a class="headerlink" href="#module-auxiliary.interface" title="Permalink to this headline">¶</a></h1>
+<p>Created on Mon Jun 15 17:40:54 2020</p>
+<p>&#64;author: Fer Caprile</p>
+<p>Functions for simulation of the diffraction obtained by an arbitrary phase mask</p>
+<dl class="function">
+<dt id="auxiliary.interface.interface_custom_mask_focus_field_XY">
+<code class="sig-prename descclassname">auxiliary.interface.</code><code class="sig-name descname">interface_custom_mask_focus_field_XY</code><span class="sig-paren">(</span><em class="sig-param">n_list</em>, <em class="sig-param">d_list</em>, <em class="sig-param">ex_lens</em>, <em class="sig-param">ey_lens</em>, <em class="sig-param">alpha</em>, <em class="sig-param">h</em>, <em class="sig-param">Lambda</em>, <em class="sig-param">z_interface</em>, <em class="sig-param">zp0</em>, <em class="sig-param">resolution_focus</em>, <em class="sig-param">resolution_theta</em>, <em class="sig-param">resolution_phi</em>, <em class="sig-param">FOV_focus</em>, <em class="sig-param">countdown=True</em>, <em class="sig-param">x0=0</em>, <em class="sig-param">y0=0</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.interface.interface_custom_mask_focus_field_XY" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D integration to calculate the field at the focus of a high aperture lens with an interface
+ex_lens,ey_lens are the x and y component of the inciding field
+Calculates the field on the XY focal plane.</p>
+<p>resolution_focus is the resolution for the field at the focus, the same for x and y
+resolution_theta,resolution_phi is the resolution for the 2D calculus (must be the same as the sie of ex_lens and ey_lens)</p>
+<p>wavelength is given in the medium (equals wavelength in vacuum/n)
+countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation</p>
+<p>x0 and y0 are used for centering the XY field at an x0, y0 position</p>
+<p>The rest of the parameters are specified in sim.py</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="auxiliary.interface.interface_custom_mask_focus_field_XZ_XY">
+<code class="sig-prename descclassname">auxiliary.interface.</code><code class="sig-name descname">interface_custom_mask_focus_field_XZ_XY</code><span class="sig-paren">(</span><em class="sig-param">n_list</em>, <em class="sig-param">d_list</em>, <em class="sig-param">ex_lens</em>, <em class="sig-param">ey_lens</em>, <em class="sig-param">alpha</em>, <em class="sig-param">h</em>, <em class="sig-param">Lambda</em>, <em class="sig-param">z_interface</em>, <em class="sig-param">z_FOV</em>, <em class="sig-param">resolution_z</em>, <em class="sig-param">zp0</em>, <em class="sig-param">resolution_focus</em>, <em class="sig-param">resolution_theta</em>, <em class="sig-param">resolution_phi</em>, <em class="sig-param">FOV_focus</em>, <em class="sig-param">x0=0</em>, <em class="sig-param">y0=0</em>, <em class="sig-param">z0=0</em>, <em class="sig-param">plot_plane='X'</em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.interface.interface_custom_mask_focus_field_XZ_XY" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D integration to calculate the field at the focus of a high aperture lens with an interface
+ex_lens,ey_lens are the x and y component of the inciding field
+Calculates the field on the XY focal plane and the XZ plane.</p>
+<p>resolution_focus is the resolution for the field at the focus, the same for x and y
+resolution_theta,resolution_phi is the resolution for the 2D calculus (must be the same as the sie of ex_lens and ey_lens)</p>
+<p>wavelength is given in the medium (equals wavelength in vacuum/n)
+countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation</p>
+<p>x0 and y0 are used for centering the XY field at an x0, y0 position</p>
+<p>The rest of the parameters are specified in sim.py</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Test’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, FC
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
