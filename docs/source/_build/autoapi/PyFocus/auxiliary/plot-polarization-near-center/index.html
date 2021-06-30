@@ -1,0 +1,560 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PyFocus.auxiliary.plot polarization near center &mdash; Test  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link href="../../../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Test
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">PyFocus documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-user_interface">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-sim">High-level simulation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-auxiliary.VPP_functions">Internal functions for VPP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-auxiliary.no_mask_functions">Internal functions for no mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-auxiliary.custom_mask_functions">Internal functions for a custom mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-auxiliary.interface">Internal functions for an interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Test</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">PyFocus.auxiliary.plot</span> <span class="pre">polarization</span> <span class="pre">near</span> <span class="pre">center</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../../_sources/autoapi/PyFocus/auxiliary/plot-polarization-near-center/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pyfocus-auxiliary-plot-polarization-near-center">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">PyFocus.auxiliary.plot</span> <span class="pre">polarization</span> <span class="pre">near</span> <span class="pre">center</span></code><a class="headerlink" href="#pyfocus-auxiliary-plot-polarization-near-center" title="Permalink to this headline">¶</a></h1>
+<p>Created on Fri Jun 26 23:22:34 2020</p>
+<p>&#64;author: ferchi</p>
+<p>This script is meant to plot the polarization near the center of the donut produced by a VPP mask after inciding with right polarization</p>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="radius_VPP">
+<span class="sig-name descname"><span class="pre">radius_VPP</span></span><em class="property"> <span class="pre">=</span> <span class="pre">5</span></em><a class="headerlink" href="#radius_VPP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="L">
+<span class="sig-name descname"><span class="pre">L</span></span><em class="property"> <span class="pre">=</span> <span class="pre">20000</span></em><a class="headerlink" href="#L" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="I0">
+<span class="sig-name descname"><span class="pre">I0</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#I0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="Lambda">
+<span class="sig-name descname"><span class="pre">Lambda</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0.00075</span></em><a class="headerlink" href="#Lambda" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="FOV">
+<span class="sig-name descname"><span class="pre">FOV</span></span><a class="headerlink" href="#FOV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="laser_width">
+<span class="sig-name descname"><span class="pre">laser_width</span></span><em class="property"> <span class="pre">=</span> <span class="pre">50</span></em><a class="headerlink" href="#laser_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="NA">
+<span class="sig-name descname"><span class="pre">NA</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1.4</span></em><a class="headerlink" href="#NA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="n">
+<span class="sig-name descname"><span class="pre">n</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1.5</span></em><a class="headerlink" href="#n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="alpha">
+<span class="sig-name descname"><span class="pre">alpha</span></span><a class="headerlink" href="#alpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="f">
+<span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#f" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="zp0">
+<span class="sig-name descname"><span class="pre">zp0</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#zp0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="field_of_view">
+<span class="sig-name descname"><span class="pre">field_of_view</span></span><em class="property"> <span class="pre">=</span> <span class="pre">500</span></em><a class="headerlink" href="#field_of_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="psi">
+<span class="sig-name descname"><span class="pre">psi</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#psi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="delta">
+<span class="sig-name descname"><span class="pre">delta</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#delta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="wavelength">
+<span class="sig-name descname"><span class="pre">wavelength</span></span><em class="property"> <span class="pre">=</span> <span class="pre">750</span></em><a class="headerlink" href="#wavelength" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="zsteps">
+<span class="sig-name descname"><span class="pre">zsteps</span></span><em class="property"> <span class="pre">=</span> <span class="pre">75</span></em><a class="headerlink" href="#zsteps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="rsteps">
+<span class="sig-name descname"><span class="pre">rsteps</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#rsteps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="phip0">
+<span class="sig-name descname"><span class="pre">phip0</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#phip0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="fields_VPP">
+<span class="sig-name descname"><span class="pre">fields_VPP</span></span><a class="headerlink" href="#fields_VPP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="zmax">
+<span class="sig-name descname"><span class="pre">zmax</span></span><a class="headerlink" href="#zmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="rmax">
+<span class="sig-name descname"><span class="pre">rmax</span></span><a class="headerlink" href="#rmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="Ifield_xz">
+<span class="sig-name descname"><span class="pre">Ifield_xz</span></span><a class="headerlink" href="#Ifield_xz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="fig">
+<span class="sig-name descname"><span class="pre">fig</span></span><a class="headerlink" href="#fig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="spec">
+<span class="sig-name descname"><span class="pre">spec</span></span><a class="headerlink" href="#spec" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ax1">
+<span class="sig-name descname"><span class="pre">ax1</span></span><a class="headerlink" href="#ax1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pos">
+<span class="sig-name descname"><span class="pre">pos</span></span><a class="headerlink" href="#pos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cbar1">
+<span class="sig-name descname"><span class="pre">cbar1</span></span><a class="headerlink" href="#cbar1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="Ifield_xy">
+<span class="sig-name descname"><span class="pre">Ifield_xy</span></span><a class="headerlink" href="#Ifield_xy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="xmax">
+<span class="sig-name descname"><span class="pre">xmax</span></span><a class="headerlink" href="#xmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ax2">
+<span class="sig-name descname"><span class="pre">ax2</span></span><a class="headerlink" href="#ax2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pos2">
+<span class="sig-name descname"><span class="pre">pos2</span></span><a class="headerlink" href="#pos2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cbar2">
+<span class="sig-name descname"><span class="pre">cbar2</span></span><a class="headerlink" href="#cbar2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="x2">
+<span class="sig-name descname"><span class="pre">x2</span></span><a class="headerlink" href="#x2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="Ifield_axis">
+<span class="sig-name descname"><span class="pre">Ifield_axis</span></span><a class="headerlink" href="#Ifield_axis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="axis">
+<span class="sig-name descname"><span class="pre">axis</span></span><a class="headerlink" href="#axis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ax3">
+<span class="sig-name descname"><span class="pre">ax3</span></span><a class="headerlink" href="#ax3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="fig3">
+<span class="sig-name descname"><span class="pre">fig3</span></span><a class="headerlink" href="#fig3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">spec</span></span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ax4">
+<span class="sig-name descname"><span class="pre">ax4</span></span><a class="headerlink" href="#ax4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pos4">
+<span class="sig-name descname"><span class="pre">pos4</span></span><a class="headerlink" href="#pos4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="x_pos">
+<span class="sig-name descname"><span class="pre">x_pos</span></span><a class="headerlink" href="#x_pos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="y_pos">
+<span class="sig-name descname"><span class="pre">y_pos</span></span><a class="headerlink" href="#y_pos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="x_values">
+<span class="sig-name descname"><span class="pre">x_values</span></span><a class="headerlink" href="#x_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="y_values">
+<span class="sig-name descname"><span class="pre">y_values</span></span><a class="headerlink" href="#y_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="AMP">
+<span class="sig-name descname"><span class="pre">AMP</span></span><a class="headerlink" href="#AMP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="x_index">
+<span class="sig-name descname"><span class="pre">x_index</span></span><a class="headerlink" href="#x_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ax5">
+<span class="sig-name descname"><span class="pre">ax5</span></span><a class="headerlink" href="#ax5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="phies">
+<span class="sig-name descname"><span class="pre">phies</span></span><a class="headerlink" href="#phies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">pos</span></span><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cbar">
+<span class="sig-name descname"><span class="pre">cbar</span></span><a class="headerlink" href="#cbar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="betas">
+<span class="sig-name descname"><span class="pre">betas</span></span><a class="headerlink" href="#betas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="beta">
+<span class="sig-name descname"><span class="pre">beta</span></span><a class="headerlink" href="#beta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ax6">
+<span class="sig-name descname"><span class="pre">ax6</span></span><a class="headerlink" href="#ax6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">pos</span></span><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">cbar</span></span><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="Amp_max">
+<span class="sig-name descname"><span class="pre">Amp_max</span></span><a class="headerlink" href="#Amp_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pos_x1">
+<span class="sig-name descname"><span class="pre">pos_x1</span></span><a class="headerlink" href="#pos_x1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cbar_1_1">
+<span class="sig-name descname"><span class="pre">cbar_1_1</span></span><a class="headerlink" href="#cbar_1_1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pos_x2">
+<span class="sig-name descname"><span class="pre">pos_x2</span></span><a class="headerlink" href="#pos_x2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">cbar_1_1</span></span><a class="headerlink" href="#id4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pos_y1">
+<span class="sig-name descname"><span class="pre">pos_y1</span></span><a class="headerlink" href="#pos_y1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">cbar_1_1</span></span><a class="headerlink" href="#id5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pos_y2">
+<span class="sig-name descname"><span class="pre">pos_y2</span></span><a class="headerlink" href="#pos_y2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">cbar_1_1</span></span><a class="headerlink" href="#id6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pos_z1">
+<span class="sig-name descname"><span class="pre">pos_z1</span></span><a class="headerlink" href="#pos_z1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">cbar_1_1</span></span><a class="headerlink" href="#id7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pos_z2">
+<span class="sig-name descname"><span class="pre">pos_z2</span></span><a class="headerlink" href="#pos_z2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">cbar_1_1</span></span><a class="headerlink" href="#id8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, FC
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

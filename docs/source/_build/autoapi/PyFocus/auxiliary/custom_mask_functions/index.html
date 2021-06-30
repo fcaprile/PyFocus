@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PyFocus.auxiliary.custom_mask_functions &mdash; Test  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link href="../../../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Test
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">PyFocus documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-user_interface">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-sim">High-level simulation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-auxiliary.VPP_functions">Internal functions for VPP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-auxiliary.no_mask_functions">Internal functions for no mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-auxiliary.custom_mask_functions">Internal functions for a custom mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html#module-auxiliary.interface">Internal functions for an interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Test</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">PyFocus.auxiliary.custom_mask_functions</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../../_sources/autoapi/PyFocus/auxiliary/custom_mask_functions/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-PyFocus.auxiliary.custom_mask_functions">
+<span id="pyfocus-auxiliary-custom-mask-functions"></span><h1><a class="reference internal" href="#module-PyFocus.auxiliary.custom_mask_functions" title="PyFocus.auxiliary.custom_mask_functions"><code class="xref py py-mod docutils literal notranslate"><span class="pre">PyFocus.auxiliary.custom_mask_functions</span></code></a><a class="headerlink" href="#module-PyFocus.auxiliary.custom_mask_functions" title="Permalink to this headline">¶</a></h1>
+<p>Created on Mon Jun 15 17:40:54 2020</p>
+<p>&#64;author: Fer Caprile</p>
+<p>Functions for simulation of the diffraction obtained by an arbitrary phase mask</p>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#PyFocus.auxiliary.custom_mask_functions.generate_incident_field" title="PyFocus.auxiliary.custom_mask_functions.generate_incident_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_incident_field</span></code></a>(maskfunction, alpha, focus, resolution_phi, resolution_theta, gamma, beta, w0, I0, wavelength)</p></td>
+<td><p>Generate a matrix for the field X and Y direction of the incident field on the lens, given the respective maskfunction</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#PyFocus.auxiliary.custom_mask_functions.plot_in_cartesian" title="PyFocus.auxiliary.custom_mask_functions.plot_in_cartesian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_in_cartesian</span></code></a>(Ex, Ey, xmax, alpha, focus, figure_name)</p></td>
+<td><p>Plot the fields Ex and Ey, who are described in polar coordinates</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#PyFocus.auxiliary.custom_mask_functions.custom_mask_objective_field" title="PyFocus.auxiliary.custom_mask_functions.custom_mask_objective_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">custom_mask_objective_field</span></code></a>(h, gamma, beta, resolution_theta, resolution_phi, N_rho, N_phi, alpha, focus, mask_function, R, L, I0, wavelength, w0, fig_name, plot=True)</p></td>
+<td><p>Calculate the inciding field on the objective by fraunhofer’s difraction formula for a custom phase mask</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#PyFocus.auxiliary.custom_mask_functions.test_custom_mask_objective_field" title="PyFocus.auxiliary.custom_mask_functions.test_custom_mask_objective_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_custom_mask_objective_field</span></code></a>(psi, delta, resolution_theta, resolution_phi, N_rho, N_phi, alpha, mask_function, h, L, I0, wavelength, w0, plot=True)</p></td>
+<td><p>Quick run for testing if the resolution used to do the 2D integration is high enought.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#PyFocus.auxiliary.custom_mask_functions.custom_mask_focus_field_XY" title="PyFocus.auxiliary.custom_mask_functions.custom_mask_focus_field_XY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">custom_mask_focus_field_XY</span></code></a>(ex_lens, ey_lens, alpha, h, wavelength, zp0, resolution_focus, resolution_theta, resolution_phi, FOV_focus, countdown=True, x0=0, y0=0)</p></td>
+<td><p>2D integration to calculate the field at the focus of a high aperture lens</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#PyFocus.auxiliary.custom_mask_functions.custom_mask_focus_field_XZ_XY" title="PyFocus.auxiliary.custom_mask_functions.custom_mask_focus_field_XZ_XY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">custom_mask_focus_field_XZ_XY</span></code></a>(ex_lens, ey_lens, alpha, h, wavelength, z_FOV, resolution_z, zp0, resolution_focus, resolution_theta, resolution_phi, FOV_focus, x0=0, y0=0, plot_plane='X')</p></td>
+<td><p>2D integration to calculate the field at the focus of a high aperture lens</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="PyFocus.auxiliary.custom_mask_functions.generate_incident_field">
+<span class="sig-prename descclassname"><span class="pre">PyFocus.auxiliary.custom_mask_functions.</span></span><span class="sig-name descname"><span class="pre">generate_incident_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maskfunction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.auxiliary.custom_mask_functions.generate_incident_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a matrix for the field X and Y direction of the incident field on the lens, given the respective maskfunction
+maskfunction: function that defines the phase mask. The real part also defines the incident field’s amplitude
+resolution_phi,resolution_theta: number of divisions in the phi and theta coordinates to use the 2D integration for the calculation of the focused field</p>
+<p>The rest of the parameters are specified in sim.py</p>
+<p>This matrix has the value of the amplitude of the incident field for each value of theta and phi: ex_lens[phi_position,theta_position]
+for phi_position a alue in np.linspace(0,2*np.pi,resolution_phi) and theta_position a value in np.linspace(0,alpha,resolution_theta)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="PyFocus.auxiliary.custom_mask_functions.plot_in_cartesian">
+<span class="sig-prename descclassname"><span class="pre">PyFocus.auxiliary.custom_mask_functions.</span></span><span class="sig-name descname"><span class="pre">plot_in_cartesian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ey</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.auxiliary.custom_mask_functions.plot_in_cartesian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the fields Ex and Ey, who are described in polar coordinates</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="PyFocus.auxiliary.custom_mask_functions.custom_mask_objective_field">
+<span class="sig-prename descclassname"><span class="pre">PyFocus.auxiliary.custom_mask_functions.</span></span><span class="sig-name descname"><span class="pre">custom_mask_objective_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.auxiliary.custom_mask_functions.custom_mask_objective_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the inciding field on the objective by fraunhofer’s difraction formula for a custom phase mask</p>
+<p>The resultant matrix Ex and Ey are returned in polar coordinates (each row is a different value of phi and each column a different rho)</p>
+<p>N_rho and N_phi: the number of divisions for the 2D integral’s calculus in rho and phi respectively, they are not coordinates in which the field is calculated
+resolution_theta,resolution_phi: number of divisions for the field indicent on the lens on the theta and phi coordinates respectively. This field is later used to calculate the focused field.
+The incident field is calculated in the coordinates:
+theta_values=np.linspace(0,alpha,resolution_theta)  #divisions of theta in which the trapezoidal 2D integration is done
+phip_values=np.linspace(0,2*np.pi,resolution_phi)   #divisions of phi in which the trapezoidal 2D integration is done
+by using sine’s law this corresponds to the radial positions rhop_values=np.sin(theta_values)*focus</p>
+<p>The rest of the parameters are specified in sim.py</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="PyFocus.auxiliary.custom_mask_functions.test_custom_mask_objective_field">
+<span class="sig-prename descclassname"><span class="pre">PyFocus.auxiliary.custom_mask_functions.</span></span><span class="sig-name descname"><span class="pre">test_custom_mask_objective_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.auxiliary.custom_mask_functions.test_custom_mask_objective_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quick run for testing if the resolution used to do the 2D integration is high enought.
+Meant for difraction for an arbitrary phase mask under the paraxial approximation, using the GPU</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="PyFocus.auxiliary.custom_mask_functions.custom_mask_focus_field_XY">
+<span class="sig-prename descclassname"><span class="pre">PyFocus.auxiliary.custom_mask_functions.</span></span><span class="sig-name descname"><span class="pre">custom_mask_focus_field_XY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ey_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FOV_focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countdown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.auxiliary.custom_mask_functions.custom_mask_focus_field_XY" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D integration to calculate the field at the focus of a high aperture lens
+ex_lens,ey_lens are the x and y component of the inciding field
+Calculates the field on the XY focal plane.</p>
+<p>resolution_focus: resolution for the field at the focus, the same for x and y
+resolution_theta,resolution_phi: resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens)</p>
+<p>wavelength: wavelength (nm) in the medium (equals wavelength in vacuum/n)</p>
+<p>x0 and y0 are used for centering the XY field at an x0, y0 position</p>
+<p>countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation</p>
+<p>The rest of the parameters are specified in sim.py</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="PyFocus.auxiliary.custom_mask_functions.custom_mask_focus_field_XZ_XY">
+<span class="sig-prename descclassname"><span class="pre">PyFocus.auxiliary.custom_mask_functions.</span></span><span class="sig-name descname"><span class="pre">custom_mask_focus_field_XZ_XY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ey_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_FOV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FOV_focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_plane</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'X'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.auxiliary.custom_mask_functions.custom_mask_focus_field_XZ_XY" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D integration to calculate the field at the focus of a high aperture lens
+ex_lens,ey_lens are the x and y component of the inciding field
+Calculates the field on the XY focal plane and the XZ plane.</p>
+<p>resolution_focus is the resolution for the field at the focus, the same for x and y
+resolution_theta,resolution_phi is the resolution for the 2D calculus (must be the same as the sie of ex_lens and ey_lens)</p>
+<p>wavelength is given in the medium (equals wavelength in vacuum/n)
+countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation</p>
+<p>x0 and y0 are used for centering the XY field at an x0, y0 position</p>
+<p>The rest of the parameters are specified in sim.py</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, FC
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

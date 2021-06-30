@@ -1,0 +1,91 @@
+:mod:`PyFocus.auxiliary.VPP_functions`
+======================================
+
+.. py:module:: PyFocus.auxiliary.VPP_functions
+
+.. autoapi-nested-parse::
+
+   Created on Thu Jun 11 16:18:12 2020
+
+   @author: ferchi
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   PyFocus.auxiliary.VPP_functions.VPP_integration
+   PyFocus.auxiliary.VPP_functions.VPP_fields
+   PyFocus.auxiliary.VPP_functions.VPP_fraunhofer
+   PyFocus.auxiliary.VPP_functions.VPP_integration_with_propagation
+   PyFocus.auxiliary.VPP_functions.VPP_fields_with_propagation
+
+
+
+.. function:: VPP_integration(alpha, n, f, w0, wavelength, rsteps, zsteps, field_of_view, z_field_of_view)
+
+   Generate the II matrixes, which are the result of the integration for different positions along the radius and z
+   This matrixes are later used to calculate the field
+
+   Parameters: 
+   alpha: semiangle of aperture
+   n: refraction medium for the optical system
+   f: focal distance (mm)
+   w0: incident gaussian beam radius (mm)
+   wavelength: wavelength in the medium (equals wavelength in vacuum/n)
+   rsteps: resolution in the x or y coordinate (nm)
+   zsteps: resolution in the axial coordinate,z (nm)
+   field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
+   z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)
+
+   The other parameters are specified in sim.py
+
+
+.. function:: VPP_fields(II1, II2, II3, II4, II5, wavelength, I0, gamma, beta, rsteps, zsteps, field_of_view, z_field_of_view, phip0, n, f, zp0)
+
+   Given the II matrixes calculate the field on the focus
+   parameter phip0 gives an azimutal offset for the XZ plane calculus
+   wavelength is given in the medium (equals wavelength in vacuum/n)
+   The other parameters are specified in sim.py
+
+
+.. function:: VPP_fraunhofer(gamma=45, beta=-90, steps=500, R=5, L=100, I_0=1, wavelength=640, FOV=11, w0=5, limit=2000, div=1, plot=True, folder='', figure_name='')
+
+   Calculate and plot the field inciding on the lens by Fraunhofer's difraction formula
+   Returns E_rho, the inciding amplitude along the radial coordinate for an x polarized beam
+   Returns Ex and Ey, the x and y components of this amplitude, in a matrix over the x and y coordinates so it can be ploted easily
+
+   limit is the ammount of iterations the scipy.quad command can do
+   div is the ammount of divisions in which the integration is divided in order to avoid the scipy.quad function from failing to converge
+
+   plot=True plots the inciding field's intensity and amplitude'
+   wavelength is given in the medium (equals wavelength in vacuum/n)
+
+   The other parameters are specified in sim.py
+
+
+.. function:: VPP_integration_with_propagation(alpha, n, f, radius_VPP, wavelength, zp0, zsteps, rsteps, field_of_view, laser_width, E_rho, div)
+
+   Given the inciding field E_rho, which only depends on the radial coordinate, generate the I matrixes, which are the same as in VPP_integration
+   Since the calculus takes a long time, only the field along the XY plane is calculated
+   wavelength is given in the medium (equals wavelength in vacuum/n)
+
+   The other parameters are specified in sim.py
+
+
+.. function:: VPP_fields_with_propagation(I1, I2, I3, I4, I5, wavelength, I0, gamma, beta, rsteps, zsteps, field_of_view, phip0, n, f, zp0)
+
+   Given the I matrixes calculate the field on the focus
+   Since the calculus takes a long time, only the field along the XY plane is calculated
+   parameter phip0 has no purpose, is only left to have the same variables for the functions
+   wavelength is given in the medium (equals wavelength in vacuum/n)
+
+   The other parameters are specified in sim.py
+
+

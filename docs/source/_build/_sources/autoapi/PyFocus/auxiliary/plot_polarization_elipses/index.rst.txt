@@ -1,0 +1,42 @@
+:mod:`PyFocus.auxiliary.plot_polarization_elipses`
+==================================================
+
+.. py:module:: PyFocus.auxiliary.plot_polarization_elipses
+
+.. autoapi-nested-parse::
+
+   Created on Tue Jun 23 22:13:16 2020
+
+   @author: ferchi
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   PyFocus.auxiliary.plot_polarization_elipses.polarization_elipse
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   PyFocus.auxiliary.plot_polarization_elipses.fig4
+
+
+.. function:: polarization_elipse(ax, x_center, y_center, Ex, Ey, Amp)
+
+
+.. data:: fig4
+   
+
+   
+

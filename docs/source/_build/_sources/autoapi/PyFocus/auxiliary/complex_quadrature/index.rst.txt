@@ -1,0 +1,22 @@
+:mod:`PyFocus.auxiliary.complex_quadrature`
+===========================================
+
+.. py:module:: PyFocus.auxiliary.complex_quadrature
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   PyFocus.auxiliary.complex_quadrature.complex_quadrature
+
+
+
+.. function:: complex_quadrature(func, a, b, **kwargs)
+
+

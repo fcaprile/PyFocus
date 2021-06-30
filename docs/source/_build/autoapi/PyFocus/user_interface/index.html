@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PyFocus.user_interface &mdash; Test  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href="../../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Test
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">PyFocus documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html#module-user_interface">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html#module-sim">High-level simulation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html#module-auxiliary.VPP_functions">Internal functions for VPP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html#module-auxiliary.no_mask_functions">Internal functions for no mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html#module-auxiliary.custom_mask_functions">Internal functions for a custom mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html#module-auxiliary.interface">Internal functions for an interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Test</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">PyFocus.user_interface</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/autoapi/PyFocus/user_interface/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-PyFocus.user_interface">
+<span id="pyfocus-user-interface"></span><h1><a class="reference internal" href="#module-PyFocus.user_interface" title="PyFocus.user_interface"><code class="xref py py-mod docutils literal notranslate"><span class="pre">PyFocus.user_interface</span></code></a><a class="headerlink" href="#module-PyFocus.user_interface" title="Permalink to this headline">¶</a></h1>
+<p>User interface class, allows setting up simulations and saving the obtained fields as .txt files</p>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#PyFocus.user_interface.UI" title="PyFocus.user_interface.UI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UI</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#PyFocus.user_interface.gui" title="PyFocus.user_interface.gui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gui</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">PyFocus.user_interface.</span></span><span class="sig-name descname"><span class="pre">UI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pyqtgraph.Qt.QtGui.QMainWindow</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary.front_end_ui.Ui_MainWindow</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.selectsavefolder">
+<span class="sig-name descname"><span class="pre">selectsavefolder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.selectsavefolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows selecting a save folder for the txt files</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.get_parameters">
+<span class="sig-name descname"><span class="pre">get_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.get_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read parameters from the UI</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.save_parameters">
+<span class="sig-name descname"><span class="pre">save_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.save_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a txt file with the parameters used for the simulation with the UI, parameters can be strings</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.save_intensity">
+<span class="sig-name descname"><span class="pre">save_intensity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.save_intensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a txt file with the intensity on the simulated planes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.save_amplitudes">
+<span class="sig-name descname"><span class="pre">save_amplitudes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.save_amplitudes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a txt file with the amplitude of each cartesian component on the simulated planes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.clear_plots">
+<span class="sig-name descname"><span class="pre">clear_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.clear_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear all existing figures</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.change_saving_name">
+<span class="sig-name descname"><span class="pre">change_saving_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.change_saving_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change saving name for the UI, also modifying the</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.change_default_name_and_open_dialog">
+<span class="sig-name descname"><span class="pre">change_default_name_and_open_dialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.change_default_name_and_open_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quality of life modification, if a new mask is selected and the name has never been modified, then change the default simulation name</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ex_XZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ey_XZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ez_XZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ex_XY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ey_XY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ez_XY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_of_view</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_field_of_view</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the field along the XZ and XY planes, the y=0, z=0 axis, the polarization on the XY plane and the amplitude squared of each cartesian component on the XY field</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.simulate">
+<span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate using the UI</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PyFocus.user_interface.UI.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyFocus.user_interface.UI.closeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="PyFocus.user_interface.gui">
+<span class="sig-prename descclassname"><span class="pre">PyFocus.user_interface.</span></span><span class="sig-name descname"><span class="pre">gui</span></span><a class="headerlink" href="#PyFocus.user_interface.gui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, FC
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

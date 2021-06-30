@@ -1,0 +1,69 @@
+:mod:`conf`
+===========
+
+.. py:module:: conf
+
+
+Module Contents
+---------------
+
+.. data:: project
+   :annotation: = Test
+
+   
+
+.. data:: copyright
+   :annotation: = 2021, FC
+
+   
+
+.. data:: author
+   :annotation: = FC
+
+   
+
+.. data:: extensions
+   :annotation: = ['sphinx.ext.autodoc', 'autoapi.extension']
+
+   
+
+.. data:: autodoc_typehints
+   :annotation: = signature
+
+   
+
+.. data:: autodoc_default_options
+   
+
+   
+
+.. data:: autoapi_dirs
+   :annotation: = ['..', '../..']
+
+   
+
+.. data:: templates_path
+   :annotation: = ['_templates']
+
+   
+
+.. data:: exclude_patterns
+   :annotation: = []
+
+   
+
+.. data:: html_theme
+   :annotation: = sphinx_rtd_theme
+
+   
+
+.. data:: html_theme_path
+   
+
+   
+
+.. data:: html_static_path
+   :annotation: = ['_static']
+
+   
+
