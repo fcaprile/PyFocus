@@ -13,13 +13,13 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
-sys.path.insert(0, os.path.abspath('../carpeta'))
+sys.path.insert(0, os.path.abspath('../auxiliary'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Test'
-copyright = '2021, FC'
-author = 'FC'
+project = 'PyFocus'
+copyright = '2021'
+author = 'Fernando Caprile'
 
 
 # -- General configuration ---------------------------------------------------
