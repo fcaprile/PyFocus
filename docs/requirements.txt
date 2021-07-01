@@ -1,3 +1,5 @@
+PyQt5
+tqdm
 sphinx
 sphinx_rtd_theme==0.5.1
 readthedocs-sphinx-search==0.1.0
