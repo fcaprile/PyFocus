@@ -1,7 +1,3 @@
-'''
-User interface class, allows setting up simulations and saving the obtained fields as .txt files
-'''
-
 #from Pyqt5 user interface packages
 from auxiliary.front_end_ui import Ui_MainWindow
 from auxiliary.mask_selection import Ui_Dialog
@@ -22,7 +18,6 @@ import time
 import sys
 import configparser
 import config
-
 
 
 class UI(QtGui.QMainWindow,Ui_MainWindow):
