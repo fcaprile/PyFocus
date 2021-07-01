@@ -13,13 +13,12 @@ User interface
 High-level simulation functions
 ===============================
 .. automodule:: sim
-   :members:
-   :undoc-members:
+
 
 Internal functions for VPP
 ==========================
 .. automodule:: auxiliary.VPP_functions
-   :members:
+
 
 Internal functions for no mask
 ==============================
@@ -34,3 +33,4 @@ Internal functions for a custom mask
 Internal functions for an interface
 ===================================
 .. automodule:: auxiliary.interface
+
