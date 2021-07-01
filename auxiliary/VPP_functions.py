@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
+﻿"""
+Functions for the simulation of the foci obtained by a VPP phase mask
 """
-Created on Thu Jun 11 16:18:12 2020
-
-@author: ferchi
-"""
-
 
 import numpy as np
 from scipy.special import jv

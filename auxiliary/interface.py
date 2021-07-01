@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jun 15 17:40:54 2020
-
-@author: Fer Caprile
-
-Functions for simulation of the diffraction obtained by an arbitrary phase mask
-"""
-
-import numpy as np
+﻿import numpy as np
 from tqdm import tqdm
 from matplotlib import pyplot as plt
 import time

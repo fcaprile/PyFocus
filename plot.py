@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 11 18:18:37 2020
-
-@author: ferchi
-"""
-import numpy as np
+﻿import numpy as np
 from matplotlib import pyplot as plt
 from auxiliary.plot_polarization_elipses import polarization_elipse
 

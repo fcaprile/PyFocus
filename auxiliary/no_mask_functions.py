@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
 """
-Created on Thu Jun 11 16:34:55 2020
-
-@author: ferchi
+Functions for the simulation of the field obtained by focuisng a gaussian beam
 """
 import numpy as np
 from auxiliary.complex_quadrature import complex_quadrature

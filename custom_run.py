@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu May 20 17:22:57 2021
-
-@author: ferchi
-"""
 import user_interface
 import sim
 

@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jun 15 17:40:54 2020
-
-@author: Fer Caprile
-
-Functions for simulation of the diffraction obtained by an arbitrary phase mask
+﻿"""
+Functions for the simulation of the foci obtained by an arbitrary phase mask
 """
 
 import numpy as np

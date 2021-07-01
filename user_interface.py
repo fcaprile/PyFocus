@@ -19,6 +19,9 @@ import sys
 import configparser
 import config
 
+'''
+User interface class that allows seting up parameters, running simualtons and saving the obtained fields as .txt files
+'''
 
 class UI(QtGui.QMainWindow,Ui_MainWindow):
     def __init__(self, *args, **kwargs):
