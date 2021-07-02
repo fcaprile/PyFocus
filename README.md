@@ -5,7 +5,7 @@ Supervisors: Luciano A. Masullo (lmasullo@df.uba.ar)
 Fernando D. Stefani (fernando.stefani@df.uba.ar)
 Affiliation: Physics Department, Faculty of Natural and Exact Sciences, University of Buenos Aires and Center for Bionanoscience Research (CIBION), National Scientific and Technical Research Council (CONICET)
 
-This is PyFocus, an user interface that allows the simulation of the propagation and focusing of a gaussian beam, after being modulated by a custom phase mask.
+This is PyFocus, a high-level package that allows the simulation of the propagation and focusing of a gaussian beam, after being modulated by a custom phase mask.
 
 To execute the interface run "main.py".
 
