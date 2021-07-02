@@ -1,64 +1,97 @@
+'''
+High-level functions to simulate the foci obtained when: Focusing a gaussian beam, focusing a gaussian beam modulated with a VP mask and focusing a gaussian beam modulated with a custom phase mask
+
+The functions use the 'parameters' array, defined as:
+    
+    parameters=np.array((NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name), dtype=object)
+    
+With:
+    
+        NA (float): Numerical aperture
+        
+        n (float or array, depends on interface): Refraction index for the medium of the optical system. If interface=True it must be given as a numpy array
+        
+        h (float): Radius of aperture of the objective lens(mm)
+        
+        f (float): Focal distance of the objective lens (mm)
+        
+        w0 (float): Radius of the incident gaussian beam (mm)
+        
+        wavelength (float): Wavelength in the medium of the objective lens (equals to wavelength in vacuum/n)
+        
+        gamma (float): Parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)
+        
+        beta (float): parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)
+        
+        zp0 (float): Axial position in which to calculate the XY plane, given by z=zp0, (nm)
+        
+        rsteps (float): Resolution in the X or Y coordinate for the focused field (nm)
+        
+        zsteps (float): Resolution in the axial coordinate (Z) for the focused field (nm)
+        
+        field_of_view (float): Field of view in the X or Y coordinate in which the focused field is calculated (nm)
+        
+        z_field_of_view (float): field of view in the axial coordinate (z) in which the focused field is calculated (nm)
+        
+        I_0 (float): Incident field intensity (uW/cm^2)
+        
+        L (float, optional): Distance between phase mask and objective lens (mm), only used if propagation=True
+        
+        R (float, optional): Phase mask radius (mm), only used if propagation=True
+        
+        ds (array, optional): Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
+        
+        zint (float, optional): Axial position of the interphase. Only used if interface=True
+        
+        figure_name (string, optional): Name for the images of the field. Also used as saving name if using the UI    
+'''
+
 import numpy as np
 import time
 
 
-from auxiliary.VPP_functions import VPP_integration, VPP_fields, VPP_fraunhofer
+from auxiliary.VP_functions import VP_integration, VP_fields, VP_fraunhofer
 from auxiliary.no_mask_functions import no_mask_integration, no_mask_fields
 from auxiliary.custom_mask_functions import generate_incident_field, plot_in_cartesian, custom_mask_objective_field, custom_mask_focus_field_XZ_XY
 from auxiliary.interface import interface_custom_mask_focus_field_XZ_XY
 
-def VPP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength=640,gamma=45,beta=90,zp0=0,rsteps=5,zsteps=8,field_of_view=1000,z_field_of_view=2000,I0=1,L='',R='',ds='',zint='',figure_name=''):#f (the focal distance) is given by the sine's law, but can be modified if desired
+def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength=640,gamma=45,beta=90,zp0=0,rsteps=5,zsteps=8,field_of_view=1000,z_field_of_view=2000,I0=1,L='',R='',ds='',zint='',figure_name=''):#f (the focal distance) is given by the sine's law, but can be modified if desired
     '''
-    Simulate the field obtained by focusing a gaussian beam modulated by a VPP mask 
+    Simulate the field obtained by focusing a gaussian beam modulated by a VP mask 
     
-    Returns ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
+    Args:
+        
+        propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer's difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation
+        
+        interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
+    
+        NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the 'parameters' array
+        
+    Returns:
+        
+        arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
     
     Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        
     ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
+    
     ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
     
     The XZ plane is given by y=0 and the XZ plane by z=zp0 
     
     The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
-    
-    propagation=True calculates and plots the field inciding on the lens by fraunhofer's difractin formula, in which case R and L are needed
-    propagation=False calculates the field inciding on the lens depreciating the propagation
-    
-    interface=True calculates the field with an interface present in the path, in which case ds and z_int are needed
-    interface=Flase calculates the field obtained without an interface
-
-    Parameters: 
-    NA: numerical aperture
-    n: refraction medium for the optical system. If interface=True it must be given as a numpy array
-    h: radius of aperture (mm)
-    f: focal distance (mm)
-    w0: incident gaussian beam radius (mm)
-    wavelength: wavelength in the medium (equals wavelength in vacuum/n)
-    gamma: parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)
-    beta: parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)
-    zp0: Axial position in which to calculate the XY plane (given by z=zp0)
-    rsteps: resolution in the x or y coordinate (nm)
-    zsteps: resolution in the axial coordinate,z (nm)
-    field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
-    z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)
-    I_0: Incident field intensity (kW/cm^2)
-    L: distance between phase mask and objective lens (mm), only used if propagation=True
-    R: phase mask radius (mm), only used if propagation=True
-    ds: thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
-    zint: axial position of the interphase. Only used if interface=True
-    figure_name: name for the images of the field. Also used as saving name if using the UI
     '''
     
     
     if interface==False:#no interface
         alpha=np.arcsin(NA / n)
         if propagation==False:
-            II1,II2,II3,II4,II5=VPP_integration(alpha,n,f,w0,wavelength/n,rsteps,zsteps,field_of_view,z_field_of_view)
-            ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=VPP_fields(II1,II2,II3,II4,II5,wavelength/n,I0,gamma,beta,rsteps,zsteps,field_of_view,z_field_of_view,0,n,f,zp0)                        
+            II1,II2,II3,II4,II5=VP_integration(alpha,n,f,w0,wavelength/n,rsteps,zsteps,field_of_view,z_field_of_view)
+            ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=VP_fields(II1,II2,II3,II4,II5,wavelength/n,I0,gamma,beta,rsteps,zsteps,field_of_view,z_field_of_view,0,n,f,zp0)                        
         else:
-            E_rho,Ex,Ey=VPP_fraunhofer(gamma,beta,1000,R,L,I0,wavelength/n,h,w0,2000,20,figure_name=figure_name)
+            E_rho,Ex,Ey=VP_fraunhofer(gamma,beta,1000,R,L,I0,wavelength/n,h,w0,2000,20,figure_name=figure_name)
             '''
-            Funny enough, doing a 2D integration with the trapezoid method will be faster than the 1D integration, since the function converges reeeeally slowly with scipy.integrate.quad, sorry if this is confusing. 1D integration method is used by the funcions "VPP_integration_with_propagation" and "VPP_fields_with_propagation" in VPP.py, but unimplemented here
+            Funny enough, doing a 2D integration with the trapezoid method will be faster than the 1D integration, since the function converges reeeeally slowly with scipy.integrate.quad, sorry if this is confusing. 1D integration method is used by the funcions "VP_integration_with_propagation" and "VP_fields_with_propagation" in VP.py, but unimplemented here
             '''
             #Usual parameters for integration precision:
             #resolution for field at objective
@@ -90,7 +123,7 @@ def VPP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelengt
     
     else:#interface is given
         alpha=np.arcsin(NA / n[0])
-        mask_function_VPP=lambda theta, phi,w0,f,wavelength: np.exp(1j*phi)# is the VPP mask function
+        mask_function_VP=lambda theta, phi,w0,f,wavelength: np.exp(1j*phi)# is the VP mask function
         #Usual parameters for integration precision:
         #resolution for field at objective
         resolution_theta=200
@@ -105,7 +138,7 @@ def VPP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelengt
         if propagation==False:
             #calculate field inciding on the lens by multiplying the phase mask's function and the gaussian amplitude
             #(ex_lens,ey_lens) are 2 matrixes with the values of the incident amplitude for each value in phi,theta                   
-            ex_lens,ey_lens=generate_incident_field(mask_function_VPP,alpha,f,resolution_phi,resolution_theta,gamma,beta,w0,I0,wavelength/n[0])            
+            ex_lens,ey_lens=generate_incident_field(mask_function_VP,alpha,f,resolution_phi,resolution_theta,gamma,beta,w0,I0,wavelength/n[0])            
             #plot field at the entrance of the lens:
             #since ex_lens and ey_lens are given in theta and phi coordinates, the have to be transformed to cartesian in order to be ploted, hence the name of this function
         else:
@@ -113,7 +146,7 @@ def VPP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelengt
             #N_rho and N_phi are the number of divisions for fraunhoffer's integral by the trapecium's method
             N_rho=400
             N_phi=400                
-            ex_lens,ey_lens,I_cartesian,Ex_cartesian,Ey_cartesian=custom_mask_objective_field(h,gamma,beta,resolution_theta,resolution_phi,N_rho,N_phi,alpha,f,mask_function,R,L,I0,wavelength*10**-6,w0,figure_name,plot=True)
+            ex_lens,ey_lens,I_cartesian,Ex_cartesian,Ey_cartesian=custom_mask_objective_field(h,gamma,beta,resolution_theta,resolution_phi,N_rho,N_phi,alpha,f,mask_function_VP,R,L,I0,wavelength*10**-6,w0,figure_name,plot=True)
 
         #calculate field at the focal plane:
         ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,zint,z_field_of_view,resolution_z,zp0,resolution_focus,resolution_theta,resolution_phi,field_of_view)
@@ -123,48 +156,32 @@ def VPP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelengt
 def no_mask(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength=640,gamma=45,beta=90,zp0=0,rsteps=5,zsteps=8,field_of_view=1000,z_field_of_view=2000,I0=1,L='',R='',ds='',zint='',figure_name=''):#f (the focal distance) is given by the sine's law, but can be modified if desired
     '''
     Simulate the field obtained by focusing a gaussian beam without being modulated in phase
-    Since there is no phase mask, propagation is not a parameter
     
-    Returns ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
+    Args:
+        
+        propagation (bool): Kept for homogeneity of the functions, True yields no diference from False, where the field incident on the lens is calculated by neglecting the propagation towards the objective lens
+        
+        interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
+    
+        NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the 'parameters' array
+        
+    Returns:
+        
+        arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
     
     Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        
     ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
+    
     ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
-
+    
     The XZ plane is given by y=0 and the XZ plane by z=zp0 
     
     The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
-
-    propagation=True calculates and plots the field inciding on the lens by fraunhofer's difractin formula, in which case R and L are needed
-    propagation=False calculates the field inciding on the lens depreciating the propagation
-    
-    interface=True calculates the field with an interface present in the path, in which case ds and z_int are needed
-    interface=Flase calculates the field obtained without an interface
-
-    Parameters: 
-    NA: numerical aperture
-    n: refraction medium for the optical system. If interface=True it must be given as a numpy array
-    h: radius of aperture (mm)
-    f: focal distance (mm)
-    w0: incident gaussian beam radius (mm)
-    wavelength: wavelength in the medium (equals wavelength in vacuum/n)
-    gamma: parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)
-    beta: parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)
-    zp0: Axial position in which to calculate the XY plane (given by z=zp0)
-    rsteps: resolution in the x or y coordinate (nm)
-    zsteps: resolution in the axial coordinate,z (nm)
-    field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
-    z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)
-    I_0: Incident field intensity (kW/cm^2)
-    L: distance between phase mask and objective lens (mm), only used if propagation=True
-    R: phase mask radius (mm), only used if propagation=True
-    ds: thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
-    zint: axial position of the interphase. Only used if interface=True
-    figure_name: name for the images of the field. Also used as saving name if using the UI
     '''
     
     if propagation==True:
-        print('Propagation for field incident on the lens is only done for VPP and custom masks. Calculating focused field with propagation=False:')
+        print('Propagation for field incident on the lens is only done for VP and custom masks. Calculating focused field with propagation=False:')
         time.sleep(0.5)
     if interface==False:#no interface
         alpha=np.arcsin(NA / n)
@@ -187,50 +204,30 @@ def no_mask(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavel
 def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength=640,gamma=45,beta=90,zp0=0,rsteps=5,zsteps=8,field_of_view=1000,z_field_of_view=2000,I0=1,L='',R='',ds='',zint='',figure_name='',resolution_theta=200,resolution_phi=200):#f (the focal distance) is given by the sine's law, but can be modified if desired
     '''
     Simulate the field obtained by focusing a gaussian beam modulated by a custom phase mask
-    The amplitude term of a gaussian beam is already multiplyed to the integral despite the phase mask used, if this is not desired w0=100 (a big number) makes this term essentially 1
+    
+    The amplitude term of a gaussian beam is already added to the incident field despite the phase mask used, if this is not desired w0=100 (a big number) makes this term essentially 1
 
-    Returns ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
+    Args:
+        
+        propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer's difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation
+        
+        interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
+    
+        NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the 'parameters' array
+        
+    Returns:
+        
+        arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
     
     Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        
     ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
+    
     ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
-
+    
     The XZ plane is given by y=0 and the XZ plane by z=zp0 
     
     The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
-    
-    propagation=True calculates and plots the field inciding on the lens by fraunhofer's difractin formula, in which case R and L are needed
-    propagation=False calculates the field inciding on the lens depreciating the propagation
-    
-    interface=True calculates the field with an interface present in the path, in which case ds and z_int are needed
-    interface=Flase calculates the field obtained without an interface
-
-    Parameters: 
-    mask_function: custom mask's description, the real part defines the incident field's amplitude and the complex part the phase. Can be given as a function or as a matrix. For this last case each value of the matrix is given by a coordinate for theta and phi: mask_function[phi_position,theta_position]
-    for phi_position an index from np.linspace(0,2*np.pi,resolution_phi) and theta_position an index from np.linspace(0,alpha,resolution_theta). With resolution_phi and resolution_theta 2 integers that ill define the resolution of the 2D integration (and also how long it takes)
-    NA: numerical aperture
-    n: refraction medium for the optical system. If interface=True it must be given as a numpy array
-    h: radius of aperture (mm)
-    f: focal distance (mm)
-    w0: incident gaussian beam radius (mm)
-    wavelength: wavelength in the medium (equals wavelength in vacuum/n)
-    gamma: parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)
-    beta: parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)
-    zp0: Axial position in which to calculate the XY plane (given by z=zp0)
-    rsteps: resolution in the x or y coordinate (nm)
-    zsteps: resolution in the axial coordinate,z (nm)
-    field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
-    z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)
-    I_0: Incident field intensity (kW/cm^2)
-    L: distance between phase mask and objective lens (mm), only used if propagation=True
-    R: phase mask radius (mm), only used if propagation=True
-    ds: thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
-    zint: axial position of the interphase. Only used if interface=True
-    figure_name: name for the images of the field. Also used as saving name if using the UI
-    resolution_theta, resolution_phi: resolution for the 2D integration of the incident field for the theta and phi variables respectively, default is set to 200. Higher values ensure less error in the integratin but require higher integration times.
-    
-    Returns the ampitude of each component on the y=0 plane (XZ) and z=cte (XY) with the constant given by the user on ''axial distance from focus'', named on the code as zp0
-    Returns the amplitude as ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY with for example ex the amplitude matrix (each place of the matrix is a different spacial position) of the X component and XZ or XY the plane in which they where calculated
     
     '''
     #moving to wavelength in the optical system's medium
@@ -241,7 +238,7 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3
         alpha=np.arcsin(NA / n[0])
         wavelength/=n[0]
 
-    # mask_function=lambda theta, phi: np.exp(1j*phi) is the VPP mask function
+    # mask_function=lambda theta, phi: np.exp(1j*phi) is the VP mask function
     #Usual parameters for integration precision:
     
     #resolution for field near the focus

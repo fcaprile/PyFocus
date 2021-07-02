@@ -8,7 +8,7 @@ import qdarkstyle
 
 #custom made integration functions
 from plot import plot_XZ_XY
-from sim import VPP, no_mask, custom
+from sim import VP, no_mask, custom
 
 #usual packages
 import numpy as np
@@ -20,7 +20,7 @@ import configparser
 import config
 
 '''
-User interface class that allows seting up parameters, running simualtons and saving the obtained fields as .txt files
+User interface class that allows seting up parameters, running simulations and saving the obtained fields as .txt files
 '''
 
 class UI(QtGui.QMainWindow,Ui_MainWindow):
@@ -51,7 +51,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         self.lineEdit_21.textEdited.connect(self.change_saving_name)
         self.comboBox.currentTextChanged.connect(self.change_default_name_and_open_dialog)
         self.modified_saving_name=False #Used later to avoid overwriting the changes in the name of the figure made by the user
-        self.default_file_name='VPP mask simulation' #default name for simulations if nothing is changed
+        self.default_file_name='VP mask simulation' #default name for simulations if nothing is changed
         self.previous_figure_name=''#used to aoid overwriting previous figures which have the same name
         
     def selectsavefolder(self):
@@ -219,8 +219,8 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         '''
         selected=self.comboBox.currentIndex()
         if self.modified_saving_name==False:
-            if selected==0:#VPP mask
-                self.default_file_name='VPP mask simulation'
+            if selected==0:#VP mask
+                self.default_file_name='VP mask simulation'
                 self.lineEdit_21.setText(self.default_file_name)
             if selected==1:#No mask (gaussian beam)
                 self.default_file_name='Gaussian beam simulation'
@@ -242,7 +242,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
 
     def simulate(self):
         '''
-        Simulate using the UI
+        Simulate with the UI using the functions provided in "sim"
         '''
         self.counter+=1
         self.get_parameters()
@@ -262,9 +262,9 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         try:      
             propagation=self.radioButton.isChecked() #then no need to calculate the field at the entrance of the lens
             interface=self.radioButton_2.isChecked()
-            if selected==0: #VPP mask
+            if selected==0: #VP mask
                 #calculate field at the focal plane:
-                ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=VPP(propagation,interface,*self.parameters)                
+                ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=VP(propagation,interface,*self.parameters)                
                 #plot the fields at the focus:
                 self.plot(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view,figure_name)
                     
@@ -292,6 +292,9 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
             print("Unexpected error:", sys.exc_info())
 
     def closeEvent(self, event, *args, **kwargs):
+        '''
+	Close the user interface
+	'''
         print('PyFocus is closed')        
         super().closeEvent(*args, **kwargs)
 

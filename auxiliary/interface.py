@@ -7,19 +7,35 @@ from auxiliary.tmm_core import *
 
 def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,Lambda,z_interface,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,countdown=True,x0=0,y0=0):
     '''
-    2D integration to calculate the field at the focus of a high aperture lens with an interface
-    ex_lens,ey_lens are the x and y component of the inciding field
-    Calculates the field on the XY focal plane.
+    2D integration to calculate the field focused by a high aperture lens on the XY plane with an interface
     
-    resolution_focus is the resolution for the field at the focus, the same for x and y
-    resolution_theta,resolution_phi is the resolution for the 2D calculus (must be the same as the sie of ex_lens and ey_lens) 
-    
-    wavelength is given in the medium (equals wavelength in vacuum/n)
-    countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation
-    
-    x0 and y0 are used for centering the XY field at an x0, y0 position
+    Parameters:
+        
+        n_list (array): array with the refraction index of each medium of the multilayer system
+        
+        d_list (array): Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
 
-    The rest of the parameters are specified in sim.py
+        ex_lens,ey_lens (array): X and Y component of the incident field. Each position must be given in the coordinates 
+        
+    This arrays must have the value of the amplitude of the incident field for each value of theta and phi. Example: ex_lens[phi_position,theta_position]
+    for phi_position a value in np.linspace(0,2*np.pi,resolution_phi) and theta_position a value in np.linspace(0,alpha,resolution_theta) 
+
+        z_interface: Axial position in wich the interface is located
+
+        zp0: Axial position for the XY plane (given by z=zp0)
+    
+        resolution_focus: Resolution for the field at the focus, the same for x and y
+        
+        resolution_theta,resolution_phi: Resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens) 
+    
+        Lambda: Wavelength (nm) in the vacuum 
+        
+        x0 and y0: Used for centering the XY field at an x0, y0 position
+
+    The rest of the parameters are specified in sim
+    
+    Returns:
+        ex,ey,ez (arrays): Cartesian components of the focused field on the XY plane, given by z=zp0
     '''
 
 
@@ -252,19 +268,44 @@ def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,L
 
 def interface_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,Lambda,z_interface,z_FOV,resolution_z,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,x0=0,y0=0,z0=0,plot_plane='X'):
     '''
-    2D integration to calculate the field at the focus of a high aperture lens with an interface
-    ex_lens,ey_lens are the x and y component of the inciding field
-    Calculates the field on the XY focal plane and the XZ plane.
+    2D integration to calculate the field focused by a high aperture lens on the XY and XZ planes with an interface
     
-    resolution_focus is the resolution for the field at the focus, the same for x and y
-    resolution_theta,resolution_phi is the resolution for the 2D calculus (must be the same as the sie of ex_lens and ey_lens) 
-    
-    wavelength is given in the medium (equals wavelength in vacuum/n)
-    countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation
-    
-    x0 and y0 are used for centering the XY field at an x0, y0 position
+    Parameters:
+        
+        n_list (array): array with the refraction index of each medium of the multilayer system
+        
+        d_list (array): Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
 
-    The rest of the parameters are specified in sim.py
+        ex_lens,ey_lens (array): X and Y component of the incident field. Each position must be given in the coordinates 
+        
+    This arrays must have the value of the amplitude of the incident field for each value of theta and phi. Example: ex_lens[phi_position,theta_position]
+    for phi_position a value in np.linspace(0,2*np.pi,resolution_phi) and theta_position a value in np.linspace(0,alpha,resolution_theta) 
+
+        z_interface: Axial position in wich the interface is located
+
+        zp0: Axial position for the XY plane (given by z=zp0)
+    
+        resolution_focus: Resolution for the field at the focus, the same for x and y
+        
+        resolution_theta,resolution_phi: Resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens) 
+    
+        Lambda: Wavelength (nm) in the vacuum 
+        
+        x0 and y0: Used for centering the XY field at an x0, y0 position
+
+    The rest of the parameters are specified in sim
+
+    Returns:
+        arrays: Ex_XZ,Ey_XZ,Ez_XZ,Ex_XY,Ey_XY,Ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
+    
+    Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        
+    ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
+    
+    ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
+    
+    The XZ plane is given by y=0 and the XZ plane by z=zp0 
+
     '''
 
 

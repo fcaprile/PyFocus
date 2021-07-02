@@ -9,10 +9,30 @@ from scipy.special import jv
 def no_mask_integration(alpha,n,f,w0,wavelength,field_of_view,z_field_of_view,zsteps,rsteps):
     '''
     Generate the II matrixes, which are the result of the integration for different positions along the radius and z
-    This matrixes are later used to calculate the field
-    wavelength is given in the medium (equals wavelength in vacuum/n)
+    
+    This matrixes are later used to calculate the focused field
+    
+    Parameters: 
+        
+        alpha: semiangle of aperture
+        
+        n: refraction medium for the optical system
+        
+        f: focal distance (mm)
+        
+        w0: incident gaussian beam radius (mm)
+        
+        wavelength: wavelength in the medium (equals wavelength in vacuum/n)
+        
+        rsteps: resolution in the x or y coordinate (nm)
+        
+        zsteps: resolution in the axial coordinate,z (nm)
+        
+        field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
+        
+        z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)
 
-    The other parameters are specified in sim.py
+    The other parameters are specified in sim
     '''
     #passage to nm:
     f*=10**6
@@ -51,10 +71,27 @@ def no_mask_integration(alpha,n,f,w0,wavelength,field_of_view,z_field_of_view,zs
 def no_mask_fields(II1,II2,II3,wavelength,I0,beta,gamma,zsteps,rsteps,field_of_view,z_field_of_view,phip0,n,f,zp0):
     '''
     Given the II matrixes calculate the field on the focus
+    
     parameter phip0 gives an azimutal offset for the XZ plane calculus
+    
     wavelength is given in the medium (equals wavelength in vacuum/n)
 
-    The other parameters are specified in sim.py
+    The other parameters are specified in sim
+    
+    Returns:
+        
+        arrays: Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)
+    
+    Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        
+    ex[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
+    
+    ex2[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
+    
+    The XZ plane is given by y=0 and the XZ plane by z=zp0 
+    
+    The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
+
     '''
     #passage to nm:
     f*=10**6

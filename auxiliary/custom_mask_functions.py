@@ -10,13 +10,17 @@ import time
 def generate_incident_field(maskfunction,alpha,focus,resolution_phi,resolution_theta,gamma,beta,w0,I0,wavelength):
     '''
     Generate a matrix for the field X and Y direction of the incident field on the lens, given the respective maskfunction
-    maskfunction: function that defines the phase mask. The real part also defines the incident field's amplitude
+    
+    Parameters:
+        
+    maskfunction (function): analytical function that defines the phase mask. The real part also defines the incident field's amplitude
+    
     resolution_phi,resolution_theta: number of divisions in the phi and theta coordinates to use the 2D integration for the calculation of the focused field
  
-    The rest of the parameters are specified in sim.py
+    The rest of the parameters are specified in sim
 
-    This matrix has the value of the amplitude of the incident field for each value of theta and phi: ex_lens[phi_position,theta_position]
-    for phi_position a alue in np.linspace(0,2*np.pi,resolution_phi) and theta_position a value in np.linspace(0,alpha,resolution_theta) 
+    This arrays have the value of the amplitude of the incident field for each value of theta and phi: ex_lens[phi_position,theta_position]
+    for phi_position a value in np.linspace(0,2*np.pi,resolution_phi) and theta_position a value in np.linspace(0,alpha,resolution_theta) 
     '''
 
     k=2*np.pi/wavelength #k is given in nm, the same as wavelength
@@ -38,7 +42,10 @@ def generate_incident_field(maskfunction,alpha,focus,resolution_phi,resolution_t
 
 def plot_in_cartesian(Ex,Ey,xmax,alpha,focus,figure_name):
     '''
-    Plot the fields Ex and Ey, who are described in polar coordinates 
+    Plot the fields Ex and Ey, who are described in polar coordinates. To do so the field in the closest cartesian coordinates for each position is calculated
+    
+    Returns:
+        I_cartesian, Ex_cartesian, Ey_cartesian: Intensity and amplitude of the incident field calculated in cartesian coordinates
     '''
     resolution_phi,resolution_theta=np.shape(Ex)
     x_values=np.linspace(-xmax,xmax,2*resolution_theta) #positions along X in which to plot
@@ -129,18 +136,26 @@ def plot_in_cartesian(Ex,Ey,xmax,alpha,focus,figure_name):
 
 def custom_mask_objective_field(h,gamma,beta,resolution_theta,resolution_phi,N_rho,N_phi,alpha,focus,mask_function,R,L,I0,wavelength,w0,fig_name,plot=True):
     '''
-    Calculate the inciding field on the objective by fraunhofer's difraction formula for a custom phase mask
+    Calculate the incident field on the objective by fraunhofer's difraction formula for a custom phase mask
 
     The resultant matrix Ex and Ey are returned in polar coordinates (each row is a different value of phi and each column a different rho)  
     
-    N_rho and N_phi: the number of divisions for the 2D integral's calculus in rho and phi respectively, they are not coordinates in which the field is calculated
-    resolution_theta,resolution_phi: number of divisions for the field indicent on the lens on the theta and phi coordinates respectively. This field is later used to calculate the focused field.
-    The incident field is calculated in the coordinates:
-    theta_values=np.linspace(0,alpha,resolution_theta)  #divisions of theta in which the trapezoidal 2D integration is done
-    phip_values=np.linspace(0,2*np.pi,resolution_phi)   #divisions of phi in which the trapezoidal 2D integration is done
-    by using sine's law this corresponds to the radial positions rhop_values=np.sin(theta_values)*focus
+    Parameters:
+    
+        N_rho and N_phi: Number of divisions for the calclation of the 2D integral in rho and phi respectively (this are not the coordinates in which the field is calculated)
+        
+        resolution_theta,resolution_phi: Number of divisions for the field indicent on the lens on the theta and phi coordinates respectively. This field is later used to calculate the focused field.
+        
 
-    The rest of the parameters are specified in sim.py
+    The rest of the parameters are specified in sim
+    
+    Returns:
+        
+        Ex, Ey (arrays): Amplitude of the incident field calculated on the pair of coordinates: theta_values=np.linspace(0,alpha,resolution_theta), phip_values=np.linspace(0,2*np.pi,resolution_phi)
+    
+    by using sine's law this corresponds to the radial positions rhop_values=np.sin(theta_values)*focus        
+    
+        I_cartesian, Ex_cartesian, Ey_cartesian: Intensity and amplitude of the incident field calculated in cartesian coordinates
     '''
     
     print('Calculating field at the objective:')
@@ -199,6 +214,7 @@ def custom_mask_objective_field(h,gamma,beta,resolution_theta,resolution_phi,N_r
 def test_custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N_rho,N_phi,alpha,mask_function,h,L,I0,wavelength,w0,plot=True):
     '''
     Quick run for testing if the resolution used to do the 2D integration is high enought.
+    
     Meant for difraction for an arbitrary phase mask under the paraxial approximation, using the GPU
     '''
     print('Calculating field at the objective:')
@@ -258,20 +274,28 @@ def test_custom_mask_objective_field(psi,delta,resolution_theta,resolution_phi,N
 
 def custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,countdown=True,x0=0,y0=0):
     '''
-    2D integration to calculate the field at the focus of a high aperture lens
-    ex_lens,ey_lens are the x and y component of the inciding field
-    Calculates the field on the XY focal plane.
+    2D integration to calculate the field focused by a high aperture lens on the XY plane
     
-    resolution_focus: resolution for the field at the focus, the same for x and y
-    resolution_theta,resolution_phi: resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens) 
-    
-    wavelength: wavelength (nm) in the medium (equals wavelength in vacuum/n) 
+    Parameters:
         
-    x0 and y0 are used for centering the XY field at an x0, y0 position
+        ex_lens,ey_lens: X and Y component of the incident field
+        
+        zp0: Axial position for the XY plane (given by z=zp0)
+    
+        resolution_focus: Resolution for the field at the focus, the same for x and y
+        
+        resolution_theta,resolution_phi: Resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens) 
+    
+        wavelength: Wavelength (nm) in the medium (equals wavelength in vacuum/n) 
+        
+        x0 and y0: Used for centering the XY field at an x0, y0 position
 
-    countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation
+        countdown (bool): True means you are only running this fuction once and you want to see a progress bar with the time elapsed and expected to finish the calculation
 
-    The rest of the parameters are specified in sim.py
+    The rest of the parameters are specified in sim
+    
+    Returns:
+        ex,ey,ez (arrays): Cartesian components of the focused field on the XY plane, given by z=zp0
     '''
     
     if countdown==True:
@@ -385,19 +409,34 @@ def custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution
 
 def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_FOV,resolution_z,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,x0=0,y0=0,plot_plane='X'):
     '''
-    2D integration to calculate the field at the focus of a high aperture lens
-    ex_lens,ey_lens are the x and y component of the inciding field
-    Calculates the field on the XY focal plane and the XZ plane.
+    2D integration to calculate the field focused by a high aperture lens on the XY and XZ plane
     
-    resolution_focus is the resolution for the field at the focus, the same for x and y
-    resolution_theta,resolution_phi is the resolution for the 2D calculus (must be the same as the sie of ex_lens and ey_lens) 
+        ex_lens,ey_lens: X and Y component of the incident field
+        
+        zp0: Axial position for the XY plane (given by z=zp0)
     
-    wavelength is given in the medium (equals wavelength in vacuum/n)
-    countdown=True means you are only running this fuction once and you want to see te time elapsed and expected to finish the calculation
-            
-    x0 and y0 are used for centering the XY field at an x0, y0 position
+        resolution_focus: Resolution for the field at the focus, the same for x and y
+        
+        resolution_theta,resolution_phi: Resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens) 
+    
+        wavelength: Wavelength (nm) in the medium (equals wavelength in vacuum/n) 
+        
+        x0 and y0: Used for centering the XY field at an x0, y0 position
 
-    The rest of the parameters are specified in sim.py
+        countdown (bool): True means you are only running this fuction once and you want to see a progress bar with the time elapsed and expected to finish the calculation
+
+    The rest of the parameters are specified in sim
+    
+    Returns:
+        arrays: Ex_XZ,Ey_XZ,Ez_XZ,Ex_XY,Ey_XY,Ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
+    
+    Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        
+    ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
+    
+    ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
+    
+    The XZ plane is given by y=0 and the XZ plane by z=zp0 
     '''
     #XY plane: 
     Ex_XY,Ey_XY,Ez_XY=custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution_focus,resolution_theta,resolution_phi,FOV_focus,countdown=True,x0=x0,y0=y0)
