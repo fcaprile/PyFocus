@@ -6,42 +6,38 @@ from auxiliary.complex_quadrature import complex_quadrature
 from tqdm import tqdm
 from scipy.special import jv
 
-def no_mask_integration(alpha,n,f,w0,wavelength,field_of_view,z_field_of_view,zsteps,rsteps):
+def no_mask_integration(alpha,n,f,w0,wavelength,x_range,z_range,z_steps,r_steps):
     '''
-    Generate the II matrixes, which are the result of the integration for different positions along the radius and z
+    Generate the II arrays, which are the result of the integration for different positions along the radius and z
     
     This matrixes are later used to calculate the focused field
     
-    Parameters: 
+    Parameters:        
+        :alpha: semiangle of aperture
+                
+        :wavelength: wavelength in the medium (equals wavelength in vacuum/n)
         
-        alpha: semiangle of aperture
+        :r_steps: resolution in the x or y coordinate (nm)
         
-        n: refraction medium for the optical system
+        :z_steps: resolution in the axial coordinate,z (nm)
         
-        f: focal distance (mm)
+        :x_range: field of view in the x or y coordinate in which the field is calculated (nm)
         
-        w0: incident gaussian beam radius (mm)
-        
-        wavelength: wavelength in the medium (equals wavelength in vacuum/n)
-        
-        rsteps: resolution in the x or y coordinate (nm)
-        
-        zsteps: resolution in the axial coordinate,z (nm)
-        
-        field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
-        
-        z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)
+        :z_range: field of view in the axial coordinate, z, in which the field is calculated (nm)
 
-    The other parameters are specified in sim
+        The other parameters are specified in sim
+        
+    Returns:
+        :(arrays): II1,II2,II3
     '''
     #passage to nm:
     f*=10**6
     w0*=10**6
 
-    ztotalsteps=int(np.rint(z_field_of_view/zsteps/2))
-    rtotalsteps=int(np.rint(field_of_view/rsteps/2**0.5)) #the actual field of view of the X axis in the XZ plane will be field_of_view*2**0.5
+    ztotalsteps=int(np.rint(z_range/z_steps/2))
+    rtotalsteps=int(np.rint(x_range/r_steps/2**0.5)) #the actual field of view of the X axis in the XZ plane will be x_range*2**0.5
 
-    gaussian=lambda theta:np.exp(-(np.sin(theta)*f/w0)**2)
+    gaussian=lambda theta:np.exp(-(np.sin(theta)*f/w0)**2)#incident gaussian beam's amplitude
 
     I1=np.zeros((ztotalsteps,rtotalsteps),dtype=complex)
     I2=np.copy(I1)
@@ -53,8 +49,8 @@ def no_mask_integration(alpha,n,f,w0,wavelength,field_of_view,z_field_of_view,zs
 
     for zz in tqdm(range(ztotalsteps),desc='No mask calulation'):
         for rr in range(rtotalsteps):
-            kz=zz*2*np.pi/wavelength/ztotalsteps*z_field_of_view/2 
-            kr=rr*2*np.pi/wavelength/rtotalsteps*field_of_view/2*2**0.5
+            kz=zz*2*np.pi/wavelength/ztotalsteps*z_range/2 
+            kr=rr*2*np.pi/wavelength/rtotalsteps*x_range/2*2**0.5
             I1[zz,rr]= complex_quadrature(fun1,0,alpha)[0]
             I2[zz,rr]= complex_quadrature(fun2,0,alpha)[0]
             I3[zz,rr]= complex_quadrature(fun3,0,alpha)[0]
@@ -68,36 +64,37 @@ def no_mask_integration(alpha,n,f,w0,wavelength,field_of_view,z_field_of_view,zs
     return II1,II2,II3
 
 
-def no_mask_fields(II1,II2,II3,wavelength,I0,beta,gamma,zsteps,rsteps,field_of_view,z_field_of_view,phip0,n,f,zp0):
+def no_mask_fields(II1,II2,II3,wavelength,I0,beta,gamma,z_steps,r_steps,x_range,z_range,phip0,n,f,zp0):
     '''
     Given the II matrixes calculate the field on the focus
     
-    parameter phip0 gives an azimutal offset for the XZ plane calculus
+    Parameters: 
+        :phip0: Azimutal offset for the XZ plane calculus
     
-    wavelength is given in the medium (equals wavelength in vacuum/n)
-
-    The other parameters are specified in sim
-    
-    Returns:
+        :wavelength: wavelength given in the medium (equals wavelength in vacuum/n)
         
-        arrays: Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)
-    
-    Each index of the matrixes corresponds to a different pair of coordinates, for example: 
-        
-    ex[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
-    
-    ex2[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
-    
-    The XZ plane is given by y=0 and the XZ plane by z=zp0 
-    
-    The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
+        :zp0: axial position of the XY plane
 
+        The other parameters are specified in sim
+    
+    Returns:        
+        :arrays: Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)
+    
+        Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+            
+        ex[z,x] with z each index of the coordinates np.linspace(z_range/2,-z_range/2,2*int(z_range/z_steps/2)) and x each index for np.linspace(-x_range/2**0.5,x_range/2**0.5,2*int(x_range/r_steps/2**0.5)) in which the field is calculated
+        
+        ex2[y,x2] with y each index of the coordinates np.linspace(x_range/2,-x_range/2,2*int(x_range/r_steps/2)) and x each index for np.linspace(-x_range/2,x_range/2,2*int(x_range/r_steps/2)) in which the field is calculated
+        
+        The XZ plane is given by y=0 and the XZ plane by z=zp0 
+        
+        The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
     '''
     #passage to nm:
     f*=10**6
 
-    ztotalsteps=int(np.rint(z_field_of_view/zsteps/2))
-    rtotalsteps=int(np.rint(field_of_view/rsteps/2**0.5))
+    ztotalsteps=int(np.rint(z_range/z_steps/2))
+    rtotalsteps=int(np.rint(x_range/r_steps/2**0.5))
 
     def cart2pol(x,y):    
         r = np.sqrt(x**2+y**2)
@@ -131,18 +128,18 @@ def no_mask_fields(II1,II2,II3,wavelength,I0,beta,gamma,zsteps,rsteps,field_of_v
     ######################xy plane#######################
     #index 2 represents it's calculated on the xy plane
 
-    x2,y2=(int(np.rint(field_of_view/rsteps/2-1)*2),int(np.rint(field_of_view/rsteps/2-1)*2))
+    x2,y2=(int(np.rint(x_range/r_steps/2-1)*2),int(np.rint(x_range/r_steps/2-1)*2))
     exx2=np.zeros((x2,y2),dtype=complex)
     eyx2=np.zeros((x2,y2),dtype=complex)
     ezx2=np.zeros((x2,y2),dtype=complex)
     exy2=np.zeros((x2,y2),dtype=complex)
     eyy2=np.zeros((x2,y2),dtype=complex)
     ezy2=np.zeros((x2,y2),dtype=complex)
-    zz=ztotalsteps + int(np.rint(zp0/z_field_of_view*2*ztotalsteps))  #zz signals to the row of kz=kz0 in each II
+    zz=ztotalsteps + int(np.rint(zp0/z_range*2*ztotalsteps))  #zz signals to the row of kz=kz0 in each II
     for xx in range(x2):
         for yy in range(y2):
-            xcord=xx - int(np.rint(field_of_view/2/rsteps))+1
-            ycord=-yy + int(np.rint(field_of_view/2/rsteps))-1
+            xcord=xx - int(np.rint(x_range/2/r_steps))+1
+            ycord=-yy + int(np.rint(x_range/2/r_steps))-1
             phip,rp=cart2pol(xcord,ycord)#nuevamente el +1 es para no tener problemas
             rp=int(np.rint(rp))
             exx2[yy,xx]=-a1*1j*(II1[zz,rp]+np.cos(2*phip)*II3[zz,rp])

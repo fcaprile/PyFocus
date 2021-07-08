@@ -10,43 +10,39 @@ from matplotlib import pyplot as plt
 from scipy.integrate import quad
 from scipy import interpolate
 
-def VP_integration(alpha,n,f,w0,wavelength,rsteps,zsteps,field_of_view,z_field_of_view):    
+def VP_integration(alpha,n,f,w0,wavelength,x_steps,z_steps,x_range,z_range):    
     '''
-    Generate the II matrixes, which are the result of the integration for different positions along the radius and z
+    Generate the II arrays, which are the result of the integration for different positions along the radius and z
     
     This matrixes are later used to calculate the focused field
     
-    Parameters: 
-        
-        alpha: semiangle of aperture
-        
-        n: refraction medium for the optical system
-        
-        f: focal distance (mm)
-        
-        w0: incident gaussian beam radius (mm)
-        
-        wavelength: wavelength in the medium (equals wavelength in vacuum/n)
-        
-        rsteps: resolution in the x or y coordinate (nm)
-        
-        zsteps: resolution in the axial coordinate,z (nm)
-        
-        field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)
-        
-        z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)
+    Parameters:    
+        :alpha: semiangle of aperture
 
-    The other parameters are specified in sim
+        :wavelength: wavelength in the medium (equals wavelength in vacuum/n)
+        
+        :x_steps: resolution in the x or y coordinate (nm)
+        
+        :z_steps: resolution in the axial coordinate,z (nm)
+        
+        :x_range: field of view in the x or y coordinate in which the field is calculated (nm)
+        
+        :z_range: field of view in the axial coordinate, z, in which the field is calculated (nm)
+
+        The other parameters are specified in sim
+        
+    Returns:
+        :(arrays): II1,II2,II3
     '''
     
     #passage to nm:
     f*=10**6
     w0*=10**6
     
-    ztotalsteps=int(np.rint(z_field_of_view/zsteps/2))
-    rtotalsteps=int(np.rint(field_of_view/rsteps/2**0.5)) #the actual field of view of the X axis in the XZ plane will be field_of_view*2**0.5
+    ztotalsteps=int(np.rint(z_range/z_steps/2))
+    rtotalsteps=int(np.rint(x_range/x_steps/2**0.5)) #the actual field of view of the X axis in the XZ plane will be x_range*2**0.5
     
-    gaussian=lambda theta:np.exp(-(np.sin(theta)*f/w0)**2)#inciding gaussian beam's amplitude
+    gaussian=lambda theta:np.exp(-(np.sin(theta)*f/w0)**2)#incident gaussian beam's amplitude
     
     I1=np.zeros((ztotalsteps,rtotalsteps),dtype=complex)
     I2=np.copy(I1)
@@ -62,8 +58,8 @@ def VP_integration(alpha,n,f,w0,wavelength,rsteps,zsteps,field_of_view,z_field_o
         
     for zz in tqdm(range(ztotalsteps),desc='VP field calculation'):
         for rr in range(rtotalsteps):
-            kz=zz*2*np.pi/wavelength/ztotalsteps*z_field_of_view/2 
-            kr=rr*2*np.pi/wavelength/rtotalsteps*field_of_view/2*2**0.5
+            kz=zz*2*np.pi/wavelength/ztotalsteps*z_range/2 
+            kr=rr*2*np.pi/wavelength/rtotalsteps*x_range/2*2**0.5
             I1[zz,rr]=complex_quadrature(fun4,0,alpha)[0]
             I2[zz,rr]=complex_quadrature(fun5,0,alpha)[0]
             I3[zz,rr]=complex_quadrature(fun6,0,alpha)[0]
@@ -76,39 +72,40 @@ def VP_integration(alpha,n,f,w0,wavelength,rsteps,zsteps,field_of_view,z_field_o
     II3=np.vstack((np.flipud(np.conj(I3)),I3[1:,:]))
     II4=np.vstack((np.flipud(np.conj(I4)),I4[1:,:]))
     II5=np.vstack((np.flipud(np.conj(I5)),I5[1:,:]))
+
     return II1,II2,II3,II4,II5
 
-def VP_fields(II1,II2,II3,II4,II5,wavelength,I0,gamma,beta,rsteps,zsteps,field_of_view,z_field_of_view,phip0,n,f,zp0):
+def VP_fields(II1,II2,II3,II4,II5,wavelength,I0,gamma,beta,x_steps,z_steps,x_range,z_range,phip0,n,f,zp0):
     '''
     Given the II matrixes calculate the field on the focus
     
-    parameters:
+    parameters:        
+        :phip0: Gives an azimutal offset for the XZ plane calculus
+    
+        :wavelength: wavelength in the medium (equals wavelength in vacuum/n)
         
-        phip0: Gives an azimutal offset for the XZ plane calculus
+        :zp0: axial position of the XY plane
     
-    wavelength is given in the medium (equals wavelength in vacuum/n)
+        The other parameters are specified in sim.py
     
-    The other parameters are specified in sim.py
+    Returns:        
+        :arrays: Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)
     
-    Returns:
+        Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+            
+        ex[z,x] with z each index of the coordinates np.linspace(z_range/2,-z_range/2,2*int(z_range/z_steps/2)) and x each index for np.linspace(-x_range/2**0.5,x_range/2**0.5,2*int(x_range/x_steps/2**0.5)) in which the field is calculated
         
-        arrays: Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)
-    
-    Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        ex2[y,x2] with y each index of the coordinates np.linspace(x_range/2,-x_range/2,2*int(x_range/x_steps/2)) and x each index for np.linspace(-x_range/2,x_range/2,2*int(x_range/x_steps/2)) in which the field is calculated
         
-    ex[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
-    
-    ex2[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
-    
-    The XZ plane is given by y=0 and the XZ plane by z=zp0 
-    
-    The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
+        The XZ plane is given by y=0 and the XZ plane by z=zp0 
+        
+        The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
     '''
     #passage to nm:
     f*=10**6
 
-    ztotalsteps=int(np.rint(z_field_of_view/zsteps/2))
-    rtotalsteps=int(np.rint(field_of_view/rsteps/2**0.5))
+    ztotalsteps=int(np.rint(z_range/z_steps/2))
+    rtotalsteps=int(np.rint(x_range/x_steps/2**0.5))
 
     def cart2pol(x,y):    
         r = np.sqrt(x**2+y**2)
@@ -142,18 +139,18 @@ def VP_fields(II1,II2,II3,II4,II5,wavelength,I0,gamma,beta,rsteps,zsteps,field_o
     ######################xy plane#######################
     #index 2 represents it's calculated on the xy plane
 
-    x2,y2=(int(np.rint(field_of_view/rsteps/2-1)*2),int(np.rint(field_of_view/rsteps/2-1)*2))
+    x2,y2=(int(np.rint(x_range/x_steps/2-1)*2),int(np.rint(x_range/x_steps/2-1)*2))
     exx2=np.zeros((x2,y2),dtype=complex)
     eyx2=np.zeros((x2,y2),dtype=complex)
     ezx2=np.zeros((x2,y2),dtype=complex)
     exy2=np.zeros((x2,y2),dtype=complex)
     eyy2=np.zeros((x2,y2),dtype=complex)
     ezy2=np.zeros((x2,y2),dtype=complex)
-    zz=ztotalsteps + int(np.rint(zp0/z_field_of_view*2*ztotalsteps))  #zz signals to the row of kz=kz0 in each II
+    zz=ztotalsteps + int(np.rint(zp0/z_range*2*ztotalsteps))  #zz signals to the row of kz=kz0 in each II
     for xx in range(x2):
         for yy in range(y2):
-            xcord=xx - int(np.rint(field_of_view/2/rsteps))+1
-            ycord=-yy + int(np.rint(field_of_view/2/rsteps))-1
+            xcord=xx - int(np.rint(x_range/2/x_steps))+1
+            ycord=-yy + int(np.rint(x_range/2/x_steps))-1
             phip,rp=cart2pol(xcord,ycord)#nuevamente el +1 es para no tener problemas
             rp=int(np.rint(rp))
             exx2[yy,xx]=a1*(II1[zz,rp]*np.exp(1j*phip) - 0.5*II2[zz,rp]*np.exp(-1j*phip) + 0.5*II3[zz,rp]*np.exp(3j*phip))
@@ -175,19 +172,22 @@ def VP_fraunhofer(gamma=45,beta=-90,steps=500,R=5,L=100,I_0=1,wavelength=640,FOV
     '''
     Calculate and plot the field inciding on the lens by Fraunhofer's difraction formula
     
-    Returns:
+        parameters:        
+        :limit: Ammount of iterations the scipy.quad command can do
         
-        E_rho, the inciding amplitude along the radial coordinate for an x polarized beam
+        :div: Ammount of divisions in which the integration is divided in order to avoid the scipy.quad function from failing to converge
         
-        Ex and Ey, the x and y components of this amplitude, in a matrix over the x and y coordinates so it can be ploted easily
+        :plot (bool): True plots the inciding field's intensity and amplitude
+        
+        :wavelength: wavelength given in the medium (equals wavelength in vacuum/n)
+        
+        The other parameters are specified in sim.py
     
-    limit is the ammount of iterations the scipy.quad command can do
-    div is the ammount of divisions in which the integration is divided in order to avoid the scipy.quad function from failing to converge
+    Returns:        
+        :array: E_rho: the inciding amplitude along the radial coordinate for an x polarized beam
+        
+        :arrays: Ex and Ey, the x and y components of this amplitude, in a matrix over the x and y coordinates so it can be ploted easily
     
-    plot=True plots the inciding field's intensity and amplitude'
-    wavelength is given in the medium (equals wavelength in vacuum/n)
-    
-    The other parameters are specified in sim.py
     '''
     
     #passage to mm:
@@ -327,7 +327,7 @@ def VP_fraunhofer(gamma=45,beta=-90,steps=500,R=5,L=100,I_0=1,wavelength=640,FOV
     '''    
     return E_fun,Ex,Ey
 
-def VP_integration_with_propagation(alpha,n,f,radius_VP,wavelength,zp0,zsteps,rsteps,field_of_view,laser_width,E_rho,div):    
+def VP_integration_with_propagation(alpha,n,f,radius_VP,wavelength,zp0,z_steps,x_steps,x_range,laser_width,E_rho,div):    
     '''
     Given the inciding field E_rho, which only depends on the radial coordinate, generate the I matrixes, which are the same as in VP_integration
     
@@ -340,7 +340,7 @@ def VP_integration_with_propagation(alpha,n,f,radius_VP,wavelength,zp0,zsteps,rs
     
     E_theta=lambda theta: E_rho(np.sin(theta)*f)
     
-    rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2))
+    rtotalsteps=np.int(np.rint(x_range/x_steps*2**0.5/2))
     
     I1=np.zeros(rtotalsteps,dtype=complex)
     I2=np.copy(I1)
@@ -357,7 +357,7 @@ def VP_integration_with_propagation(alpha,n,f,radius_VP,wavelength,zp0,zsteps,rs
     # alpha_VP=np.arctan(radius_VP/(f*wavelength))#since radius_VP is given in nm, i translate f to nm    
     for rr in tqdm(range(rtotalsteps),desc='Focal plane field calculation'):
         kz=zp0*2*np.pi/wavelength 
-        kr=rr*2*np.pi/wavelength/rtotalsteps*field_of_view/2*2**0.5
+        kr=rr*2*np.pi/wavelength/rtotalsteps*x_range/2*2**0.5
         for l in range(div):
             I1[rr]+=complex_quadrature(fun4,alpha*l/div,alpha*(l+1)/div)[0]
             I2[rr]+=complex_quadrature(fun5,alpha*l/div,alpha*(l+1)/div)[0]
@@ -368,7 +368,7 @@ def VP_integration_with_propagation(alpha,n,f,radius_VP,wavelength,zp0,zsteps,rs
     return I1,I2,I3,I4,I5
 
 
-def VP_fields_with_propagation(I1,I2,I3,I4,I5,wavelength,I0,gamma,beta,rsteps,zsteps,field_of_view,phip0,n,f,zp0):
+def VP_fields_with_propagation(I1,I2,I3,I4,I5,wavelength,I0,gamma,beta,x_steps,z_steps,x_range,phip0,n,f,zp0):
     '''
     Given the I matrixes calculate the field on the focus
     Since the calculus takes a long time, only the field along the XY plane is calculated
@@ -377,21 +377,20 @@ def VP_fields_with_propagation(I1,I2,I3,I4,I5,wavelength,I0,gamma,beta,rsteps,zs
 
     The other parameters are specified in sim.py
 
-    Returns:
+    Returns:        
+        :arrays: Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)
+    
+        Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+            
+        ex[z,x] with z each index of the coordinates np.linspace(z_range/2,-z_range/2,2*int(z_range/z_steps/2)) and x each index for np.linspace(-x_range/2**0.5,x_range/2**0.5,2*int(x_range/x_steps/2**0.5)) in which the field is calculated
         
-        arrays: Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)
-    
-    Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        ex2[y,x2] with y each index of the coordinates np.linspace(x_range/2,-x_range/2,2*int(x_range/x_steps/2)) and x each index for np.linspace(-x_range/2,x_range/2,2*int(x_range/x_steps/2)) in which the field is calculated
         
-    ex[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
-    
-    ex2[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
-    
-    The XZ plane is given by y=0 and the XZ plane by z=zp0 
-    
-    The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
+        The XZ plane is given by y=0 and the XZ plane by z=zp0 
+        
+        The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
     '''
-    rtotalsteps=np.int(np.rint(field_of_view/rsteps*2**0.5/2))
+    rtotalsteps=np.int(np.rint(x_range/x_steps*2**0.5/2))
 
     def cart2pol(x,y):    
         r = (x**2+y**2)**0.5
@@ -409,7 +408,7 @@ def VP_fields_with_propagation(I1,I2,I3,I4,I5,wavelength,I0,gamma,beta,rsteps,zs
     a2=E2*np.exp(1j*beta)
         
 
-    x,y=(int(np.rint(field_of_view/rsteps/2-1)*2),int(np.rint(field_of_view/rsteps/2-1)*2))
+    x,y=(int(np.rint(x_range/x_steps/2-1)*2),int(np.rint(x_range/x_steps/2-1)*2))
     exx=np.zeros((x,y),dtype=complex)
     eyx=np.zeros((x,y),dtype=complex)
     ezx=np.zeros((x,y),dtype=complex)

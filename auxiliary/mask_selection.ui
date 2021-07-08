@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>312</width>
-    <height>241</height>
+    <width>315</width>
+    <height>285</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,12 +18,12 @@
     <rect>
      <x>10</x>
      <y>150</y>
-     <width>211</width>
+     <width>271</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string> rho, phi (radial and azimutal coordinates)</string>
+    <string> rho (radial coordinate, from 0 to phase mask  radius)</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_3">
@@ -43,33 +43,33 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>170</y>
+     <y>190</y>
      <width>181</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>w0 (gaussian beam's radius)</string>
+    <string>w0 (gaussian beam radius)</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>190</y>
-     <width>131</width>
+     <y>210</y>
+     <width>181</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>f (focal distance)</string>
+    <string>f (focal distance of objective lens)</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>210</y>
+     <y>230</y>
      <width>101</width>
      <height>16</height>
     </rect>
@@ -119,6 +119,19 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Load mask from .txt file</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>170</y>
+     <width>301</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>phi (azimutal coordinate, from 0 to 2pi)</string>
    </property>
   </widget>
  </widget>

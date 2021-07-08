@@ -3,47 +3,45 @@ High-level functions to simulate the foci obtained when: Focusing a gaussian bea
 
 The functions use the 'parameters' array, defined as:
     
-    parameters=np.array((NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name), dtype=object)
+    parameters=np.array((NA, n, h, w0, wavelength, gamma, beta, z, x_steps, z_steps, x_range, z_range, I0, L, R, ds, z_int, figure_name), dtype=object)
     
 With:
     
-        NA (float): Numerical aperture
+        :NA (float): Numerical aperture
         
-        n (float or array, depends on interface): Refraction index for the medium of the optical system. If interface=True it must be given as a numpy array
+        :n (float or array): Type depends on interface: float for no interface, array for interface. Refraction index for the medium of the optical system.
         
-        h (float): Radius of aperture of the objective lens(mm)
+        :h (float): Radius of aperture of the objective lens(mm)
+                
+        :w0 (float): Radius of the incident gaussian beam (mm)
         
-        f (float): Focal distance of the objective lens (mm)
+        :wavelength (float): Wavelength in the medium of the objective lens (equals to wavelength in vacuum/n)
         
-        w0 (float): Radius of the incident gaussian beam (mm)
+        :gamma (float): Parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)
         
-        wavelength (float): Wavelength in the medium of the objective lens (equals to wavelength in vacuum/n)
+        :beta (float): parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)
         
-        gamma (float): Parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)
+        :z (float): Axial position for the XY plane (nm)
         
-        beta (float): parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)
+        :x_steps (float): Resolution in the X or Y coordinate for the focused field (nm)
         
-        zp0 (float): Axial position in which to calculate the XY plane, given by z=zp0, (nm)
+        :z_steps (float): Resolution in the axial coordinate (Z) for the focused field (nm)
         
-        rsteps (float): Resolution in the X or Y coordinate for the focused field (nm)
+        :x_range (float): Field of view in the X or Y coordinate in which the focused field is calculated (nm)
         
-        zsteps (float): Resolution in the axial coordinate (Z) for the focused field (nm)
+        :z_range (float): field of view in the axial coordinate (z) in which the focused field is calculated (nm)
         
-        field_of_view (float): Field of view in the X or Y coordinate in which the focused field is calculated (nm)
+        :I_0 (float): Incident field intensity (mW/cm^2)
         
-        z_field_of_view (float): field of view in the axial coordinate (z) in which the focused field is calculated (nm)
+        :L (float, optional): Distance between phase mask and objective lens (mm), only used if propagation=True
         
-        I_0 (float): Incident field intensity (uW/cm^2)
+        :R (float, optional): Phase mask radius (mm), only used if propagation=True
         
-        L (float, optional): Distance between phase mask and objective lens (mm), only used if propagation=True
+        :ds (array, optional): Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
         
-        R (float, optional): Phase mask radius (mm), only used if propagation=True
+        :z_int (float, optional): Axial position of the interphase. Only used if interface=True
         
-        ds (array, optional): Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
-        
-        zint (float, optional): Axial position of the interphase. Only used if interface=True
-        
-        figure_name (string, optional): Name for the images of the field. Also used as saving name if using the UI    
+        :figure_name (string, optional): Name for the images of the field. Also used as saving name if using the UI    
 '''
 
 import numpy as np
@@ -55,39 +53,40 @@ from auxiliary.no_mask_functions import no_mask_integration, no_mask_fields
 from auxiliary.custom_mask_functions import generate_incident_field, plot_in_cartesian, custom_mask_objective_field, custom_mask_focus_field_XZ_XY
 from auxiliary.interface import interface_custom_mask_focus_field_XZ_XY
 
-def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength=640,gamma=45,beta=90,zp0=0,rsteps=5,zsteps=8,field_of_view=1000,z_field_of_view=2000,I0=1,L='',R='',ds='',zint='',figure_name=''):#f (the focal distance) is given by the sine's law, but can be modified if desired
+def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name=''):#f (the focal distance) is given by the sine's law, but can be modified if desired
     '''
     Simulate the field obtained by focusing a gaussian beam modulated by a VP mask 
     
-    Args:
-        
-        propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer's difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation
-        
-        interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
+    Args:        
+        :propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer's difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation 
+       
+        :interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
     
-        NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the 'parameters' array
+        :Parameters: NA,n,h,w0,wavelength,gamma,beta,z,x_steps,z_steps,x_range,z_range,I0,L,R,ds,z_int,figure_name: Simulation parameters, defined as part of the 'parameters' array
         
-    Returns:
+    Returns:        
+        :arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
+    
+        Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+            
+        ex_XZ[z,x] with z each index of the coordinates np.linspace(z_range/2,-z_range/2,2*int(z_range/z_steps/2)) and x each index for np.linspace(-x_range/2**0.5,x_range/2**0.5,2*int(x_range/x_steps/2**0.5)) in which the field is calculated. 
         
-        arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
-    
-    Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        IMPORTANT: It is worth noting the x positions are sqrt(2) times higher to allow a square field of view for the XY plane (because the maximum radial position to be calculated for the XY plane is higher than the maximum x or y position)
         
-    ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
-    
-    ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
-    
-    The XZ plane is given by y=0 and the XZ plane by z=zp0 
-    
-    The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
+        ex_XZ[y,x2] with y each index of the coordinates np.linspace(x_range/2,-x_range/2,2*int(x_range/x_steps/2)) and x each index for np.linspace(-x_range/2,x_range/2,2*int(x_range/x_steps/2)) in which the field is calculated
+        
+        The XZ plane is given by y=0 and the XY plane by the z parameter
+        
+        The unit of the intensity is the same as the initial intensity (mW/cm^2)
     '''
     
     
     if interface==False:#no interface
         alpha=np.arcsin(NA / n)
+        f=h*n/NA#sine's law
         if propagation==False:
-            II1,II2,II3,II4,II5=VP_integration(alpha,n,f,w0,wavelength/n,rsteps,zsteps,field_of_view,z_field_of_view)
-            ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=VP_fields(II1,II2,II3,II4,II5,wavelength/n,I0,gamma,beta,rsteps,zsteps,field_of_view,z_field_of_view,0,n,f,zp0)                        
+            II1,II2,II3,II4,II5=VP_integration(alpha,n,f,w0,wavelength/n,x_steps,z_steps,x_range,z_range)
+            ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=VP_fields(II1,II2,II3,II4,II5,wavelength/n,I0,gamma,beta,x_steps,z_steps,x_range,z_range,0,n,f,z)                        
         else:
             E_rho,Ex,Ey=VP_fraunhofer(gamma,beta,1000,R,L,I0,wavelength/n,h,w0,2000,20,figure_name=figure_name)
             '''
@@ -113,13 +112,13 @@ def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength
 
             
             #resolution for field near the focus
-            resolution_focus=int(field_of_view/rsteps)
-            resolution_z=int(z_field_of_view/zsteps)
+            resolution_focus=int(x_range/x_steps)
+            resolution_z=int(z_range/z_steps)
             
             #smaller numbers give faster integration times
             
             #calculate field at the focal plane:
-            ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength/n,z_field_of_view,resolution_z,zp0,resolution_focus,resolution_theta,resolution_phi,field_of_view)
+            ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength/n,z_range,resolution_z,z,resolution_focus,resolution_theta,resolution_phi,x_range)
     
     else:#interface is given
         alpha=np.arcsin(NA / n[0])
@@ -130,8 +129,8 @@ def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength
         resolution_phi=200
         
         #resolution for field near the focus
-        resolution_focus=int(field_of_view/rsteps)
-        resolution_z=int(z_field_of_view/zsteps)
+        resolution_focus=int(x_range/x_steps)
+        resolution_z=int(z_range/z_steps)
         
         #smaller numbers give faster integration times
         
@@ -149,35 +148,35 @@ def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength
             ex_lens,ey_lens,I_cartesian,Ex_cartesian,Ey_cartesian=custom_mask_objective_field(h,gamma,beta,resolution_theta,resolution_phi,N_rho,N_phi,alpha,f,mask_function_VP,R,L,I0,wavelength*10**-6,w0,figure_name,plot=True)
 
         #calculate field at the focal plane:
-        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,zint,z_field_of_view,resolution_z,zp0,resolution_focus,resolution_theta,resolution_phi,field_of_view)
+        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,z,resolution_focus,resolution_theta,resolution_phi,x_range)
     
     return ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY
 
-def no_mask(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength=640,gamma=45,beta=90,zp0=0,rsteps=5,zsteps=8,field_of_view=1000,z_field_of_view=2000,I0=1,L='',R='',ds='',zint='',figure_name=''):#f (the focal distance) is given by the sine's law, but can be modified if desired
+def no_mask(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name=''):#f (the focal distance) is given by the sine's law, but can be modified if desired
     '''
     Simulate the field obtained by focusing a gaussian beam without being modulated in phase
     
-    Args:
+    Args:        
+        :propagation (bool): Kept for homogeneity of the functions, True yields no diference from False, where the field incident on the lens is calculated by neglecting the propagation towards the objective lens
         
-        propagation (bool): Kept for homogeneity of the functions, True yields no diference from False, where the field incident on the lens is calculated by neglecting the propagation towards the objective lens
+        :interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
+    
+        :Parameters: NA,n,h,w0,wavelength,gamma,beta,z,x_steps,z_steps,x_range,z_range,I0,L,R,ds,z_int,figure_name: Simulation parameters, defined as part of the 'parameters' array
         
-        interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
+    Returns:        
+        :arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
     
-        NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the 'parameters' array
+        Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+            
+        ex_XZ[z,x] with z each index of the coordinates np.linspace(z_range/2,-z_range/2,2*int(z_range/z_steps/2)) and x each index for np.linspace(-x_range/2**0.5,x_range/2**0.5,2*int(x_range/x_steps/2**0.5)) in which the field is calculated. 
         
-    Returns:
+        IMPORTANT: It is worth noting the x positions are sqrt(2) times higher to allow a square field of view for the XY plane (because the maximum radial position to be calculated for the XY plane is higher than the maximum x or y position)
         
-        arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
-    
-    Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        ex_XZ[y,x2] with y each index of the coordinates np.linspace(x_range/2,-x_range/2,2*int(x_range/x_steps/2)) and x each index for np.linspace(-x_range/2,x_range/2,2*int(x_range/x_steps/2)) in which the field is calculated
         
-    ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
-    
-    ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
-    
-    The XZ plane is given by y=0 and the XZ plane by z=zp0 
-    
-    The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
+        The XZ plane is given by y=0 and the XY plane by the z parameter 
+        
+        The unit of the intensity is the same as the initial intensity (mW/cm^2)
     '''
     
     if propagation==True:
@@ -185,50 +184,49 @@ def no_mask(propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavel
         time.sleep(0.5)
     if interface==False:#no interface
         alpha=np.arcsin(NA / n)
-        II1,II2,II3=no_mask_integration(alpha,n,f,w0,wavelength/n,field_of_view,z_field_of_view,zsteps,rsteps)
-        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=no_mask_fields(II1,II2,II3,wavelength/n,I0,beta,gamma,zsteps,rsteps,field_of_view,z_field_of_view,0,n,f,zp0)
+        f=h*n/NA
+        II1,II2,II3=no_mask_integration(alpha,n,f,w0,wavelength/n,x_range,z_range,z_steps,x_steps)
+        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=no_mask_fields(II1,II2,II3,wavelength/n,I0,beta,gamma,z_steps,x_steps,x_range,z_range,0,n,f,z)
 
     else:#interface
         alpha=np.arcsin(NA / n[0])
         mask_function=lambda theta, phi,w0,f,wavelength: 1# is the nule mask function
         resolution_theta=200
         resolution_phi=200
-        resolution_focus=int(field_of_view/rsteps)
-        resolution_z=int(z_field_of_view/zsteps)
+        resolution_focus=int(x_range/x_steps)
+        resolution_z=int(z_range/z_steps)
 
         ex_lens,ey_lens=generate_incident_field(mask_function,alpha,f,resolution_phi,resolution_theta,gamma,beta,w0,I0,wavelength/n[0])
-        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,zint,z_field_of_view,resolution_z,zp0,resolution_focus,resolution_theta,resolution_phi,field_of_view,x0=0,y0=0,z0=0,plot_plane='X')
+        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,z,resolution_focus,resolution_theta,resolution_phi,x_range,x0=0,y0=0,z0=0,plot_plane='X')
 
     return ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY
 
-def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3.21,w0=5,wavelength=640,gamma=45,beta=90,zp0=0,rsteps=5,zsteps=8,field_of_view=1000,z_field_of_view=2000,I0=1,L='',R='',ds='',zint='',figure_name='',resolution_theta=200,resolution_phi=200):#f (the focal distance) is given by the sine's law, but can be modified if desired
+def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name='',resolution_theta=200,resolution_phi=200):#f (the focal distance) is given by the sine's law, but can be modified if desired
     '''
     Simulate the field obtained by focusing a gaussian beam modulated by a custom phase mask
     
     The amplitude term of a gaussian beam is already added to the incident field despite the phase mask used, if this is not desired w0=100 (a big number) makes this term essentially 1
 
-    Args:
+    Args:        
+        :propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer's difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation
         
-        propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer's difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation
+        :interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
+    
+        :Parameters: NA,n,h,w0,wavelength,gamma,beta,z,x_steps,z_steps,x_range,z_range,I0,L,R,ds,z_int,figure_name: Simulation parameters, defined as part of the 'parameters' array
+    Returns:        
+        :arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
+    
+        Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+            
+        ex_XZ[z,x] with z each index of the coordinates np.linspace(z_range/2,-z_range/2,2*int(z_range/z_steps/2)) and x each index for np.linspace(-x_range/2**0.5,x_range/2**0.5,2*int(x_range/x_steps/2**0.5)) in which the field is calculated. 
         
-        interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
-    
-        NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the 'parameters' array
+        IMPORTANT: It is worth noting the x positions are sqrt(2) times higher to allow a square field of view for the XY plane (because the maximum radial position to be calculated for the XY plane is higher than the maximum x or y position)
         
-    Returns:
+        ex_XZ[y,x2] with y each index of the coordinates np.linspace(x_range/2,-x_range/2,2*int(x_range/x_steps/2)) and x each index for np.linspace(-x_range/2,x_range/2,2*int(x_range/x_steps/2)) in which the field is calculated
         
-        arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
-    
-    Each index of the matrixes corresponds to a different pair of coordinates, for example: 
+        The XZ plane is given by y=0 and the XY plane by the z parameter 
         
-    ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
-    
-    ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
-    
-    The XZ plane is given by y=0 and the XZ plane by z=zp0 
-    
-    The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)
-    
+        The unit of the intensity is the same as the initial intensity (mW/cm^2)
     '''
     #moving to wavelength in the optical system's medium
     if interface==False:
@@ -242,14 +240,14 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3
     #Usual parameters for integration precision:
     
     #resolution for field near the focus
-    resolution_focus=int(field_of_view/rsteps)
-    resolution_z=int(z_field_of_view/zsteps)
+    resolution_focus=int(x_range/x_steps)
+    resolution_z=int(z_range/z_steps)
     
     #smaller numbers give faster integration times
     
     #pasage to mm:
     wavelength*=10**-6
-    
+    f=h*n/NA    
     if callable(mask_function)==True:#if a function is given, turn it into the ex_lens and ey_lens variables
         #resolution for field at objective
         if propagation==False:
@@ -268,21 +266,24 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,f=3
             plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
 
     elif type(mask_function)==np.ndarray:#if an array is given
+        if propagation==True:
+            print('Giving mask function as an array not implemented for calculation of incient field propagation. Can be implemented by obtaining "ex_lens" and "ey_lens" arrays using the "generate_incident_field" function manualy replacing "mask_function" with the desired array')
+            print('Simulation will continue as if propagation is False')
         ex_lens,ey_lens=mask_function*np.cos(gamma*np.pi/180)*I0**0.5,mask_function*np.sin(gamma*np.pi/180)*np.exp(1j*beta*np.pi/180)*I0**0.5 #make the x and y component based on polarization
         plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
         resolution_phi,resolution_theta=np.shape(mask_function)
     else:
-        print('Wrong format for mask function, acceptable are functions or arrays')
+        print('Wrong format for mask function, acceptable formats are functions or arrays')
         
     #calculate field at the focal plane:
     #pasage to nm:
     wavelength*=10**6
 
     if interface==False:#no interface
-        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_field_of_view,resolution_z,zp0,resolution_focus,resolution_theta,resolution_phi,field_of_view)
+        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,resolution_z,z,resolution_focus,resolution_theta,resolution_phi,x_range)
     else:
         wavelength*=n[0] #to return to wavelength at vacuum
-        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,zint,z_field_of_view,resolution_z,zp0,resolution_focus,resolution_theta,resolution_phi,field_of_view)
+        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,z,resolution_focus,resolution_theta,resolution_phi,x_range)
 
     return ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY
 

@@ -2,27 +2,28 @@
 from matplotlib import pyplot as plt
 from auxiliary.plot_polarization_elipses import polarization_elipse
 
-def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view,figure_name):
+def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name=''):
     '''
     Plot the calculated fields ont the XY and XZ planes
     
     parameters are ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
     
     Each index of the matrixes corresponds to a different pair of coordinates, for example: 
-    ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated
-    ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated
+    ex_XZ[z,x] with z each index of the coordinates np.linspace(z_range/2,-z_range/2,2*int(z_range/zsteps/2)) and x each index for np.linspace(-x_range/2**0.5,x_range/2**0.5,2*int(x_range/rsteps/2**0.5)) in which the field is calculated
+    ex_XZ[y,x2] with y each index of the coordinates np.linspace(x_range/2,-x_range/2,2*int(x_range/rsteps/2)) and x each index for np.linspace(-x_range/2,x_range/2,2*int(x_range/rsteps/2)) in which the field is calculated
+    
+    The intensity is ploted in (kW/cm^2) since most focused fields at NA=1.4 have a maximum intensity in the order of 10^6 to 10^8 mW/cm^2
     '''
-    zmax=z_field_of_view/2
-    rmax=field_of_view*2**0.5/2
+    #For pasage from (mW/cm^2) to (kW/cm^2) the intensity will be divided by 10**6
+    
+    zmax=z_range/2
+    rmax=x_range*2**0.5/2 #the maximum radial distance is calculated sqrt(2) times biger than the maximum x or y distnace in the previous functions
     x,y=np.shape(ex_XZ)
 
-    radial_pixel_width=field_of_view*2**0.5/2/y
-    Ifield_xz=np.zeros((x,y))
-    for i in range(x):
-        for j in range(y):
-            Ifield_xz[i,j]=np.real(ex_XZ[i,j]*np.conj(ex_XZ[i,j]) + ey_XZ[i,j]*np.conj(ey_XZ[i,j]) +ez_XZ[i,j]*np.conj(ez_XZ[i,j]))
-
-
+    radial_pixel_width=x_range*2**0.5/2/y#value used to show the pixels centered at the radial position at which they are calculated
+    Ifield_xz=np.abs(ex_XZ)**2+np.abs(ey_XZ)**2+np.abs(ez_XZ)**2
+    Ifield_xz/=10**6
+    
     plt.rcParams['font.size']=14
     #intensity plot
     fig = plt.figure(num=str(figure_name)+'_Intensity',figsize=(16, 8))
@@ -37,12 +38,10 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
 
     
     x2,y2=np.shape(ex_XY)
-    Ifield_xy=np.zeros((x2,y2))
-    for i in range(x2):
-        for j in range(y2):
-            Ifield_xy[i,j]=np.real(ex_XY[i,j]*np.conj(ex_XY[i,j]) + ey_XY[i,j]*np.conj(ey_XY[i,j]) +ez_XY[i,j]*np.conj(ez_XY[i,j]))
+    Ifield_xy=np.abs(ex_XY)**2+np.abs(ey_XY)**2+np.abs(ez_XY)**2
+    Ifield_xy/=10**6
 
-    xmax=field_of_view/2
+    xmax=x_range/2
     extent=[-xmax-radial_pixel_width,xmax-radial_pixel_width,-xmax+radial_pixel_width,xmax+radial_pixel_width]
     ax2 = fig.add_subplot(spec[0, 1])
     ax2.set_title('Intensity on xy',pad=20)
@@ -67,7 +66,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     ax4.set_title('Polarization on xy')
     pos4=ax4.imshow(Ifield_xy,extent=extent,interpolation='none', aspect='auto',alpha=0.5)
     cbar4=fig.colorbar(pos4, ax=ax4)
-    cbar4.ax.set_ylabel('Intensidad (kW/cm\u00b2)')
+    cbar4.ax.set_ylabel('Intensity (kW/cm\u00b2)')
     ax4.set_xlabel('x (nm)')
     ax4.set_ylabel('y (nm)')  
     ax4.axis('square')
@@ -80,7 +79,8 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
         for y_coor in y_pos:
             x_index = (np.abs(x_values - x_coor)).argmin()
             y_index = (np.abs(y_values - y_coor)).argmin()
-            if np.abs(Ifield_xy[y_index,x_index]/np.max(Ifield_xy))>0.15 and np.abs(ez_XY[y_index,x_index])**2/np.max(Ifield_xy)<0.9:
+            # if np.abs(Ifield_xy[y_index,x_index]/np.max(Ifield_xy))>0.15 and np.abs(ez_XY[y_index,x_index])**2/np.max(Ifield_xy)<0.9:#added a condition for the z intensity to avoid point where the polarization is mostly along z
+            if np.abs(Ifield_xy[y_index,x_index]/np.max(Ifield_xy))>0.15: #removed the z intensity condition
                 if x_coor==x_pos[5] and y_coor==y_pos[5]: #at x,y=0,0 usually the atan2 does not work well
                     x_index+=1
                     y_index+=1
@@ -149,7 +149,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view
     cbar_1_1.ax.set_ylabel('Phase (º)')
     fig2.tight_layout()
 
-def plot_XY(ex_XY,ey_XY,ez_XY,field_of_view,figure_name):   
+def plot_XY(ex_XY,ey_XY,ez_XY,x_range,figure_name):   
     '''
     Plot the calculated fields ont the XY plane
     '''
@@ -163,7 +163,7 @@ def plot_XY(ex_XY,ey_XY,ez_XY,field_of_view,figure_name):
         for j in range(y2):
             Ifield_xy[i,j]=np.real(ex_XY[i,j]*np.conj(ex_XY[i,j]) + ey_XY[i,j]*np.conj(ey_XY[i,j]) +ez_XY[i,j]*np.conj(ez_XY[i,j]))
 
-    xmax=field_of_view/2
+    xmax=x_range/2
     ax2.set_title('Intensity on xy')
     pos2=ax2.imshow(Ifield_xy,extent=[-xmax,xmax,-xmax,xmax],interpolation='none', aspect='auto')
     cbar2=fig.colorbar(pos2, ax=ax2)

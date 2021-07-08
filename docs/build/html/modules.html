@@ -245,70 +245,130 @@
 <p>High-level functions to simulate the foci obtained when: Focusing a gaussian beam, focusing a gaussian beam modulated with a VP mask and focusing a gaussian beam modulated with a custom phase mask</p>
 <p>The functions use the ‘parameters’ array, defined as:</p>
 <blockquote>
-<div><p>parameters=np.array((NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name), dtype=object)</p>
+<div><p>parameters=np.array((NA, n, h, f, w0, wavelength, gamma, beta, zp0, rsteps, zsteps, field_of_view, z_field_of_view, I0, L, R, ds, zint, figure_name), dtype=object)</p>
 </div></blockquote>
 <p>With:</p>
 <blockquote>
-<div><p>NA (float): Numerical aperture</p>
-<p>n (float or array, depends on interface): Refraction index for the medium of the optical system. If interface=True it must be given as a numpy array</p>
-<p>h (float): Radius of aperture of the objective lens(mm)</p>
-<p>f (float): Focal distance of the objective lens (mm)</p>
-<p>w0 (float): Radius of the incident gaussian beam (mm)</p>
-<p>wavelength (float): Wavelength in the medium of the objective lens (equals to wavelength in vacuum/n)</p>
-<p>gamma (float): Parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)</p>
-<p>beta (float): parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)</p>
-<p>zp0 (float): Axial position in which to calculate the XY plane, given by z=zp0, (nm)</p>
-<p>rsteps (float): Resolution in the X or Y coordinate for the focused field (nm)</p>
-<p>zsteps (float): Resolution in the axial coordinate (Z) for the focused field (nm)</p>
-<p>field_of_view (float): Field of view in the X or Y coordinate in which the focused field is calculated (nm)</p>
-<p>z_field_of_view (float): field of view in the axial coordinate (z) in which the focused field is calculated (nm)</p>
-<p>I_0 (float): Incident field intensity (uW/cm^2)</p>
-<p>L (float, optional): Distance between phase mask and objective lens (mm), only used if propagation=True</p>
-<p>R (float, optional): Phase mask radius (mm), only used if propagation=True</p>
-<p>ds (array, optional): Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True</p>
-<p>zint (float, optional): Axial position of the interphase. Only used if interface=True</p>
-<p>figure_name (string, optional): Name for the images of the field. Also used as saving name if using the UI</p>
+<div><dl class="field-list simple">
+<dt class="field-odd">NA (float)</dt>
+<dd class="field-odd"><p>Numerical aperture</p>
+</dd>
+<dt class="field-even">n (float or array)</dt>
+<dd class="field-even"><p>Type depends on interface: float for no interface, array for interface. Refraction index for the medium of the optical system.</p>
+</dd>
+<dt class="field-odd">h (float)</dt>
+<dd class="field-odd"><p>Radius of aperture of the objective lens(mm)</p>
+</dd>
+<dt class="field-even">f (float)</dt>
+<dd class="field-even"><p>Focal distance of the objective lens (mm)</p>
+</dd>
+<dt class="field-odd">w0 (float)</dt>
+<dd class="field-odd"><p>Radius of the incident gaussian beam (mm)</p>
+</dd>
+<dt class="field-even">wavelength (float)</dt>
+<dd class="field-even"><p>Wavelength in the medium of the objective lens (equals to wavelength in vacuum/n)</p>
+</dd>
+<dt class="field-odd">gamma (float)</dt>
+<dd class="field-odd"><p>Parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)</p>
+</dd>
+<dt class="field-even">beta (float)</dt>
+<dd class="field-even"><p>parameter that determines the polarization, phase difference between ex and ey (gamma=45, beta=90 gives right circular polarization and a donut shape)</p>
+</dd>
+<dt class="field-odd">zp0 (float)</dt>
+<dd class="field-odd"><p>Axial position in which to calculate the XY plane, given by z=zp0, (nm)</p>
+</dd>
+<dt class="field-even">rsteps (float)</dt>
+<dd class="field-even"><p>Resolution in the X or Y coordinate for the focused field (nm)</p>
+</dd>
+<dt class="field-odd">zsteps (float)</dt>
+<dd class="field-odd"><p>Resolution in the axial coordinate (Z) for the focused field (nm)</p>
+</dd>
+<dt class="field-even">field_of_view (float)</dt>
+<dd class="field-even"><p>Field of view in the X or Y coordinate in which the focused field is calculated (nm)</p>
+</dd>
+<dt class="field-odd">z_field_of_view (float)</dt>
+<dd class="field-odd"><p>field of view in the axial coordinate (z) in which the focused field is calculated (nm)</p>
+</dd>
+<dt class="field-even">I_0 (float)</dt>
+<dd class="field-even"><p>Incident field intensity (uW/cm^2)</p>
+</dd>
+<dt class="field-odd">L (float, optional)</dt>
+<dd class="field-odd"><p>Distance between phase mask and objective lens (mm), only used if propagation=True</p>
+</dd>
+<dt class="field-even">R (float, optional)</dt>
+<dd class="field-even"><p>Phase mask radius (mm), only used if propagation=True</p>
+</dd>
+<dt class="field-odd">ds (array, optional)</dt>
+<dd class="field-odd"><p>Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True</p>
+</dd>
+<dt class="field-even">zint (float, optional)</dt>
+<dd class="field-even"><p>Axial position of the interphase. Only used if interface=True</p>
+</dd>
+<dt class="field-odd">figure_name (string, optional)</dt>
+<dd class="field-odd"><p>Name for the images of the field. Also used as saving name if using the UI</p>
+</dd>
+</dl>
 </div></blockquote>
 <dl class="py function">
 <dt class="sig sig-object py" id="sim.VP">
 <span class="sig-prename descclassname"><span class="pre">sim.</span></span><span class="sig-name descname"><span class="pre">VP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">propagation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interface</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.21</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">640</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zsteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_of_view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_field_of_view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim.VP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate the field obtained by focusing a gaussian beam modulated by a VP mask</p>
-<p>Args:</p>
-<blockquote>
-<div><p>propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer’s difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation</p>
-<p>interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface</p>
-<p>NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the ‘parameters’ array</p>
-</div></blockquote>
-<p>Returns:</p>
-<blockquote>
-<div><p>arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)</p>
-</div></blockquote>
+<dl>
+<dt>Args:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">propagation (bool)</dt>
+<dd class="field-odd"><p>True for calculating and ploting the field incident on the lens by fraunhofer’s difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation</p>
+</dd>
+<dt class="field-even">interface (bool)</dt>
+<dd class="field-even"><p>True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface</p>
+</dd>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p>NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the ‘parameters’ array</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">arrays</dt>
+<dd class="field-odd"><p>ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)</p>
+</dd>
+</dl>
 <p>Each index of the matrixes corresponds to a different pair of coordinates, for example:</p>
-<p>ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated</p>
+<p>ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated.</p>
+<p>IMPORTANT: It is worth noting the x positions are sqrt(2) times higher to allow a square field of view for the XY plane (because the maximum radial position to be calculated for the XY plane is higher than the maximum x or y position)</p>
 <p>ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
 <p>The XZ plane is given by y=0 and the XZ plane by z=zp0</p>
-<p>The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="sim.no_mask">
 <span class="sig-prename descclassname"><span class="pre">sim.</span></span><span class="sig-name descname"><span class="pre">no_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">propagation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interface</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.21</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">640</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zsteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_of_view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_field_of_view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim.no_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate the field obtained by focusing a gaussian beam without being modulated in phase</p>
-<p>Args:</p>
-<blockquote>
-<div><p>propagation (bool): Kept for homogeneity of the functions, True yields no diference from False, where the field incident on the lens is calculated by neglecting the propagation towards the objective lens</p>
-<p>interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface</p>
-<p>NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the ‘parameters’ array</p>
-</div></blockquote>
-<p>Returns:</p>
-<blockquote>
-<div><p>arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)</p>
-</div></blockquote>
+<dl>
+<dt>Args:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">propagation (bool)</dt>
+<dd class="field-odd"><p>Kept for homogeneity of the functions, True yields no diference from False, where the field incident on the lens is calculated by neglecting the propagation towards the objective lens</p>
+</dd>
+<dt class="field-even">interface (bool)</dt>
+<dd class="field-even"><p>True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface</p>
+</dd>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p>NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the ‘parameters’ array</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">arrays</dt>
+<dd class="field-odd"><p>ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)</p>
+</dd>
+</dl>
 <p>Each index of the matrixes corresponds to a different pair of coordinates, for example:</p>
-<p>ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated</p>
+<p>ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated.</p>
+<p>IMPORTANT: It is worth noting the x positions are sqrt(2) times higher to allow a square field of view for the XY plane (because the maximum radial position to be calculated for the XY plane is higher than the maximum x or y position)</p>
 <p>ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
 <p>The XZ plane is given by y=0 and the XZ plane by z=zp0</p>
-<p>The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -316,21 +376,31 @@
 <span class="sig-prename descclassname"><span class="pre">sim.</span></span><span class="sig-name descname"><span class="pre">custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propagation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interface</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.21</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">640</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zsteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_of_view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_field_of_view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_theta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_phi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim.custom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate the field obtained by focusing a gaussian beam modulated by a custom phase mask</p>
 <p>The amplitude term of a gaussian beam is already added to the incident field despite the phase mask used, if this is not desired w0=100 (a big number) makes this term essentially 1</p>
-<p>Args:</p>
-<blockquote>
-<div><p>propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer’s difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation</p>
-<p>interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface</p>
-<p>NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the ‘parameters’ array</p>
-</div></blockquote>
-<p>Returns:</p>
-<blockquote>
-<div><p>arrays: ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)</p>
-</div></blockquote>
+<dl>
+<dt>Args:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">propagation (bool)</dt>
+<dd class="field-odd"><p>True for calculating and ploting the field incident on the lens by fraunhofer’s difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation</p>
+</dd>
+<dt class="field-even">interface (bool)</dt>
+<dd class="field-even"><p>True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface</p>
+</dd>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p>NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name: Simulation parameters, defined as part of the ‘parameters’ array</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">arrays</dt>
+<dd class="field-odd"><p>ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)</p>
+</dd>
+</dl>
 <p>Each index of the matrixes corresponds to a different pair of coordinates, for example:</p>
-<p>ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated</p>
+<p>ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated.</p>
+<p>IMPORTANT: It is worth noting the x positions are sqrt(2) times higher to allow a square field of view for the XY plane (because the maximum radial position to be calculated for the XY plane is higher than the maximum x or y position)</p>
 <p>ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
 <p>The XZ plane is given by y=0 and the XZ plane by z=zp0</p>
-<p>The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -361,37 +431,60 @@
 <dt class="sig sig-object py" id="auxiliary.VP_functions.VP_fields">
 <span class="sig-prename descclassname"><span class="pre">auxiliary.VP_functions.</span></span><span class="sig-name descname"><span class="pre">VP_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">II1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">II2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">II3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">II4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">II5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_of_view</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_field_of_view</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phip0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.VP_functions.VP_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given the II matrixes calculate the field on the focus</p>
-<p>parameters:</p>
-<blockquote>
-<div><p>phip0: Gives an azimutal offset for the XZ plane calculus</p>
-</div></blockquote>
-<p>wavelength is given in the medium (equals wavelength in vacuum/n)</p>
+<dl>
+<dt>parameters:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">phip0</dt>
+<dd class="field-odd"><p>Gives an azimutal offset for the XZ plane calculus</p>
+</dd>
+<dt class="field-even">wavelength</dt>
+<dd class="field-even"><p>wavelength in the medium (equals wavelength in vacuum/n)</p>
+</dd>
+</dl>
 <p>The other parameters are specified in sim.py</p>
-<p>Returns:</p>
-<blockquote>
-<div><p>arrays: Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)</p>
-</div></blockquote>
+</dd>
+<dt>Returns:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">arrays</dt>
+<dd class="field-odd"><p>Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)</p>
+</dd>
+</dl>
 <p>Each index of the matrixes corresponds to a different pair of coordinates, for example:</p>
 <p>ex[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated</p>
 <p>ex2[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
 <p>The XZ plane is given by y=0 and the XZ plane by z=zp0</p>
 <p>The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="auxiliary.VP_functions.VP_fraunhofer">
 <span class="sig-prename descclassname"><span class="pre">auxiliary.VP_functions.</span></span><span class="sig-name descname"><span class="pre">VP_fraunhofer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">90</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">640</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FOV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.VP_functions.VP_fraunhofer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate and plot the field inciding on the lens by Fraunhofer’s difraction formula</p>
-<p>Returns:</p>
-<blockquote>
-<div><p>E_rho, the inciding amplitude along the radial coordinate for an x polarized beam</p>
-<p>Ex and Ey, the x and y components of this amplitude, in a matrix over the x and y coordinates so it can be ploted easily</p>
-</div></blockquote>
-<p>limit is the ammount of iterations the scipy.quad command can do
-div is the ammount of divisions in which the integration is divided in order to avoid the scipy.quad function from failing to converge</p>
-<p>plot=True plots the inciding field’s intensity and amplitude’
-wavelength is given in the medium (equals wavelength in vacuum/n)</p>
+<dd><dl>
+<dt>Calculate and plot the field inciding on the lens by Fraunhofer’s difraction formula</dt><dd><p>parameters:        
+:limit: Ammount of iterations the scipy.quad command can do</p>
+<dl class="field-list simple">
+<dt class="field-odd">div</dt>
+<dd class="field-odd"><p>Ammount of divisions in which the integration is divided in order to avoid the scipy.quad function from failing to converge</p>
+</dd>
+<dt class="field-even">plot (bool)</dt>
+<dd class="field-even"><p>True plots the inciding field’s intensity and amplitude</p>
+</dd>
+<dt class="field-odd">wavelength</dt>
+<dd class="field-odd"><p>wavelength given in the medium (equals wavelength in vacuum/n)</p>
+</dd>
+</dl>
 <p>The other parameters are specified in sim.py</p>
+</dd>
+<dt>Returns:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">array</dt>
+<dd class="field-odd"><p>E_rho: the inciding amplitude along the radial coordinate for an x polarized beam</p>
+</dd>
+<dt class="field-even">arrays</dt>
+<dd class="field-even"><p>Ex and Ey, the x and y components of this amplitude, in a matrix over the x and y coordinates so it can be ploted easily</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -411,15 +504,19 @@ Since the calculus takes a long time, only the field along the XY plane is calcu
 parameter phip0 has no purpose, is only left to have the same variables for the functions
 wavelength is given in the medium (equals wavelength in vacuum/n)</p>
 <p>The other parameters are specified in sim.py</p>
-<p>Returns:</p>
-<blockquote>
-<div><p>arrays: Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)</p>
-</div></blockquote>
+<dl>
+<dt>Returns:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">arrays</dt>
+<dd class="field-odd"><p>Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)</p>
+</dd>
+</dl>
 <p>Each index of the matrixes corresponds to a different pair of coordinates, for example:</p>
 <p>ex[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated</p>
 <p>ex2[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
 <p>The XZ plane is given by y=0 and the XZ plane by z=zp0</p>
 <p>The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -431,18 +528,38 @@ wavelength is given in the medium (equals wavelength in vacuum/n)</p>
 <span class="sig-prename descclassname"><span class="pre">auxiliary.no_mask_functions.</span></span><span class="sig-name descname"><span class="pre">no_mask_integration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_of_view</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_field_of_view</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsteps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.no_mask_functions.no_mask_integration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate the II matrixes, which are the result of the integration for different positions along the radius and z</p>
 <p>This matrixes are later used to calculate the focused field</p>
-<p>Parameters:</p>
-<blockquote>
-<div><p>alpha: semiangle of aperture</p>
-<p>n: refraction medium for the optical system</p>
-<p>f: focal distance (mm)</p>
-<p>w0: incident gaussian beam radius (mm)</p>
-<p>wavelength: wavelength in the medium (equals wavelength in vacuum/n)</p>
-<p>rsteps: resolution in the x or y coordinate (nm)</p>
-<p>zsteps: resolution in the axial coordinate,z (nm)</p>
-<p>field_of_view: field of view in the x or y coordinate in which the field is calculated (nm)</p>
-<p>z_field_of_view: field of view in the axial coordinate, z, in which the field is calculated (nm)</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">alpha</dt>
+<dd class="field-odd"><p>semiangle of aperture</p>
+</dd>
+<dt class="field-even">n</dt>
+<dd class="field-even"><p>refraction medium for the optical system</p>
+</dd>
+<dt class="field-odd">f</dt>
+<dd class="field-odd"><p>focal distance (mm)</p>
+</dd>
+<dt class="field-even">w0</dt>
+<dd class="field-even"><p>incident gaussian beam radius (mm)</p>
+</dd>
+<dt class="field-odd">wavelength</dt>
+<dd class="field-odd"><p>wavelength in the medium (equals wavelength in vacuum/n)</p>
+</dd>
+<dt class="field-even">rsteps</dt>
+<dd class="field-even"><p>resolution in the x or y coordinate (nm)</p>
+</dd>
+<dt class="field-odd">zsteps</dt>
+<dd class="field-odd"><p>resolution in the axial coordinate,z (nm)</p>
+</dd>
+<dt class="field-even">field_of_view</dt>
+<dd class="field-even"><p>field of view in the x or y coordinate in which the field is calculated (nm)</p>
+</dd>
+<dt class="field-odd">z_field_of_view</dt>
+<dd class="field-odd"><p>field of view in the axial coordinate, z, in which the field is calculated (nm)</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <p>The other parameters are specified in sim</p>
 </dd></dl>
 
@@ -450,18 +567,29 @@ wavelength is given in the medium (equals wavelength in vacuum/n)</p>
 <dt class="sig sig-object py" id="auxiliary.no_mask_functions.no_mask_fields">
 <span class="sig-prename descclassname"><span class="pre">auxiliary.no_mask_functions.</span></span><span class="sig-name descname"><span class="pre">no_mask_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">II1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">II2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">II3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_of_view</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_field_of_view</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phip0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.no_mask_functions.no_mask_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given the II matrixes calculate the field on the focus</p>
-<p>parameter phip0 gives an azimutal offset for the XZ plane calculus</p>
-<p>wavelength is given in the medium (equals wavelength in vacuum/n)</p>
+<dl>
+<dt>Parameters: </dt><dd><dl class="field-list simple">
+<dt class="field-odd">phip0</dt>
+<dd class="field-odd"><p>Azimutal offset for the XZ plane calculus</p>
+</dd>
+<dt class="field-even">wavelength</dt>
+<dd class="field-even"><p>wavelength given in the medium (equals wavelength in vacuum/n)</p>
+</dd>
+</dl>
 <p>The other parameters are specified in sim</p>
-<p>Returns:</p>
-<blockquote>
-<div><p>arrays: Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)</p>
-</div></blockquote>
+</dd>
+<dt>Returns:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">arrays</dt>
+<dd class="field-odd"><p>Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)</p>
+</dd>
+</dl>
 <p>Each index of the matrixes corresponds to a different pair of coordinates, for example:</p>
 <p>ex[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated</p>
 <p>ex2[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
 <p>The XZ plane is given by y=0 and the XZ plane by z=zp0</p>
 <p>The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -522,18 +650,32 @@ for phi_position a value in np.linspace(0,2*np.pi,resolution_phi) and theta_posi
 <dt class="sig sig-object py" id="auxiliary.custom_mask_functions.custom_mask_focus_field_XY">
 <span class="sig-prename descclassname"><span class="pre">auxiliary.custom_mask_functions.</span></span><span class="sig-name descname"><span class="pre">custom_mask_focus_field_XY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ey_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FOV_focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countdown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.custom_mask_functions.custom_mask_focus_field_XY" title="Permalink to this definition">¶</a></dt>
 <dd><p>2D integration to calculate the field focused by a high aperture lens on the XY plane</p>
-<p>Parameters:</p>
-<blockquote>
-<div><p>ex_lens,ey_lens: X and Y component of the incident field</p>
-<p>zp0: Axial position for the XY plane (given by z=zp0)</p>
-<p>resolution_focus: Resolution for the field at the focus, the same for x and y</p>
-<p>resolution_theta,resolution_phi: Resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens)</p>
-<p>wavelength: Wavelength (nm) in the medium (equals wavelength in vacuum/n)</p>
-<p>x0 and y0: Used for centering the XY field at an x0, y0 position</p>
-<p>countdown (bool): True means you are only running this fuction once and you want to see a progress bar with the time elapsed and expected to finish the calculation</p>
-</div></blockquote>
+<dl>
+<dt>Parameters:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">ex_lens,ey_lens</dt>
+<dd class="field-odd"><p>X and Y component of the incident field. This arrays have the value of the amplitude of the incident field for each value of theta and phi: ex_lens[phi_position,theta_position] for phi_position a value in np.linspace(0,2*np.pi,resolution_phi) and theta_position a value in np.linspace(0,alpha,resolution_theta)</p>
+</dd>
+<dt class="field-even">zp0</dt>
+<dd class="field-even"><p>Axial position for the XY plane (given by z=zp0)</p>
+</dd>
+<dt class="field-odd">resolution_focus</dt>
+<dd class="field-odd"><p>Resolution for the field at the focus, the same for x and y</p>
+</dd>
+<dt class="field-even">resolution_theta,resolution_phi</dt>
+<dd class="field-even"><p>Resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens)</p>
+</dd>
+<dt class="field-odd">wavelength</dt>
+<dd class="field-odd"><p>Wavelength (nm) in the medium (equals wavelength in vacuum/n)</p>
+</dd>
+<dt class="field-even">x0, y0</dt>
+<dd class="field-even"><p>Used for centering the XY field at an x0, y0 position</p>
+</dd>
+<dt class="field-odd">countdown (bool)</dt>
+<dd class="field-odd"><p>True means you are only running this fuction once and you want to see a progress bar with the time elapsed and expected to finish the calculation</p>
+</dd>
+</dl>
 <p>The rest of the parameters are specified in sim</p>
-<dl class="simple">
+</dd>
 <dt>Returns:</dt><dd><p>ex,ey,ez (arrays): Cartesian components of the focused field on the XY plane, given by z=zp0</p>
 </dd>
 </dl>
@@ -543,24 +685,44 @@ for phi_position a value in np.linspace(0,2*np.pi,resolution_phi) and theta_posi
 <dt class="sig sig-object py" id="auxiliary.custom_mask_functions.custom_mask_focus_field_XZ_XY">
 <span class="sig-prename descclassname"><span class="pre">auxiliary.custom_mask_functions.</span></span><span class="sig-name descname"><span class="pre">custom_mask_focus_field_XZ_XY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ey_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_FOV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FOV_focus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_plane</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'X'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#auxiliary.custom_mask_functions.custom_mask_focus_field_XZ_XY" title="Permalink to this definition">¶</a></dt>
 <dd><p>2D integration to calculate the field focused by a high aperture lens on the XY and XZ plane</p>
-<blockquote>
-<div><p>ex_lens,ey_lens: X and Y component of the incident field</p>
-<p>zp0: Axial position for the XY plane (given by z=zp0)</p>
-<p>resolution_focus: Resolution for the field at the focus, the same for x and y</p>
-<p>resolution_theta,resolution_phi: Resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens)</p>
-<p>wavelength: Wavelength (nm) in the medium (equals wavelength in vacuum/n)</p>
-<p>x0 and y0: Used for centering the XY field at an x0, y0 position</p>
-<p>countdown (bool): True means you are only running this fuction once and you want to see a progress bar with the time elapsed and expected to finish the calculation</p>
-</div></blockquote>
+<dl>
+<dt>Parameters:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">ex_lens,ey_lens</dt>
+<dd class="field-odd"><p>X and Y component of the incident field. This arrays have the value of the amplitude of the incident field for each value of theta and phi: ex_lens[phi_position,theta_position] for phi_position a value in np.linspace(0,2*np.pi,resolution_phi) and theta_position a value in np.linspace(0,alpha,resolution_theta)</p>
+</dd>
+<dt class="field-even">zp0</dt>
+<dd class="field-even"><p>Axial position for the XY plane (given by z=zp0)</p>
+</dd>
+<dt class="field-odd">resolution_focus</dt>
+<dd class="field-odd"><p>Resolution for the field at the focus, the same for x and y</p>
+</dd>
+<dt class="field-even">resolution_theta,resolution_phi</dt>
+<dd class="field-even"><p>Resolution for the 2D calculus (must be the same as the size of ex_lens and ey_lens)</p>
+</dd>
+<dt class="field-odd">wavelength</dt>
+<dd class="field-odd"><p>Wavelength (nm) in the medium (equals wavelength in vacuum/n)</p>
+</dd>
+<dt class="field-even">x0, y0</dt>
+<dd class="field-even"><p>Used for centering the XY field at an x0, y0 position</p>
+</dd>
+<dt class="field-odd">countdown (bool)</dt>
+<dd class="field-odd"><p>True means you are only running this fuction once and you want to see a progress bar with the time elapsed and expected to finish the calculation</p>
+</dd>
+</dl>
 <p>The rest of the parameters are specified in sim</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>arrays: Ex_XZ,Ey_XZ,Ez_XZ,Ex_XY,Ey_XY,Ez_XY, each one is a matrix with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)</p>
+</dd>
+<dt>Returns:        </dt><dd><dl class="field-list simple">
+<dt class="field-odd">arrays</dt>
+<dd class="field-odd"><p>Ex,Ey,Ez,Ex2,Ey2,Ez2, each one is a matrix with the amplitude of each cartesian component on the XZ plane (Ex,Ey,Ez) or on the XY plane (Ex2,Ey2,Ez2)</p>
 </dd>
 </dl>
 <p>Each index of the matrixes corresponds to a different pair of coordinates, for example:</p>
-<p>ex_XZ[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated</p>
-<p>ex_XZ[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
+<p>ex[z,x] with z each index of the coordinates np.linspace(z_field_of_view/2,-z_field_of_view/2,2*int(z_field_of_view/zsteps/2)) and x each index for np.linspace(-field_of_view/2**0.5,field_of_view/2**0.5,2*int(field_of_view/rsteps/2**0.5)) in which the field is calculated</p>
+<p>ex2[y,x2] with y each index of the coordinates np.linspace(field_of_view/2,-field_of_view/2,2*int(field_of_view/rsteps/2)) and x each index for np.linspace(-field_of_view/2,field_of_view/2,2*int(field_of_view/rsteps/2)) in which the field is calculated</p>
 <p>The XZ plane is given by y=0 and the XZ plane by z=zp0</p>
+<p>The radial field of view in the XZ plane is sqrt(2) times bigger to allow a square field of view for the XY plane (the maximum radial position is higher than the maximum x or y position)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

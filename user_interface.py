@@ -69,28 +69,27 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         n=float(self.lineEdit_2.text())#medium's density
         h=float(self.lineEdit_18.text()) #radius of aperture converted to nm
         w0=float(self.lineEdit_16.text()) #incident gaussian beam's radius, converted to nm
-        f=h*n/NA #given by the sine's law
         wavelength=float(self.lineEdit_3.text())#wavelength in vacuum
         I0=float(self.lineEdit_15.text())#maximum intensity for the incident beam (|A|^2)
         zp0=float(self.lineEdit_12.text())#axial distance in wich to calculate the XY plane (z=cte=zp0 is the plane)
         gamma=float(self.lineEdit_11.text()) #arctan(ey/ex)
         beta=float(self.lineEdit_13.text()) #Delta phase betheen ey and ey, gamma=45 and beta=90 give right circular poalarizacion and a donut, gamma=45 and beta=-90 give left polarization and a maximum of intensity in the focused field
-        rsteps=float(self.lineEdit_5.text())#radial pixel size
-        zsteps=float(self.lineEdit_4.text())#axial pixel size
-        field_of_view=float(self.lineEdit_17.text())#radial distance for the simulation
+        x_steps=float(self.lineEdit_5.text())#radial pixel size
+        z_steps=float(self.lineEdit_4.text())#axial pixel size
+        x_range=float(self.lineEdit_17.text())#radial distance for the simulation
         if self.radioButton.isChecked()==True:#L and R are parameters for calculating the inciding beam with fraunhoffer's formula, if the propagation is depreciated then this parameters ar saved as ''not implemented''
             L=float(self.lineEdit_19.text())
             R=float(self.lineEdit_22.text())
         else:
             L=''
             R=''
-        z_field_of_view=float(self.lineEdit_20.text())#axial distance for the simulation
+        z_range=float(self.lineEdit_20.text())#axial distance for the simulation
         figure_name=str(self.lineEdit_21.text())#name for the ploted figures and the save files
         if figure_name=='': #to always have a figure name
             figure_name='Phase mask simulation'
         if self.radioButton_2.isChecked()==True:#if the interface simulation is not checked, this parameters ar saved as ''not implemented''
             try:
-                zint=float(self.lineEdit_25.text())#axial distance of the interface (negatie means before the focal plane)
+                z_int=float(self.lineEdit_25.text())#axial distance of the interface (negatie means before the focal plane)
                 n=np.array([complex(a) for a in self.lineEdit_23.text().split(',')])#array containing the refraction indexes of all mediums
                 ds=[]#array cointaining the thickness of all mediums
                 ds.append(np.inf)
@@ -105,10 +104,10 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                 print('The refraction index array or the thickness array are missing a parameter, check that there are 2 parameters less for thickness than for refraction index')
                 raise ValueError('The refraction index array or the thickness array are missing a parameter, check that there are 2 parameters less for thickness than for refraction index')
         else:
-            zint=''
+            z_int=''
             ds=''
-        self.parameters=np.array((NA,n,h,f,w0,wavelength,gamma,beta,zp0,rsteps,zsteps,field_of_view,z_field_of_view,I0,L,R,ds,zint,figure_name), dtype=object)
-        
+        self.parameters=np.array((NA,n,h,w0,wavelength,gamma,beta,zp0,x_steps,z_steps,x_range,z_range,I0,L,R,ds,z_int,figure_name), dtype=object)
+
     def save_parameters(self):
         '''
         Save a txt file with the parameters used for the simulation with the UI, parameters can be strings
@@ -131,22 +130,22 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
             config['Parameters'] = {
             'NA': self.parameters[0],
             'Aperture radius (mm)':self.parameters[2],
-            'focal distance (mm)': self.parameters[3],
-            'incident beam radius (mm)': self.parameters[4],
-            'wavelength at vacuum (nm)': self.parameters[5],
-            'gamma, arctan(ey ex) (degrees)': self.parameters[6],
-            'beta, Delta phase (degrees)': self.parameters[7],
-            'Axial distance from focus for the XY plane (nm)': self.parameters[8],
-            'Radial pixel size (nm)': self.parameters[9],
-            'Axial pixel size (nm)': self.parameters[10],
-            'Radial field of view (nm)': self.parameters[11],
-            'Axial field of view (nm)': self.parameters[12],
-            'Laser intensity (kW/cm^2)': self.parameters[13],
+            # 'focal distance (mm)': self.parameters[3],#removed since it is given by sine's law
+            'incident beam radius (mm)': self.parameters[3],
+            'wavelength at vacuum (nm)': self.parameters[4],
+            'gamma, arctan(ey ex) (degrees)': self.parameters[5],
+            'beta, Delta phase (degrees)': self.parameters[6],
+            'Axial distance from focus for the XY plane (nm)': self.parameters[7],
+            'Radial pixel size (nm)': self.parameters[8],
+            'Axial pixel size (nm)': self.parameters[9],
+            'Radial field of view (nm)': self.parameters[10],
+            'Axial field of view (nm)': self.parameters[11],
+            'Laser intensity (kW/cm^2)': self.parameters[12],
             'refraction indexes': self.parameters[1],
-            'interface layer thickness': self.parameters[16],
-            'interface axial position': self.parameters[17],
-            'Distance from phase plate to objective (mm)': self.parameters[14],
-            'Phase mask radius (mm)': self.parameters[15]}
+            'interface layer thickness': self.parameters[15],
+            'interface axial position': self.parameters[16],
+            'Distance from phase plate to objective (mm)': self.parameters[13],
+            'Phase mask radius (mm)': self.parameters[14]}
 
             with open(folder+name+'.txt', 'w') as configfile:
                 config.write(configfile)
@@ -234,11 +233,11 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                 ui2.setupUi(Dialog)
                 Dialog.exec_()
     
-    def plot(self,ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view,figure_name=''):#ex, ey and ez have tha values of the field on the XY plane
+    def plot(self,ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name=''):#ex, ey and ez have tha values of the field on the XY plane
         '''
         Plot the field along the XZ and XY planes, the y=0, z=0 axis, the polarization on the XY plane and the amplitude squared of each cartesian component on the XY field
         '''
-        plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view,figure_name)
+        plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name)
 
     def simulate(self):
         '''
@@ -246,8 +245,8 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         '''
         self.counter+=1
         self.get_parameters()
-        field_of_view=self.parameters[11]
-        z_field_of_view=self.parameters[12]
+        x_range=self.parameters[10]
+        z_range=self.parameters[11]
         figure_name=self.parameters[-1]
         #used to avoid overwriting previous figures which have the same name:
         if figure_name==self.default_file_name:
@@ -265,14 +264,10 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
             if selected==0: #VP mask
                 #calculate field at the focal plane:
                 ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=VP(propagation,interface,*self.parameters)                
-                #plot the fields at the focus:
-                self.plot(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view,figure_name)
                     
             if selected==1: #No mask (gaussian beam)
                 #calculate field at the focal plane:
                 ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=no_mask(propagation,interface,*self.parameters)
-                #plot the fields at the focus:
-                self.plot(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view,figure_name) #ex, ey and ez have tha values of the field on the XY plane
         
             if selected==2: #Custom mask
                 if config.y==True: #internal variable used to check if given mask function is a functionor a matrix
@@ -282,9 +277,11 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                     self.mask_function=config.x
                 #calculate field at the focal plane:
                 ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(self.mask_function,propagation,interface,*self.parameters)
-                #plot the fields at the focus:
-                self.plot(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,field_of_view,z_field_of_view,figure_name) #ex, ey and ez have tha values of the field on the XY plane
 
+            #plot the fields at the focus:
+            self.plot(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name) #ex, ey and ez have tha values of the field on the XY plane
+            
+            #make internal variables to save the fields as txts
             self.amplitudes_xy=(ex_XY,ey_XY,ez_XY)
             self.Ifield_xy=np.abs(ex_XY)**2+np.abs(ey_XY)**2+np.abs(ez_XY)**2#used to generate the save file
             self.Ifield_xz=np.zeros((2,2))#since it is not calculated i return a matrix of zeros so there is no error while trying to save the data
