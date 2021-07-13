@@ -38,6 +38,9 @@ class Ui_Dialog(object):
         self.pushButton_2 = QtWidgets.QPushButton(Dialog)
         self.pushButton_2.setGeometry(QtCore.QRect(80, 10, 151, 31))
         self.pushButton_2.setObjectName("pushButton_2")
+        self.label = QtWidgets.QLabel(Dialog)
+        self.label.setGeometry(QtCore.QRect(10, 170, 301, 16))
+        self.label.setObjectName("label")
 
         self.pushButton.clicked.connect(self.change_mask_function)
         self.pushButton_2.clicked.connect(self.load_mask_function)
@@ -68,6 +71,10 @@ class Ui_Dialog(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">np.exp(-(rho/w0)**2+1j*phi)</p></body></html>"))
         self.pushButton.setText(_translate("Dialog", "Define mask"))
         self.pushButton_2.setText(_translate("Dialog", "Load mask from .txt file"))
+        try:
+            self.textEdit.setText(config.x)#if a phase mask has already been given
+        except:
+            pass
 
 
 if __name__ == "__main__":

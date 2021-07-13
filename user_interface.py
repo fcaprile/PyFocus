@@ -86,7 +86,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         z_range=float(self.lineEdit_20.text())#axial distance for the simulation
         figure_name=str(self.lineEdit_21.text())#name for the ploted figures and the save files
         if figure_name=='': #to always have a figure name
-            figure_name='Phase mask simulation'
+            figure_name='Simulation'
         if self.radioButton_2.isChecked()==True:#if the interface simulation is not checked, this parameters ar saved as ''not implemented''
             try:
                 z_int=float(self.lineEdit_25.text())#axial distance of the interface (negatie means before the focal plane)
@@ -233,12 +233,6 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                 ui2.setupUi(Dialog)
                 Dialog.exec_()
     
-    def plot(self,ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name=''):#ex, ey and ez have tha values of the field on the XY plane
-        '''
-        Plot the field along the XZ and XY planes, the y=0, z=0 axis, the polarization on the XY plane and the amplitude squared of each cartesian component on the XY field
-        '''
-        plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name)
-
     def simulate(self):
         '''
         Simulate with the UI using the functions provided in "sim"
@@ -279,7 +273,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                 ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(self.mask_function,propagation,interface,*self.parameters)
 
             #plot the fields at the focus:
-            self.plot(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name) #ex, ey and ez have tha values of the field on the XY plane
+            plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name) #ex, ey and ez have tha values of the field on the XY plane
             
             #make internal variables to save the fields as txts
             self.amplitudes_xy=(ex_XY,ey_XY,ez_XY)

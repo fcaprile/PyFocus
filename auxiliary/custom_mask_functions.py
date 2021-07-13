@@ -7,14 +7,26 @@ from tqdm import tqdm
 from matplotlib import pyplot as plt
 import time
 
-def generate_incident_field(maskfunction,alpha,focus,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength):
+def generate_incident_field(maskfunction,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength):
     '''
     Generate a matrix for the field X and Y direction of the incident field on the lens, given the respective maskfunction
     
-    Parameters:        
-        :maskfunction (function): analytical function that defines the phase mask. The real part also defines the incident field's amplitude
+    Args:        
+        :maskfunction (function): Analytical function that defines the phase mask, must be a function of the 5 internal variables: rho, phi, w0, f and k, with:
+            
+            rho: Radial coordinate from 0 to the aperture radius of the objective.
+            
+            phi: Azimutal coordinate from 0 to 2pi.
+            
+            w0: Radius of the incident gaussian beam.
+            
+            f: Focal distane of the objective lens
+            
+            k: Wavenumber in the objective lens medium IMPORTANT:(mm)
+            
+            The real part defines the amplitude of the incident field
     
-        :divisions_phi,divisions_theta: number of divisions in the phi and theta coordinates to use the 2D integration for the calculation of the focused field
+        :divisions_phi,divisions_theta: Number of divisions in the phi and theta coordinates to use the 2D integration for the calculation of the focused field
  
         The rest of the parameters are specified in sim
 
@@ -30,11 +42,11 @@ def generate_incident_field(maskfunction,alpha,focus,divisions_phi,divisions_the
     ey_lens=np.zeros((divisions_phi,divisions_theta),dtype=complex)
 
     theta_values=np.linspace(0,alpha,divisions_theta)  #divisions of theta in which the trapezoidal 2D integration is done
-    rhop_values=np.sin(theta_values)*focus              #given by the sine's law
-    phip_values=np.linspace(0,2*np.pi,divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
-    for i,phip in enumerate(phip_values):
-        for j,rhop in enumerate(rhop_values):
-            phase=maskfunction(rhop,phip,w0,focus,k)
+    rho_values=np.sin(theta_values)*f              #given by the sine's law
+    phi_values=np.linspace(0,2*np.pi,divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
+    for i,phi in enumerate(phi_values):
+        for j,rho in enumerate(rho_values):
+            phase=maskfunction(rho,phi,w0,f,k)
             ex_lens[i,j]=phase
             ey_lens[i,j]=phase
     ex_lens*=np.cos(gamma*np.pi/180)*I0**0.5
@@ -42,23 +54,32 @@ def generate_incident_field(maskfunction,alpha,focus,divisions_phi,divisions_the
     
     return ex_lens,ey_lens
 
-def plot_in_cartesian(Ex,Ey,xmax,alpha,focus,figure_name):
+def plot_in_cartesian(Ex,Ey,r_range,alpha,f,figure_name):
     '''
-    Plot the fields Ex and Ey, who are described in polar coordinates. To do so the field in the closest cartesian coordinates for each position is calculated
+    Plot the fields Ex and Ey, who are described in the same coordinates as ex_lens and ey_lens. To do so the field in the closest cartesian coordinates for each position is calculated
+    
+    Args:
+        :r_range: Radial distance in which to plot the field (total distance in x and y is 2*r_range)
+    
+        :alpha: Semi-angle of aperture of the objective lens, given by alpha=np.arcsin(NA / n)
+        
+        :f: Focal distance of the objective lens, given by the sine's law: f=h*n/NA
+        
+        :figure_name: Name for the ploted figures
     
     Returns:
         I_cartesian, Ex_cartesian, Ey_cartesian: Intensity and amplitude of the incident field calculated in cartesian coordinates
     '''
     divisions_phi,divisions_theta=np.shape(Ex)
-    x_values=np.linspace(-xmax,xmax,2*divisions_theta) #positions along X in which to plot
-    y_values=np.linspace(xmax,-xmax,2*divisions_theta)
+    x_values=np.linspace(-r_range,r_range,2*divisions_theta) #positions along X in which to plot
+    y_values=np.linspace(r_range,-r_range,2*divisions_theta)
     I_cartesian=np.zeros((2*divisions_theta,2*divisions_theta))
     Ex_cartesian=np.zeros((2*divisions_theta,2*divisions_theta),dtype=complex)
     Ey_cartesian=np.zeros((2*divisions_theta,2*divisions_theta),dtype=complex)
     
     #original polar coordinates in which the Ex and Ey where calculated:  
     theta_values=np.linspace(0,alpha,divisions_theta)  #divisions of theta in which the trapezoidal 2D integration is done
-    rhop_values=np.sin(theta_values)*focus              #given by the sine's law
+    rhop_values=np.sin(theta_values)*f              #given by the sine's law
     phip_values=np.linspace(0,2*np.pi,divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
     
     #passage from polar to cartesian coordinates, keep in mind the positions are not to be exact since the plot is on a grid
@@ -68,7 +89,7 @@ def plot_in_cartesian(Ex,Ey,xmax,alpha,focus,figure_name):
             phip=np.arctan2(y,x)
             if phip<0:
                 phip+=2*np.pi
-            if rhop<xmax:
+            if rhop<r_range:
                 id_rho = (np.abs(rhop_values - rhop)).argmin() #get the closest indent for the coordinate in which the field was calculated
                 id_phi = (np.abs(phip_values - phip)).argmin()
                 Ex_cartesian[j,i]=Ex[id_phi,id_rho]
@@ -77,62 +98,64 @@ def plot_in_cartesian(Ex,Ey,xmax,alpha,focus,figure_name):
     I_cartesian=np.abs(Ex_cartesian)**2+np.abs(Ey_cartesian)**2
     
     #colorbar plot for the field:
-    plt.rcParams['font.size']=12#tamaño de fuente
-    fig1, (ax1, ax2) = plt.subplots(num=str(figure_name)+': Incident intensity',figsize=(12, 5), ncols=2)
-    fig1.suptitle('Field at the objective using 2D integration')
+    plt.rcParams['font.size']=17#tamaño de fuente
+    fig1, (ax1, ax2) = plt.subplots(num=str(figure_name)+' Incident intensity',figsize=(9, 4), ncols=2)
+    fig1.suptitle('Incident field intensity')
     
-    ax1.set_title('Intensity')
-    pos=ax1.imshow(I_cartesian,extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='auto')
+    # ax1.set_title('Intensity')
+    pos=ax1.imshow(I_cartesian,extent=[-r_range,r_range,-r_range,r_range], interpolation='none', aspect='auto')
     ax1.set_xlabel('x (mm)')
     ax1.set_ylabel('y (mm)')
     ax1.axis('square')
     cbar1= fig1.colorbar(pos, ax=ax1)
-    cbar1.ax.set_ylabel('Intensity (kW/cm\u00b2)')            
+    cbar1.ax.set_ylabel('Intensity (mW/cm\u00b2)')            
     #plot along the Y=0 axis:
-    ax2.set_title(' Intensity along x')
-    ax2.plot(np.linspace(-xmax,xmax,2*divisions_theta),I_cartesian[divisions_theta,:])
+    # ax2.set_title(' Intensity along x')
+    ax2.plot(np.linspace(-r_range,r_range,2*divisions_theta),I_cartesian[divisions_theta,:])
     ax2.set_xlabel('x (mm)')
-    ax2.set_ylabel('Intensity  (kW/cm\u00b2)')  
+    ax2.set_ylabel('Intensity  (mW/cm\u00b2)')  
     fig1.tight_layout()
-    fig1.subplots_adjust(top=0.80)                
+    fig1.subplots_adjust(top=0.90)                
     
     #Amplitude and phase plot 
     #Ex
-    fig2, ((ax_x1,ax_y1),(ax_x2,ax_y2)) = plt.subplots(num=str(figure_name)+': Incident amplitude',figsize=(12, 8),nrows=2, ncols=2)
-    ax_x1.set_title('ex amplitude')
-    pos_x1=ax_x1.imshow(np.abs(Ex_cartesian),extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='equal')
+    fig2, ((ax_x1,ax_y1),(ax_x2,ax_y2)) = plt.subplots(num=str(figure_name)+' Incident amplitude',figsize=(10, 8),nrows=2, ncols=2)
+    fig2.suptitle('Incident field amplitude')
+    ax_x1.set_title('$|E_{i_x}|^2$')
+    pos_x1=ax_x1.imshow(np.abs(Ex_cartesian)**2,extent=[-r_range,r_range,-r_range,r_range], interpolation='none', aspect='equal')
     ax_x1.set_xlabel('x (mm)')
     ax_x1.set_ylabel('y (mm)')
     ax_x1.axis('square')
     cbar_1_1=fig2.colorbar(pos_x1, ax=ax_x1)
-    cbar_1_1.ax.set_ylabel('Amplitude')
+    cbar_1_1.ax.set_ylabel('Relative intensity')
     
-    ax_x2.set_title('ex phase')
-    pos_x2=ax_x2.imshow(np.angle(Ex_cartesian),extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='equal')
+    ax_x2.set_title('$E_{i_x}$ phase')
+    pos_x2=ax_x2.imshow(np.angle(Ex_cartesian, deg=True),extent=[-r_range,r_range,-r_range,r_range], interpolation='none', aspect='equal')
     ax_x2.set_xlabel('x (mm)')
     ax_x2.set_ylabel('y (mm)')
     ax_x2.axis('square')
     cbar_1_1=fig2.colorbar(pos_x2, ax=ax_x2)
-    cbar_1_1.ax.set_ylabel('Phase (Radians)')
+    cbar_1_1.ax.set_ylabel('Phase (degrees)')
     
     #Ey
-    ax_y1.set_title('ey amplitude')
-    pos_y1=ax_y1.imshow(np.abs(Ey_cartesian),extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='equal')
+    ax_y1.set_title('$|E_{i_y}|^2$')
+    pos_y1=ax_y1.imshow(np.abs(Ey_cartesian)**2,extent=[-r_range,r_range,-r_range,r_range], interpolation='none', aspect='equal')
     ax_y1.set_xlabel('x (mm)')
     ax_y1.set_ylabel('y (mm)')
     ax_y1.axis('square')
     cbar_1_1=fig2.colorbar(pos_y1, ax=ax_y1)
-    cbar_1_1.ax.set_ylabel('Amplitude')
+    cbar_1_1.ax.set_ylabel('Relative intensity')
     
-    ax_y2.set_title('ey phase')
-    pos_y2=ax_y2.imshow(np.angle(Ey_cartesian),extent=[-xmax,xmax,-xmax,xmax], interpolation='none', aspect='equal')
+    ax_y2.set_title('$E_{i_y}$ phase')
+    pos_y2=ax_y2.imshow(np.angle(Ey_cartesian, deg=True),extent=[-r_range,r_range,-r_range,r_range], interpolation='none', aspect='equal')
     ax_y2.set_xlabel('x (mm)')
     ax_y2.set_ylabel('y (mm)')
     ax_y2.axis('square')
     cbar_1_1=fig2.colorbar(pos_y2, ax=ax_y2)
-    cbar_1_1.ax.set_ylabel('Phase (Radians)')
+    cbar_1_1.ax.set_ylabel('Phase (degrees)')
     
     fig2.tight_layout()
+    fig2.subplots_adjust(top=0.90)                
     
     return I_cartesian,Ex_cartesian,Ey_cartesian
 
@@ -142,7 +165,7 @@ def custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho
 
     The resultant matrix Ex and Ey are returned in polar coordinates (each row is a different value of phi and each column a different rho)  
     
-    Parameters:    
+    Args:    
         :N_rho and N_phi: Number of divisions for the calclation of the 2D integral in rho and phi respectively (this are not the coordinates in which the field is calculated)
         
         :divisions_theta,divisions_phi: Number of divisions for the field indicent on the lens on the theta and phi coordinates respectively. This field is later used to calculate the focused field.
@@ -215,7 +238,7 @@ def custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution
     '''
     2D integration to calculate the field focused by a high aperture lens on the XY plane
     
-    Parameters:        
+    Args:        
         :ex_lens,ey_lens: X and Y component of the incident field. This arrays have the value of the amplitude of the incident field for each value of theta and phi: ex_lens[phi_position,theta_position] for phi_position a value in np.linspace(0,2*np.pi,divisions_phi) and theta_position a value in np.linspace(0,alpha,divisions_theta) 
 
         :zp0: Axial position for the XY plane (given by z=zp0)
@@ -243,15 +266,27 @@ def custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution
     #passage from mm to nm and sine's law  
     focus=h/np.sin(alpha)*10**6
         
-    #The Y component of incident field must be evaluated at phi-pi-pi/2, which is equivalent to moving the rows of the matrix    
-    def rotate_90º(matrix):
+    #defining functions for rotating in the azimutal direction pi and 3*pi/2, which corresponds to changing the order of the columns in ex_lens and ey_lens since the columns are given by an azimutal position
+    def rotate_180º(matrix):
+        a,b=np.shape(matrix)       
+        aux=np.zeros((a,b),dtype=complex)        
+        for i in range(a):
+            aux[i-int(a/2),:]=matrix[i,:]
+        return aux
+    
+    #The Y component of incident field must be evaluated at phi-pi/2, which is equivalent to moving the rows of the matrix    
+    def rotate_270º(matrix):
         a,b=np.shape(matrix)       
         aux=np.zeros((a,b),dtype=complex)        
         for i in range(a):
             aux[i-int(3*a/4),:]=matrix[i,:]
         return aux
-
-    ey_lens=rotate_90º(ey_lens)
+    
+    #To use the incident field as the function to be integrated in the equations deried from born and wolf, the incident field must be evaluated at phi-pi for the X component and at phi-3*pi/2 for the Y component. 
+    #The motives for this correspond to a difference in the coordinate system used when deriving the equations, where the z versor points in the oposite direction
+    #This fact is not described in the paper since i am not 100% sure this is the motive, but the rotation is necesary to obtain the needed result in all my tests with custom masks
+    ex_lens=rotate_180º(ex_lens)
+    ey_lens=rotate_270º(ey_lens)
     
     '''
     # the functions i am going to integrate are:
@@ -305,9 +340,9 @@ def custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution
     Axy=prefactor_y*ex_lens*weight_trapezoid
     Axz=prefactor_z*ex_lens*weight_trapezoid
 
-    Ayx=-prefactor_y*ey_lens*weight_trapezoid
-    Ayy=prefactor_x*ey_lens*weight_trapezoid
-    Ayz=-prefactor_z*ey_lens*weight_trapezoid
+    Ayx=prefactor_y*ey_lens*weight_trapezoid
+    Ayy=-prefactor_x*ey_lens*weight_trapezoid
+    Ayz=prefactor_z*ey_lens*weight_trapezoid
 
     cos_theta_kz=cos_theta*kz
     #now for each position in which i calculate the field i do the integration
@@ -349,7 +384,7 @@ def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,res
     '''
     2D integration to calculate the field focused by a high aperture lens on the XY and XZ plane
     
-    Parameters:        
+    Args:        
         :ex_lens,ey_lens: X and Y component of the incident field. This arrays have the value of the amplitude of the incident field for each value of theta and phi: ex_lens[phi_position,theta_position] for phi_position a value in np.linspace(0,2*np.pi,divisions_phi) and theta_position a value in np.linspace(0,alpha,divisions_theta) 
         
         :zp0: Axial position for the XY plane (given by z=zp0)
@@ -389,15 +424,26 @@ def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,res
     #passage from mm to nm and sine's law  
     focus=h/np.sin(alpha)*10**6
         
+    def rotate_180º(matrix):
+        a,b=np.shape(matrix)       
+        aux=np.zeros((a,b),dtype=complex)        
+        for i in range(a):
+            aux[i-int(a/2),:]=matrix[i,:]
+        return aux
+    
     #The Y component of incident field must be evaluated at phi-pi/2, which is equivalent to moving the rows of the matrix    
-    def rotate_90º(matrix):
+    def rotate_270º(matrix):
         a,b=np.shape(matrix)       
         aux=np.zeros((a,b),dtype=complex)        
         for i in range(a):
             aux[i-int(3*a/4),:]=matrix[i,:]
         return aux
-
-    ey_lens=rotate_90º(ey_lens)
+    
+    #To use the incident field as the function to be integrated in the equations deried from born and wolf, the incident field must be evaluated at phi-pi for the X component and at phi-3*pi/2 for the Y component. 
+    #The motives for this correspond to a difference in the coordinate system used when deriving the equations, where the z versor points in the oposite direction
+    #This fact is not described in the paper since i am not 100% sure this is the motive, but the rotation is necesary to obtain the needed result in all my tests with custom masks
+    ex_lens=rotate_180º(ex_lens)
+    ey_lens=rotate_270º(ey_lens)
 
     '''
     # the functions i am going to integrate are:
@@ -451,9 +497,9 @@ def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,res
     Axy=prefactor_y*ex_lens*weight_trapezoid
     Axz=prefactor_z*ex_lens*weight_trapezoid
 
-    Ayx=-prefactor_y*ey_lens*weight_trapezoid
-    Ayy=prefactor_x*ey_lens*weight_trapezoid
-    Ayz=-prefactor_z*ey_lens*weight_trapezoid
+    Ayx=prefactor_y*ey_lens*weight_trapezoid
+    Ayy=-prefactor_x*ey_lens*weight_trapezoid
+    Ayz=prefactor_z*ey_lens*weight_trapezoid
 
     if plot_plane=='X':
         for j in tqdm(range(resolution_z),desc='XZ plane'):

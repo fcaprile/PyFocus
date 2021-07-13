@@ -4,14 +4,20 @@
    contain the root `toctree` directive.
 
 Welcome to PyFocus's documentation!
-================================
+====================================
 
 .. toctree::
+   :caption: Examples:
    :maxdepth: 2
-   :caption: Contents:
+
+   examples
+
+.. toctree::
+   :caption: Modules:
+   :maxdepth: 2
 
    modules
-
+   
 
 Indices and tables
 ==================

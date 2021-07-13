@@ -9,7 +9,7 @@ def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,w
     '''
     2D integration to calculate the field focused by a high aperture lens on the XY plane with an interface
     
-    Parameters:        
+    Args:        
         :n_list (array): array with the refraction index of each medium of the multilayer system
         
         :d_list (array): Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
@@ -50,14 +50,26 @@ def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,w
     focus=h/np.sin(alpha)*10**6
         
     #The Y component of incident field must be evaluated at phi-pi/2, which is equivalent to moving the rows of the matrix    
-    def rotate_90º(matrix):
+    def rotate_180º(matrix):
         a,b=np.shape(matrix)       
         aux=np.zeros((a,b),dtype=complex)        
         for i in range(a):
-            aux[i-int(a/4),:]=matrix[i,:]
+            aux[i-int(a/2),:]=matrix[i,:]
         return aux
-
-    ey_lens=rotate_90º(ey_lens)
+    
+    #The Y component of incident field must be evaluated at phi-pi/2, which is equivalent to moving the rows of the matrix    
+    def rotate_270º(matrix):
+        a,b=np.shape(matrix)       
+        aux=np.zeros((a,b),dtype=complex)        
+        for i in range(a):
+            aux[i-int(3*a/4),:]=matrix[i,:]
+        return aux
+    
+    #To use the incident field as the function to be integrated in the equations deried from born and wolf, the incident field must be evaluated at phi-pi for the X component and at phi-3*pi/2 for the Y component. 
+    #The motives for this correspond to a difference in the coordinate system used when deriving the equations, where the z versor points in the oposite direction
+    #This fact is not described in the paper since i am not 100% sure this is the motive, but the rotation is necesary to obtain the needed result in all my tests with custom masks
+    ex_lens=rotate_180º(ex_lens)
+    ey_lens=rotate_270º(ey_lens)
 
     #Functions for computing the reflection and transmitinos coeficients between 2 interfaces. Subindexes _i meant incident and _t meand transmited  
     #given incident angle (theta_i), compute the reflection coeficients:
@@ -271,7 +283,7 @@ def interface_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha,
     '''
     2D integration to calculate the field focused by a high aperture lens on the XY and XZ planes with an interface
     
-    Parameters:        
+    Args:        
         :n_list (array): array with the refraction index of each medium of the multilayer system
         
         :d_list (array): Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
@@ -327,14 +339,26 @@ def interface_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha,
     focus=h/np.sin(alpha)*10**6
         
     #The Y component of incident field must be evaluated at phi-pi/2, which is equivalent to moving the rows of the matrix    
-    def rotate_90º(matrix):
+    def rotate_180º(matrix):
         a,b=np.shape(matrix)       
         aux=np.zeros((a,b),dtype=complex)        
         for i in range(a):
-            aux[i-int(a/4),:]=matrix[i,:]
+            aux[i-int(a/2),:]=matrix[i,:]
         return aux
-
-    ey_lens=rotate_90º(ey_lens)
+    
+    #The Y component of incident field must be evaluated at phi-pi/2, which is equivalent to moving the rows of the matrix    
+    def rotate_270º(matrix):
+        a,b=np.shape(matrix)       
+        aux=np.zeros((a,b),dtype=complex)        
+        for i in range(a):
+            aux[i-int(3*a/4),:]=matrix[i,:]
+        return aux
+    
+    #To use the incident field as the function to be integrated in the equations deried from born and wolf, the incident field must be evaluated at phi-pi for the X component and at phi-3*pi/2 for the Y component. 
+    #The motives for this correspond to a difference in the coordinate system used when deriving the equations, where the z versor points in the oposite direction
+    #This fact is not described in the paper since i am not 100% sure this is the motive, but the rotation is necesary to obtain the needed result in all my tests with custom masks
+    ex_lens=rotate_180º(ex_lens)
+    ey_lens=rotate_270º(ey_lens)
 
     '''
     #functions to integrate: Focused field without interface (Ef)

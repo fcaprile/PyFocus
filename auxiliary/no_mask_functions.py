@@ -12,7 +12,7 @@ def no_mask_integration(alpha,n,f,w0,wavelength,x_range,z_range,z_steps,r_steps)
     
     This matrixes are later used to calculate the focused field
     
-    Parameters:        
+    Args:        
         :alpha: semiangle of aperture
                 
         :wavelength: wavelength in the medium (equals wavelength in vacuum/n)
@@ -68,7 +68,7 @@ def no_mask_fields(II1,II2,II3,wavelength,I0,beta,gamma,z_steps,r_steps,x_range,
     '''
     Given the II matrixes calculate the field on the focus
     
-    Parameters: 
+    Args: 
         :phip0: Azimutal offset for the XZ plane calculus
     
         :wavelength: wavelength given in the medium (equals wavelength in vacuum/n)

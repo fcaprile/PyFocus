@@ -41,7 +41,7 @@ class Ui_Dialog(object):
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setGeometry(QtCore.QRect(10, 170, 301, 16))
         self.label.setObjectName("label")
-        
+
         self.pushButton.clicked.connect(self.change_mask_function)
         self.pushButton_2.clicked.connect(self.load_mask_function)
 
@@ -73,6 +73,10 @@ class Ui_Dialog(object):
         self.pushButton.setText(_translate("Dialog", "Define mask"))
         self.pushButton_2.setText(_translate("Dialog", "Load mask from .txt file"))
         self.label.setText(_translate("Dialog", "phi (azimutal coordinate, from 0 to 2pi)"))
+        try:
+            self.textEdit.setText(config.x)#if a phase mask has already been given
+        except:
+            pass
 
 
 if __name__ == "__main__":

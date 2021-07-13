@@ -258,7 +258,7 @@ class Ui_MainWindow(object):
         self.lineEdit_14.setText(_translate("MainWindow", "(leave like this for local folder)"))
         self.pushButton_5.setText(_translate("MainWindow", "Saving folder"))
         self.pushButton_6.setText(_translate("MainWindow", "Clear images"))
-        self.lineEdit_21.setText(_translate("MainWindow", "VPP mask simulation"))
+        self.lineEdit_21.setText(_translate("MainWindow", "VP mask simulation"))
         self.pushButton_4.setText(_translate("MainWindow", "Save"))
         self.groupBox_4.setTitle(_translate("MainWindow", "Field propagation"))
         self.radioButton.setText(_translate("MainWindow", "Simulate field propagation between "))

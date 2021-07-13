@@ -321,7 +321,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>VPP mask simulation</string>
+     <string>VP mask simulation</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_4">
