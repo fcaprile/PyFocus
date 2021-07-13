@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Examples using PyFocus &mdash; PyFocus  documentation</title>
+  <title>Examples using PyFocus User Interface &mdash; PyFocus  documentation</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="PyFocus" href="modules.html" />
-    <link rel="prev" title="Welcome to PyFocus’s documentation!" href="index.html" />
+    <link rel="prev" title="Intalation" href="instalation.html" />
     <link href="_static/style.css" rel="stylesheet" type="text/css">
 
 </head>
@@ -86,11 +86,29 @@
               
             
             
-              <p class="caption"><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Instalation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="instalation.html">Intalation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples using PyFocus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#vp-phase-mask-examples">VP phase mask examples:</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#custom-mask-examples">Custom mask examples:</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples using PyFocus User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#examples-using-pyfocus-in-custom-codes">Examples using PyFocus in custom codes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#gaussian-beam-without-modulation">Gaussian beam without modulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#vp-phase-mask">VP phase mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#propagation-with-a-vp-phase-mask">Propagation with a VP phase mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#interface-with-a-vp-phase-mask">Interface with a VP phase mask</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#multilayer-system">Multilayer system</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#custom-mask-examples">Custom mask examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#missalignment">Missalignment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inclination-tilt">Inclination (tilt)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tirf">TIRF</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Modules:</span></p>
 <ul>
@@ -147,7 +165,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Examples using PyFocus</li>
+      <li>Examples using PyFocus User Interface</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -166,8 +184,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="examples-using-pyfocus">
-<h1>Examples using PyFocus<a class="headerlink" href="#examples-using-pyfocus" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="examples-using-pyfocus-user-interface">
+<h1>Examples using PyFocus User Interface<a class="headerlink" href="#examples-using-pyfocus-user-interface" title="Permalink to this headline">¶</a></h1>
+<p>First we import the user interface class and define an instance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">user_interface</span>
+<span class="n">ui</span><span class="o">=</span><span class="n">user_interface</span><span class="o">.</span><span class="n">UI</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To show the interface we use the function “show”:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="examples-using-pyfocus-in-custom-codes">
+<h1>Examples using PyFocus in custom codes<a class="headerlink" href="#examples-using-pyfocus-in-custom-codes" title="Permalink to this headline">¶</a></h1>
 <p>First, we define the parameters of the simulation:</p>
 <blockquote>
 <div><dl class="field-list simple">
@@ -260,49 +290,65 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">parameters</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">NA</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">x_steps</span><span class="p">,</span> <span class="n">z_steps</span><span class="p">,</span> <span class="n">x_range</span><span class="p">,</span> <span class="n">z_range</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">z_int</span><span class="p">,</span> <span class="n">figure_name</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 </pre></div>
 </div>
+<div class="section" id="gaussian-beam-without-modulation">
+<h2>Gaussian beam without modulation<a class="headerlink" href="#gaussian-beam-without-modulation" title="Permalink to this headline">¶</a></h2>
 <p>Simulation of a focused gaussian beam without phase modulation by using the “no_mask” function. We obtain the “fields” tuple, which contains 6 arrays with the resulting field, and then we plot them using the “plot” function:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">no_mask</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
 <span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
+<div class="section" id="vp-phase-mask">
+<h1>VP phase mask<a class="headerlink" href="#vp-phase-mask" title="Permalink to this headline">¶</a></h1>
 <p>Simulation of a focused gaussian beam with VP modulation by using the “VP” function:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">VP</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
 <span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="vp-phase-mask-examples">
-<h1>VP phase mask examples:<a class="headerlink" href="#vp-phase-mask-examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="propagation-with-a-vp-phase-mask">
+<h1>Propagation with a VP phase mask<a class="headerlink" href="#propagation-with-a-vp-phase-mask" title="Permalink to this headline">¶</a></h1>
 <p>To simulate the propagation of the incident field from the phase mask to the objective lens, we redefine the parameters L and R and set the propagation variable of VP to True:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">L</span><span class="o">=</span><span class="mi">1000</span>
 <span class="n">R</span><span class="o">=</span><span class="mi">5</span>
 <span class="n">parameters</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">NA</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">x_steps</span><span class="p">,</span> <span class="n">z_steps</span><span class="p">,</span> <span class="n">x_range</span><span class="p">,</span> <span class="n">z_range</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">z_int</span><span class="p">,</span> <span class="n">figure_name</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
 <span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">VP</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
 <span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="interface-with-a-vp-phase-mask">
+<h1>Interface with a VP phase mask<a class="headerlink" href="#interface-with-a-vp-phase-mask" title="Permalink to this headline">¶</a></h1>
 <p>To simulate a glass-water interface located at the focal plane, we redefine the parameters n, ds and z_int and set the interface variable of VP to True:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">1.33</span><span class="p">))</span>
 <span class="n">ds</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
 <span class="n">z_int</span><span class="o">=</span><span class="mi">0</span>
 <span class="n">parameters</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">NA</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">x_steps</span><span class="p">,</span> <span class="n">z_steps</span><span class="p">,</span> <span class="n">x_range</span><span class="p">,</span> <span class="n">z_range</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">z_int</span><span class="p">,</span> <span class="n">figure_name</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
 <span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">VP</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
 <span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
+<div class="section" id="multilayer-system">
+<h2>Multilayer system<a class="headerlink" href="#multilayer-system" title="Permalink to this headline">¶</a></h2>
 <p>For a multilayer system, we add 2 more layers of refraction index 0.14+3.55j and 1.54, and thicknesses 44 and 24:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">0.14</span><span class="o">+</span><span class="mf">3.55</span><span class="n">j</span><span class="p">,</span><span class="mf">1.54</span><span class="p">,</span><span class="mf">1.33</span><span class="p">))</span>
 <span class="n">ds</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span><span class="mi">44</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
 <span class="n">z_int</span><span class="o">=</span><span class="mi">0</span>
 <span class="n">parameters</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">NA</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">x_steps</span><span class="p">,</span> <span class="n">z_steps</span><span class="p">,</span> <span class="n">x_range</span><span class="p">,</span> <span class="n">z_range</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">z_int</span><span class="p">,</span> <span class="n">figure_name</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
 <span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">VP</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
 <span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+</div>
 <div class="section" id="custom-mask-examples">
-<h1>Custom mask examples:<a class="headerlink" href="#custom-mask-examples" title="Permalink to this headline">¶</a></h1>
-<p>Missalignment:</p>
+<h1>Custom mask examples<a class="headerlink" href="#custom-mask-examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="missalignment">
+<h2>Missalignment<a class="headerlink" href="#missalignment" title="Permalink to this headline">¶</a></h2>
 <p>First, we simulate the displacement of the gaussian beam and the VP mask. We define the auxiliar variables rho2 and phi2, which correspond to the displaced coordinates. We set the displacement to 0.4 times the aperture radius of the objective lens.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">=</span><span class="mf">0.4</span><span class="o">*</span><span class="n">h</span>
 <span class="n">rho2</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">:(</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="n">d</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
@@ -317,20 +363,27 @@
 <span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Inclination (tilt) in an angle of 3.11*10**-5 radians:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="n">angle</span><span class="o">=</span><span class="mf">3.11</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">5</span>
- <span class="n">f</span><span class="o">=</span><span class="n">h</span><span class="o">*</span><span class="n">n</span><span class="o">/</span><span class="n">NA</span>
- <span class="n">d</span><span class="o">=</span><span class="n">f</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
- <span class="n">rho2</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">:(</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="n">d</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
- <span class="n">phi2</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">rho</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span><span class="n">rho</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="o">-</span><span class="n">d</span><span class="p">)</span>
- <span class="n">mask_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">,</span><span class="n">w0</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">rho2</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">)</span><span class="o">/</span><span class="n">w0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="n">phi2</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">)</span><span class="o">+</span><span class="n">k</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi2</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">))))</span><span class="c1">#displaced a distance d with a VPP mask</span>
+</div>
+<div class="section" id="inclination-tilt">
+<h2>Inclination (tilt)<a class="headerlink" href="#inclination-tilt" title="Permalink to this headline">¶</a></h2>
+<p>For inclination in an angle of 3.11*10**-5 radians</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">angle</span><span class="o">=</span><span class="mf">3.11</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">5</span>
+<span class="n">f</span><span class="o">=</span><span class="n">h</span><span class="o">*</span><span class="n">n</span><span class="o">/</span><span class="n">NA</span>
+<span class="n">d</span><span class="o">=</span><span class="n">f</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+
+<span class="n">rho2</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">:(</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="n">d</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+<span class="n">phi2</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">rho</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span><span class="n">rho</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="o">-</span><span class="n">d</span><span class="p">)</span>
+<span class="n">mask_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">,</span><span class="n">w0</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">rho2</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">)</span><span class="o">/</span><span class="n">w0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="n">phi2</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">)</span><span class="o">+</span><span class="n">k</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi2</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">))))</span>
+
 <span class="n">divisions_theta</span><span class="o">=</span><span class="mi">200</span>
 <span class="n">divisions_phi</span><span class="o">=</span><span class="mi">200</span>
 <span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">custom</span><span class="p">(</span><span class="n">mask_function</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">,</span><span class="n">divisions_theta</span><span class="p">,</span><span class="n">divisions_phi</span><span class="p">)</span>
 <span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>TIRF:</p>
+</div>
+<div class="section" id="tirf">
+<h2>TIRF<a class="headerlink" href="#tirf" title="Permalink to this headline">¶</a></h2>
 <p>After setting a water-glass interface, to simulate TIRF with modulation of a VP mask we define the mask function the following way:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">1.33</span><span class="p">))</span>
 <span class="n">ds</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
@@ -349,6 +402,7 @@
 </pre></div>
 </div>
 </div>
+</div>
 
 
            </div>
@@ -361,7 +415,7 @@
         <a href="modules.html" class="btn btn-neutral float-right" title="PyFocus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to PyFocus’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="instalation.html" class="btn btn-neutral float-left" title="Intalation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

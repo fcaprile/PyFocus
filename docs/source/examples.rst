@@ -1,5 +1,22 @@
-Examples using PyFocus
-====================================
+Examples using PyFocus User Interface
+===================================================
+
+First we import the user interface class and define an instance:
+
+.. code-block:: python
+
+   import user_interface 
+   ui=user_interface.UI()
+
+To show the interface we use the function "show":
+
+.. code-block:: python
+
+   ui.show()
+
+
+Examples using PyFocus in custom codes
+===================================================
 
 First, we define the parameters of the simulation:
 
@@ -80,12 +97,18 @@ To simplify the code, we define the "parameters" array:
    parameters=np.array((NA, n, h, w0, wavelength, gamma, beta, z, x_steps, z_steps, x_range, z_range, I0, L, R, ds, z_int, figure_name), dtype=object)
 
 
+Gaussian beam without modulation
+--------------------------------
+
 Simulation of a focused gaussian beam without phase modulation by using the "no_mask" function. We obtain the "fields" tuple, which contains 6 arrays with the resulting field, and then we plot them using the "plot" function:
 
 .. code-block:: python
 
    fields=sim.no_mask(False,False,*parameters) 
    plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+
+VP phase mask
+==============
 
 Simulation of a focused gaussian beam with VP modulation by using the "VP" function:
 
@@ -94,8 +117,9 @@ Simulation of a focused gaussian beam with VP modulation by using the "VP" funct
    fields=sim.VP(False,False,*parameters) 
    plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
-VP phase mask examples:
-=======================
+
+Propagation with a VP phase mask
+================================
 
 To simulate the propagation of the incident field from the phase mask to the objective lens, we redefine the parameters L and R and set the propagation variable of VP to True:
 
@@ -104,8 +128,12 @@ To simulate the propagation of the incident field from the phase mask to the obj
    L=1000
    R=5
    parameters=np.array((NA, n, h, w0, wavelength, gamma, beta, z, x_steps, z_steps, x_range, z_range, I0, L, R, ds, z_int, figure_name), dtype=object)
+
    fields=sim.VP(True,False,*parameters)
    plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+
+Interface with a VP phase mask
+==============================
 
 To simulate a glass-water interface located at the focal plane, we redefine the parameters n, ds and z_int and set the interface variable of VP to True:
 
@@ -115,8 +143,12 @@ To simulate a glass-water interface located at the focal plane, we redefine the 
    ds= np.array((np.inf,np.inf))
    z_int=0
    parameters=np.array((NA, n, h, w0, wavelength, gamma, beta, z, x_steps, z_steps, x_range, z_range, I0, L, R, ds, z_int, figure_name), dtype=object)
+
    fields=sim.VP(False,True,*parameters)
    plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+
+Multilayer system
+-----------------
 
 For a multilayer system, we add 2 more layers of refraction index 0.14+3.55j and 1.54, and thicknesses 44 and 24:
 
@@ -126,14 +158,16 @@ For a multilayer system, we add 2 more layers of refraction index 0.14+3.55j and
    ds= np.array((np.inf,44,24,np.inf))
    z_int=0
    parameters=np.array((NA, n, h, w0, wavelength, gamma, beta, z, x_steps, z_steps, x_range, z_range, I0, L, R, ds, z_int, figure_name), dtype=object)
+
    fields=sim.VP(False,True,*parameters)
    plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 
-Custom mask examples:
+Custom mask examples
 =====================
 
-Missalignment:
+Missalignment
+--------------
 
 First, we simulate the displacement of the gaussian beam and the VP mask. We define the auxiliar variables rho2 and phi2, which correspond to the displaced coordinates. We set the displacement to 0.4 times the aperture radius of the objective lens. 
 
@@ -153,22 +187,28 @@ Then we define the mask function and begin the simulation. We set the 2D integra
    fields=sim.custom(mask_function,False,False,*parameters,divisions_theta,divisions_phi)
    plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
-Inclination (tilt) in an angle of 3.11*10**-5 radians:
+Inclination (tilt)
+-------------------
+
+For inclination in an angle of 3.11*10**-5 radians
 
 .. code-block:: python
 
-    angle=3.11*10**-5
-    f=h*n/NA
-    d=f*np.tan(angle)
-    rho2=lambda rho,phi:(rho**2+d**2-2*rho*d*np.cos(phi))**0.5
-    phi2=lambda rho,phi:np.arctan2(rho*np.sin(phi),rho*np.cos(phi)-d)
-    mask_function=lambda rho,phi,w0,f,k: np.exp(-(rho2(rho,phi)/w0)**2+1j*(phi2(rho,phi)+k*np.sin(angle)*rho*np.cos(phi2(rho,phi))))#displaced a distance d with a VPP mask
+   angle=3.11*10**-5
+   f=h*n/NA
+   d=f*np.tan(angle)
+
+   rho2=lambda rho,phi:(rho**2+d**2-2*rho*d*np.cos(phi))**0.5
+   phi2=lambda rho,phi:np.arctan2(rho*np.sin(phi),rho*np.cos(phi)-d)
+   mask_function=lambda rho,phi,w0,f,k: np.exp(-(rho2(rho,phi)/w0)**2+1j*(phi2(rho,phi)+k*np.sin(angle)*rho*np.cos(phi2(rho,phi))))
+
    divisions_theta=200
    divisions_phi=200
    fields=sim.custom(mask_function,False,False,*parameters,divisions_theta,divisions_phi)
    plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
-TIRF:
+TIRF
+-----
 
 After setting a water-glass interface, to simulate TIRF with modulation of a VP mask we define the mask function the following way:
 
