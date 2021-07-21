@@ -30,7 +30,6 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         app = QtGui.QApplication.instance()
         app.setStyleSheet(qdarkstyle.load_stylesheet())#set a dark style
-
         #Main functions:
         self.counter=0# counts the numer of simulations realized in this sesion, to avoid overwriting save files with the same name
         self.setupUi(self)
