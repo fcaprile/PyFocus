@@ -20,9 +20,9 @@ def generate_incident_field(maskfunction,alpha,f,divisions_phi,divisions_theta,g
             
             w0: Radius of the incident gaussian beam.
             
-            f: Focal distane of the objective lens
+            f: Focal distane of the objective lens (mm)
             
-            k: Wavenumber in the objective lens medium IMPORTANT:(mm)
+            k: Wavenumber in the objective lens medium (mm)
             
             The real part defines the amplitude of the incident field
     
@@ -36,7 +36,7 @@ def generate_incident_field(maskfunction,alpha,f,divisions_phi,divisions_theta,g
     This arrays have the value of the amplitude of the incident field for each value of theta and phi: ex_lens[phi_position,theta_position]
     for phi_position a value in np.linspace(0,2*np.pi,divisions_phi) and theta_position a value in np.linspace(0,alpha,divisions_theta) 
     '''
-
+    wavelength/=10**6#pasage from nm to mm
     k=2*np.pi/wavelength #k is given in nm, the same as wavelength
     ex_lens=np.zeros((divisions_phi,divisions_theta),dtype=complex)
     ey_lens=np.zeros((divisions_phi,divisions_theta),dtype=complex)
@@ -98,7 +98,7 @@ def plot_in_cartesian(Ex,Ey,r_range,alpha,f,figure_name):
     I_cartesian=np.abs(Ex_cartesian)**2+np.abs(Ey_cartesian)**2
     
     #colorbar plot for the field:
-    plt.rcParams['font.size']=17#tamaño de fuente
+    plt.rcParams['font.size']=10#tamaño de fuente
     fig1, (ax1, ax2) = plt.subplots(num=str(figure_name)+' Incident intensity',figsize=(9, 4), ncols=2)
     fig1.suptitle('Incident field intensity')
     
@@ -115,7 +115,7 @@ def plot_in_cartesian(Ex,Ey,r_range,alpha,f,figure_name):
     ax2.set_xlabel('x (mm)')
     ax2.set_ylabel('Intensity  (mW/cm\u00b2)')  
     fig1.tight_layout()
-    fig1.subplots_adjust(top=0.90)                
+    fig1.subplots_adjust(top=0.90) 
     
     #Amplitude and phase plot 
     #Ex
@@ -179,8 +179,9 @@ def custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho
     
         :arrays: I_cartesian, Ex_cartesian, Ey_cartesian: Intensity and amplitude of the incident field calculated in cartesian coordinates
     '''
+    wavelength/=10**6#passage of wavelength to mm
     
-    print('Calculating field at the objective:')
+    print('Calculating incident field:')
     time.sleep(0.2)
     
     #define divisions for the integration:
@@ -260,7 +261,7 @@ def custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution
     '''
     
     if countdown==True:
-        print('Calculating field at the focal plane:')
+        print('Calculating field near the focus:')
         time.sleep(0.5)
     
     #passage from mm to nm and sine's law  

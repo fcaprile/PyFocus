@@ -110,7 +110,7 @@ Simulation of a focused gaussian beam without phase modulation by using the "no_
 VP phase mask
 ==============
 
-Simulation of a focused gaussian beam with VP modulation by using the "VP" function:
+Simulation of a focused gaussian beam with VP modulation by using the "VP" function. Remember that the 2 first ariables are boolean parameters that define if we simulate the propagation of the incident field and if there is an interface.
 
 .. code-block:: python
 

@@ -51,10 +51,12 @@ class Ui_Dialog(object):
     def change_mask_function(self):
         config.x=self.textEdit.toPlainText()
         config.y=True #internal parameter to set whether or the mask function is a function or a txt
+        print('Function defined')
 
     def load_mask_function(self):
         config.x=np.loadtxt(QtWidgets.QFileDialog.getOpenFileName(None,'Select mask function File')[0],dtype=complex)
         config.y=False #internal parameter to set whether or the mask function is a function or a txt
+        print('File loaded')
         
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -71,6 +73,7 @@ class Ui_Dialog(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">np.exp(-(rho/w0)**2+1j*phi)</p></body></html>"))
         self.pushButton.setText(_translate("Dialog", "Define mask"))
         self.pushButton_2.setText(_translate("Dialog", "Load mask from .txt file"))
+        self.label.setText(_translate("Dialog", "phi (azimutal coordinate, from 0 to 2pi)"))
         try:
             self.textEdit.setText(config.x)#if a phase mask has already been given
         except:

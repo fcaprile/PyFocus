@@ -81,8 +81,8 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
             L=float(self.lineEdit_19.text())
             R=float(self.lineEdit_22.text())
         else:
-            L=''
-            R=''
+            L='Not used'
+            R='Not used'
         z_range=float(self.lineEdit_20.text())#axial distance for the simulation
         figure_name=str(self.lineEdit_21.text())#name for the ploted figures and the save files
         if figure_name=='': #to always have a figure name
@@ -104,8 +104,8 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                 print('The refraction index array or the thickness array are missing a parameter, check that there are 2 parameters less for thickness than for refraction index')
                 raise ValueError('The refraction index array or the thickness array are missing a parameter, check that there are 2 parameters less for thickness than for refraction index')
         else:
-            z_int=''
-            ds=''
+            z_int='Not used'
+            ds='Not used'
         self.parameters=np.array((NA,n,h,w0,wavelength,gamma,beta,zp0,x_steps,z_steps,x_range,z_range,I0,L,R,ds,z_int,figure_name), dtype=object)
 
     def save_parameters(self):
@@ -121,12 +121,11 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                 name=name+' parameters'
             else:
                 name=name[:-4]+' parameters'
-            
-            for i in np.array(14,15,16,17):
-                if self.parameters[i]=='':
-                    self.parameters[i]='Not used'
-            
+                        
             config = configparser.ConfigParser()
+            # #check if an interface as simualted:
+            # if len(self.parameters[1])==1:#no interface
+
             config['Parameters'] = {
             'NA': self.parameters[0],
             'Aperture radius (mm)':self.parameters[2],
@@ -140,10 +139,10 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
             'Axial pixel size (nm)': self.parameters[9],
             'Radial field of view (nm)': self.parameters[10],
             'Axial field of view (nm)': self.parameters[11],
-            'Laser intensity (kW/cm^2)': self.parameters[12],
-            'refraction indexes': self.parameters[1],
-            'interface layer thickness': self.parameters[15],
-            'interface axial position': self.parameters[16],
+            'Laser intensity (mW/cm^2)': self.parameters[12],
+            'refraction indices': self.parameters[1],
+            'interface layer thickness (nm)': self.parameters[15],
+            'interface axial position (nm)': self.parameters[16],
             'Distance from phase plate to objective (mm)': self.parameters[13],
             'Phase mask radius (mm)': self.parameters[14]}
 

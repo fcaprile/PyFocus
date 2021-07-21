@@ -24,10 +24,10 @@ class Ui_Dialog(object):
         self.label_4.setGeometry(QtCore.QRect(10, 190, 181, 16))
         self.label_4.setObjectName("label_4")
         self.label_5 = QtWidgets.QLabel(Dialog)
-        self.label_5.setGeometry(QtCore.QRect(10, 210, 181, 16))
+        self.label_5.setGeometry(QtCore.QRect(10, 210, 241, 16))
         self.label_5.setObjectName("label_5")
         self.label_6 = QtWidgets.QLabel(Dialog)
-        self.label_6.setGeometry(QtCore.QRect(10, 230, 101, 16))
+        self.label_6.setGeometry(QtCore.QRect(10, 230, 141, 16))
         self.label_6.setObjectName("label_6")
         self.textEdit = QtWidgets.QTextEdit(Dialog)
         self.textEdit.setGeometry(QtCore.QRect(10, 100, 291, 21))
@@ -51,20 +51,21 @@ class Ui_Dialog(object):
     def change_mask_function(self):
         config.x=self.textEdit.toPlainText()
         config.y=True #internal parameter to set whether or the mask function is a function or a txt
+        print('Function defined')
 
     def load_mask_function(self):
         config.x=np.loadtxt(QtWidgets.QFileDialog.getOpenFileName(None,'Select mask function File')[0],dtype=complex)
         config.y=False #internal parameter to set whether or the mask function is a function or a txt
-
-
+        print('File loaded')
+        
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Define mask"))
-        self.label_2.setText(_translate("Dialog", " rho (radial coordinate, from 0 to phase mask  radius)"))
+        self.label_2.setText(_translate("Dialog", " rho (radial coordinate, from 0 to phase mask radius)"))
         self.label_3.setText(_translate("Dialog", "Available parameters:"))
-        self.label_4.setText(_translate("Dialog", "w0 (gaussian beam radius)"))
-        self.label_5.setText(_translate("Dialog", "f (focal distance of objective lens)"))
-        self.label_6.setText(_translate("Dialog", "k (wavenumber)"))
+        self.label_4.setText(_translate("Dialog", "w0 (gaussian beam radius, mm)"))
+        self.label_5.setText(_translate("Dialog", "f (focal distance of objective lens, mm)"))
+        self.label_6.setText(_translate("Dialog", "k (wavenumber, 1/mm)"))
         self.textEdit.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

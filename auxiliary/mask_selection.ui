@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string> rho (radial coordinate, from 0 to phase mask  radius)</string>
+    <string> rho (radial coordinate, from 0 to phase mask radius)</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_3">
@@ -49,7 +49,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>w0 (gaussian beam radius)</string>
+    <string>w0 (gaussian beam radius, mm)</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_5">
@@ -57,12 +57,12 @@
     <rect>
      <x>10</x>
      <y>210</y>
-     <width>181</width>
+     <width>241</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>f (focal distance of objective lens)</string>
+    <string>f (focal distance of objective lens, mm)</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_6">
@@ -70,12 +70,12 @@
     <rect>
      <x>10</x>
      <y>230</y>
-     <width>101</width>
+     <width>141</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>k (wavenumber)</string>
+    <string>k (wavenumber, 1/mm)</string>
    </property>
   </widget>
   <widget class="QTextEdit" name="textEdit">

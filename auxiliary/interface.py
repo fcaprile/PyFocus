@@ -44,7 +44,7 @@ def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,w
     n2=n_list[-1]#last medium
     
     if countdown==True:
-        print('Calculating field at the focal plane:')
+        print('Calculating field near the focus:')
         time.sleep(0.5)
         
     focus=h/np.sin(alpha)*10**6

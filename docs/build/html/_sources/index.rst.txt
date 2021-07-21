@@ -10,7 +10,7 @@ Welcome to PyFocus's documentation!
    :caption: Instalation:
    :maxdepth: 2
 
-   instalation
+   installation
 
 .. toctree::
    :caption: Examples:

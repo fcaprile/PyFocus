@@ -143,7 +143,7 @@ def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,ga
             #N_rho and N_phi are the number of divisions for fraunhoffer's integral by the trapecium's method
             N_rho=400
             N_phi=400                
-            ex_lens,ey_lens,I_cartesian,Ex_cartesian,Ey_cartesian=custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho,N_phi,alpha,f,mask_function_VP,R,L,I0,wavelength*10**-6,w0,figure_name,plot=True)
+            ex_lens,ey_lens,I_cartesian,Ex_cartesian,Ey_cartesian=custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho,N_phi,alpha,f,mask_function_VP,R,L,I0,wavelength,w0,figure_name,plot=True)
 
         #calculate field at the focal plane:
         ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range)
@@ -261,8 +261,6 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=
     
     #smaller numbers give faster integration times
     
-    #pasage to mm:
-    wavelength*=10**-6
     if callable(mask_function)==True:#if a function is given, turn it into the ex_lens and ey_lens variables
         #resolution for field at objective
         if propagation==False:
@@ -271,33 +269,31 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=
             #plot field at the entrance of the lens:
             #since ex_lens and ey_lens are given in theta and phi coordinates, the have to be transformed to cartesian in order to be ploted, hence the name of this function
             if plot_Ei==True:
-                print('Ploting incident field:')
+                print('Showing incident field:')
                 plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
         else:
             #calculate field inciding on the lens by fraunhofer's difraction formula
             #N_rho and N_phi are the number of divisions for fraunhoffer's integral by the trapecium's method
-            N_rho=500
-            N_phi=500                
+            N_rho=200
+            N_phi=200                
             ex_lens,ey_lens,I_cartesian,Ex_cartesian,Ey_cartesian=custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho,N_phi,alpha,f,mask_function,R,L,I0,wavelength,w0,figure_name,plot=True)
             if plot_Ei==True:
+                print('Showing incident field:')
                 plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
 
     elif type(mask_function)==np.ndarray:#if an array is given
         if propagation==True:
             print('Giving mask function as an array not implemented for calculation of incient field propagation. Can be implemented by obtaining "ex_lens" and "ey_lens" arrays using the "generate_incident_field" function manualy replacing "mask_function" with the desired array')
-            print('Simulation will continue as if propagation is False')
+            print('Simulation will continue with propagation=False')
         ex_lens,ey_lens=mask_function*np.cos(gamma*np.pi/180)*I0**0.5,mask_function*np.sin(gamma*np.pi/180)*np.exp(1j*beta*np.pi/180)*I0**0.5 #make the x and y component based on polarization
         if plot_Ei==True:
-            print('Ploting incident field:')
+            print('Showing incident field:')
             plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
         divisions_phi,divisions_theta=np.shape(mask_function)
     else:
         print('Wrong format for mask function, acceptable formats are functions or arrays')
         
     #calculate field at the focal plane:
-    #pasage to nm:
-    wavelength*=10**6
-
     if interface==False:#no interface
         ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range)
     else:

@@ -1,4 +1,4 @@
-Intalation
+Intallation
 ===============================
 
 To install from pip:
@@ -8,7 +8,7 @@ To install from pip:
    pip install Py_Focus
 
 
-Dependences:
+Dependences
 ------------
 
 PyFocus uses the following packages (install them with pip):
@@ -17,7 +17,7 @@ PyFocus uses the following packages (install them with pip):
 
    pip install config tqdm numpy matplotlib scipy PyQt5 qtpy pyqtgraph qdarkstyle os configparser time
 
-Importing:
+Importing
 ----------
 
 For the examples we use the following modules:
