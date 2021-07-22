@@ -1,3 +1,0 @@
-To avoid overwriting text files or figures which have the same name, if the name repeats from the previous one, a number is added to the name to avoid it.
-
-Upon selecting a phase mask, the simulation's default name changes to one acording to the used mask. Default name can be modified by the user, and after that changing phase masks won't change the name.
