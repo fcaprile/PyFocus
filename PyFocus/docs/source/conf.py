@@ -18,6 +18,15 @@ sys.path.insert(0, os.path.abspath('/.'))
 sys.path.insert(0, os.path.abspath('../.'))
 sys.path.insert(0, os.path.abspath('.../.'))
 sys.path.insert(0, os.path.abspath('.../...'))
+<<<<<<< HEAD
+=======
+sys.path.insert(0, os.path.abspath('.../..'))
+sys.path.insert(0, os.path.abspath('..../'))
+sys.path.insert(0, os.path.abspath('..../.'))
+sys.path.insert(0, os.path.abspath('..../..'))
+sys.path.insert(0, os.path.abspath('..../...'))
+sys.path.insert(0, os.path.abspath('..../....'))
+>>>>>>> parent of 5b53810 (Update conf.py)
 # -- Project information -----------------------------------------------------
 
 project = 'PyFocus'
