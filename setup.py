@@ -16,7 +16,6 @@ setup(
     'numpy',
     'matplotlib',
     'scipy',
-    'PyQt5',
     'qtpy',
     'pyqtgraph',
     'qdarkstyle',
