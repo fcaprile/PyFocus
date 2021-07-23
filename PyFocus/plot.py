@@ -166,6 +166,7 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name='
     cbar_1_1=fig2.colorbar(pos_z2, ax=ax_z2,ticks=[5, 90,180,270,355])
     cbar_1_1.ax.set_ylabel('Phase (degrees)')
     fig2.tight_layout()
+    plt.show()
     
     return fig1,fig2
 

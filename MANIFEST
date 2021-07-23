@@ -11,7 +11,6 @@ PyFocus\interface.py
 PyFocus\mask_selection.py
 PyFocus\mask_selection_modified.py
 PyFocus\no_mask_functions.py
-PyFocus\plot polarization near center.py
 PyFocus\plot.py
 PyFocus\plot_polarization_elipses.py
 PyFocus\sim.py
