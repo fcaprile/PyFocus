@@ -47,13 +47,10 @@ With:
 import numpy as np
 import time
 
-import sys
-sys.path.insert(0,'/auxiliary')
-
-from auxiliary.VP_functions import VP_integration, VP_fields, VP_fraunhofer
-from auxiliary.no_mask_functions import no_mask_integration, no_mask_fields
-from auxiliary.custom_mask_functions import generate_incident_field, plot_in_cartesian, custom_mask_objective_field, custom_mask_focus_field_XZ_XY
-from auxiliary.interface import interface_custom_mask_focus_field_XZ_XY
+from VP_functions import VP_integration, VP_fields, VP_fraunhofer
+from no_mask_functions import no_mask_integration, no_mask_fields
+from custom_mask_functions import generate_incident_field, plot_in_cartesian, custom_mask_objective_field, custom_mask_focus_field_XZ_XY
+from interface import interface_custom_mask_focus_field_XZ_XY
 
 def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name=''):
     '''

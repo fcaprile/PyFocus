@@ -1,8 +1,6 @@
-﻿import sys
-sys.path.insert(0,'/auxiliary')
-import numpy as np
+﻿import numpy as np
 from matplotlib import pyplot as plt
-from auxiliary.plot_polarization_elipses import polarization_elipse
+from plot_polarization_elipses import polarization_elipse
 
 
 def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name=''):
