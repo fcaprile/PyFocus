@@ -5,3 +5,16 @@ PyFocus\__init__.py
 PyFocus\plot.py
 PyFocus\sim.py
 PyFocus\user_interface.py
+PyFocus\auxiliary\VP_functions.py
+PyFocus\auxiliary\__init__.py
+PyFocus\auxiliary\complex_quadrature.py
+PyFocus\auxiliary\complex_quadrature_2D.py
+PyFocus\auxiliary\custom_mask_functions.py
+PyFocus\auxiliary\front_end_ui.py
+PyFocus\auxiliary\interface.py
+PyFocus\auxiliary\mask_selection.py
+PyFocus\auxiliary\mask_selection_modified.py
+PyFocus\auxiliary\no_mask_functions.py
+PyFocus\auxiliary\plot polarization near center.py
+PyFocus\auxiliary\plot_polarization_elipses.py
+PyFocus\auxiliary\tmm_core.py
