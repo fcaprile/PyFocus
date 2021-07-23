@@ -1,14 +1,14 @@
 from distutils.core import setup
 setup(
   name = 'PyCustomFocus',         
-  packages = ['PyFocus','PyFocus.plot_polarization_elipses','plot_polarization_elipses'],   
-  version = '0.3.1',      # Start with a small number and increase it with every change you make
+  packages = ['PyFocus'],   
+  version = '0.3.3',      # Start with a small number and increase it with every change you make
   license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
   description = 'Full vectorial calculation of focused electromagnetic fields moduled by a custom phase mask',   # Give a short description about your library
   author = 'Caprile Fernando',                   # Type in your name
   author_email = 'fcaprile@gmail.com',      # Type in your E-Mail
   url = 'https://github.com/fcaprile/PyFocus',   # Provide either the link to your github or to your website
-  download_url = 'https://github.com/fcaprile/PyFocus/archive/refs/tags/0.3.1.tar.gz',    # I explain this later on
+  download_url = 'https://github.com/fcaprile/PyFocus/archive/refs/tags/0.3.3.tar.gz',    # I explain this later on
   keywords = ['User interface', 'Custom phase mask'],   # Keywords that define your package best
   install_requires=[            # I get to this in a second
     'config',
