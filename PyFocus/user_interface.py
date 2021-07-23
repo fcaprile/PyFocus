@@ -1,4 +1,7 @@
 #from Pyqt5 user interface packages
+import sys
+sys.path.insert(0,'/auxiliary')
+
 from auxiliary.front_end_ui import Ui_MainWindow
 from auxiliary.mask_selection import Ui_Dialog
 from PyQt5.QtWidgets import QFileDialog

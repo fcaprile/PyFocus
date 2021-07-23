@@ -47,6 +47,8 @@ With:
 import numpy as np
 import time
 
+import sys
+sys.path.insert(0,'/auxiliary')
 
 from auxiliary.VP_functions import VP_integration, VP_fields, VP_fraunhofer
 from auxiliary.no_mask_functions import no_mask_integration, no_mask_fields
