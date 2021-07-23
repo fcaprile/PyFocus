@@ -17,19 +17,19 @@ High-level simulation functions
 
 Internal functions for VPP
 ==========================
-.. automodule:: auxiliary.VP_functions
+.. automodule:: VP_functions
 
 
 Internal functions for no mask
 ==============================
-.. automodule:: auxiliary.no_mask_functions
+.. automodule:: no_mask_functions
 
 
 Internal functions for a custom mask
 ====================================
-.. automodule:: auxiliary.custom_mask_functions
+.. automodule:: custom_mask_functions
 
 
 Internal functions for an interface
 ===================================
-.. automodule:: auxiliary.interface
+.. automodule:: interface
