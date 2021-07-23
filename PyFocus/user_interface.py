@@ -1,14 +1,21 @@
+import sys
+import os
+
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+
 #from Pyqt5 user interface packages
-from front_end_ui import Ui_MainWindow
-from mask_selection import Ui_Dialog
+from PyFocus.front_end_ui import Ui_MainWindow
+from PyFocus.mask_selection import Ui_Dialog
 from PyQt5.QtWidgets import QFileDialog
 from qtpy import QtWidgets
 from pyqtgraph.Qt import QtGui
 import qdarkstyle
 
 #custom made integration functions
-from plot import plot_XZ_XY
-from sim import VP, no_mask, custom
+from PyFocus.plot import plot_XZ_XY
+from PyFocus.sim import VP, no_mask, custom
 
 #usual packages
 import numpy as np

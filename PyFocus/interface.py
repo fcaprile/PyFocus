@@ -1,8 +1,14 @@
 ﻿import numpy as np
 from tqdm import tqdm
-from matplotlib import pyplot as plt
 import time
-from tmm_core import *
+import sys
+import os
+
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+
+from PyFocus.tmm_core import coh_tmm
 
 
 def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,wavelength,z_int,zp0,resolution_x,divisions_theta,divisions_phi,x_range,countdown=True,x0=0,y0=0):
@@ -252,7 +258,7 @@ def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,w
             for j,y in enumerate(y_values):
                 rhop=(x**2+y**2)**0.5
                 phip=np.arctan2(y,x)
-                kr=rhop*k
+                kr=rhop*k1
                 sin_theta_kr=sin_theta*kr
                 
                 phase_rho_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip)))

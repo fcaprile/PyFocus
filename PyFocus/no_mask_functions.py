@@ -1,8 +1,17 @@
 """
 Functions for the simulation of the field obtained by focuisng a gaussian beam
 """
+
+import sys
+import os
+
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+
+
 import numpy as np
-from complex_quadrature import complex_quadrature
+from PyFocus.complex_quadrature import complex_quadrature
 from tqdm import tqdm
 from scipy.special import jv
 
