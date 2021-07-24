@@ -1,3 +1,16 @@
+#usual packages
+import numpy as np
+import os
+from matplotlib import pyplot as plt
+import time
+import sys
+import configparser
+import config
+from PyQt5.QtWidgets import QFileDialog
+from qtpy import QtWidgets
+from pyqtgraph.Qt import QtGui
+import qdarkstyle
+
 import sys
 import os
 
@@ -8,23 +21,10 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 #from Pyqt5 user interface packages
 from PyFocus.front_end_ui import Ui_MainWindow
 from PyFocus.mask_selection import Ui_Dialog
-from PyQt5.QtWidgets import QFileDialog
-from qtpy import QtWidgets
-from pyqtgraph.Qt import QtGui
-import qdarkstyle
 
 #custom made integration functions
 from PyFocus.plot import plot_XZ_XY
 from PyFocus.sim import VP, no_mask, custom
-
-#usual packages
-import numpy as np
-import os
-from matplotlib import pyplot as plt
-import time
-import sys
-import configparser
-import config
 
 '''
 User interface class that allows seting up parameters, running simulations and saving the obtained fields as .txt files
