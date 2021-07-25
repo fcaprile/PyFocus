@@ -1,5 +1,5 @@
 ﻿"""
-Functions for the simulation of the foci obtained by a VP phase mask
+Functions for the simulation of the foci obtained by a VP mask
 """
 import sys
 import os
