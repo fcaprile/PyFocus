@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>User interface &mdash; PyFocus  documentation</title>
+  <title>Classes for the user interface &mdash; PyFocus  documentation</title>
   
 
   
@@ -100,12 +100,18 @@
 </ul>
 <p class="caption"><span class="caption-text">Modules:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">User interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#module-sim">High-level simulation functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#module-VP_functions">Internal functions for VPP</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#module-no_mask_functions">Internal functions for no mask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#module-custom_mask_functions">Internal functions for a custom mask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#module-interface">Internal functions for an interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Classes for the user interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-user_interface">User interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sim">High-level simulation functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#internal-functions">Internal functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-VP_functions">Functions for a VP mask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-no_mask_functions">Functions for no mask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-custom_mask_functions">Functions for a custom phase mask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-interface">Functions for simulation of an interface</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -152,7 +158,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>User interface</li>
+      <li>Classes for the user interface</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -171,10 +177,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="toctree-wrapper compound">
+  <div class="section" id="classes-for-the-user-interface">
+<h1>Classes for the user interface<a class="headerlink" href="#classes-for-the-user-interface" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
 </div>
 <div class="section" id="module-user_interface">
-<span id="user-interface"></span><h1>User interface<a class="headerlink" href="#module-user_interface" title="Permalink to this headline">¶</a></h1>
+<span id="user-interface"></span><h2>User interface<a class="headerlink" href="#module-user_interface" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="user_interface.Mask_window">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">user_interface.</span></span><span class="sig-name descname"><span class="pre">Mask_window</span></span><a class="headerlink" href="#user_interface.Mask_window" title="Permalink to this definition">¶</a></dt>
@@ -250,7 +258,7 @@ Open the phase mask selection window if the “custom” option is selected</p>
 
 </div>
 <div class="section" id="module-sim">
-<span id="high-level-simulation-functions"></span><h1>High-level simulation functions<a class="headerlink" href="#module-sim" title="Permalink to this headline">¶</a></h1>
+<span id="high-level-simulation-functions"></span><h2>High-level simulation functions<a class="headerlink" href="#module-sim" title="Permalink to this headline">¶</a></h2>
 <p>High-level functions to simulate the foci obtained when: Focusing a gaussian beam, focusing a gaussian beam modulated with a VP mask and focusing a gaussian beam modulated with a custom phase mask</p>
 <p>The functions use the ‘parameters’ array, defined as:</p>
 <blockquote>
@@ -425,8 +433,11 @@ If array: Complex amplitude of the custom phase mask for each value of the spher
 </dd></dl>
 
 </div>
+</div>
+<div class="section" id="internal-functions">
+<h1>Internal functions<a class="headerlink" href="#internal-functions" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-VP_functions">
-<span id="internal-functions-for-vpp"></span><h1>Internal functions for VPP<a class="headerlink" href="#module-VP_functions" title="Permalink to this headline">¶</a></h1>
+<span id="functions-for-a-vp-mask"></span><h2>Functions for a VP mask<a class="headerlink" href="#module-VP_functions" title="Permalink to this headline">¶</a></h2>
 <p>Functions for the simulation of the foci obtained by a VP phase mask</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="VP_functions.VP_integration">
@@ -564,7 +575,7 @@ wavelength is given in the medium (equals wavelength in vacuum/n)</p>
 
 </div>
 <div class="section" id="module-no_mask_functions">
-<span id="internal-functions-for-no-mask"></span><h1>Internal functions for no mask<a class="headerlink" href="#module-no_mask_functions" title="Permalink to this headline">¶</a></h1>
+<span id="functions-for-no-mask"></span><h2>Functions for no mask<a class="headerlink" href="#module-no_mask_functions" title="Permalink to this headline">¶</a></h2>
 <p>Functions for the simulation of the field obtained by focuisng a gaussian beam</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="no_mask_functions.no_mask_integration">
@@ -637,7 +648,7 @@ wavelength is given in the medium (equals wavelength in vacuum/n)</p>
 
 </div>
 <div class="section" id="module-custom_mask_functions">
-<span id="internal-functions-for-a-custom-mask"></span><h1>Internal functions for a custom mask<a class="headerlink" href="#module-custom_mask_functions" title="Permalink to this headline">¶</a></h1>
+<span id="functions-for-a-custom-phase-mask"></span><h2>Functions for a custom phase mask<a class="headerlink" href="#module-custom_mask_functions" title="Permalink to this headline">¶</a></h2>
 <p>Functions for the simulation of the foci obtained by an arbitrary phase mask</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="custom_mask_functions.generate_incident_field">
@@ -814,7 +825,7 @@ for phi_position a value in np.linspace(0,2*np.pi,divisions_phi) and theta_posit
 
 </div>
 <div class="section" id="module-interface">
-<span id="internal-functions-for-an-interface"></span><h1>Internal functions for an interface<a class="headerlink" href="#module-interface" title="Permalink to this headline">¶</a></h1>
+<span id="functions-for-simulation-of-an-interface"></span><h2>Functions for simulation of an interface<a class="headerlink" href="#module-interface" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="interface.interface_custom_mask_focus_field_XY">
 <span class="sig-prename descclassname"><span class="pre">interface.</span></span><span class="sig-name descname"><span class="pre">interface_custom_mask_focus_field_XY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ex_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ey_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">divisions_theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">divisions_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countdown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#interface.interface_custom_mask_focus_field_XY" title="Permalink to this definition">¶</a></dt>
@@ -929,6 +940,7 @@ for phi_position a value in np.linspace(0,2*np.pi,divisions_phi) and theta_posit
 </dl>
 </dd></dl>
 
+</div>
 </div>
 
 

@@ -1,32 +1,38 @@
+Classes for the user interface
+================================
 .. toctree::
    :maxdepth: 4
 
 
 User interface
-===============
+--------------
 .. automodule:: user_interface
 
 
 High-level simulation functions
-===============================
+-------------------------------
 .. automodule:: sim
 
 
-Internal functions for VPP
-==========================
+Internal functions
+===========================================
+
+
+Functions for a VP mask
+--------------------------
 .. automodule:: VP_functions
 
 
-Internal functions for no mask
-==============================
+Functions for no mask
+--------------------------
 .. automodule:: no_mask_functions
 
 
-Internal functions for a custom mask
-====================================
+Functions for a custom phase mask
+---------------------------------
 .. automodule:: custom_mask_functions
 
 
-Internal functions for an interface
-===================================
+Functions for simulation of an interface
+----------------------------------------
 .. automodule:: interface
