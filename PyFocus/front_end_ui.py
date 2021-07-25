@@ -203,6 +203,10 @@ class Ui_MainWindow(object):
         self.label_28 = QtWidgets.QLabel(self.centralwidget)
         self.label_28.setGeometry(QtCore.QRect(10, 600, 171, 21))
         self.label_28.setObjectName("label_28")
+        self.pushButton_7 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_7.setEnabled(False)
+        self.pushButton_7.setGeometry(QtCore.QRect(540, 360, 101, 41))
+        self.pushButton_7.setObjectName("pushButton_7")
         self.groupBox.raise_()
         self.pushButton.raise_()
         self.pushButton_2.raise_()
@@ -223,6 +227,7 @@ class Ui_MainWindow(object):
         self.label_22.raise_()
         self.label_27.raise_()
         self.label_28.raise_()
+        self.pushButton_7.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -295,6 +300,8 @@ class Ui_MainWindow(object):
         self.label_22.setText(_translate("MainWindow", "Save text with used parameters:"))
         self.label_27.setText(_translate("MainWindow", "Save intensity on XZ and XY planes:"))
         self.label_28.setText(_translate("MainWindow", "Save amplitudes on the XY plane:"))
+        self.pushButton_7.setText(_translate("MainWindow", "Select custom\n"
+"phase mask"))
 
 
 if __name__ == "__main__":

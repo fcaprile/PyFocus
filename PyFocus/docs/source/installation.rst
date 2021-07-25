@@ -11,12 +11,13 @@ To install from pip, for package name issues the package name was chosen as PyCu
 Dependences
 ------------
 
-PyFocus uses various packages. Here we show an example of the needed installation:
+PyFocus uses various packages. Here we show an example of the needed installation, some packages are preferably installed using conda:
 
 .. code-block:: python
    conda install numpy
    conda install scipy
-   pip install config tqdm matplotlib PyQt5 qtpy pyqtgraph qdarkstyle os configparser time
+   conda install qdarkstyle 
+   pip install config tqdm matplotlib PyQt5 qtpy pyqtgraph os configparser time 
 
 Importing
 ----------

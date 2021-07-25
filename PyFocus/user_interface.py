@@ -1,9 +1,7 @@
 #usual packages
 import numpy as np
-import os
 from matplotlib import pyplot as plt
 import time
-import sys
 import configparser
 import config
 from PyQt5.QtWidgets import QFileDialog
@@ -20,7 +18,8 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 #from Pyqt5 user interface packages
 from PyFocus.front_end_ui import Ui_MainWindow
-from PyFocus.mask_selection import Ui_Dialog
+# from PyFocus.mask_selection import Ui_Dialog
+from PyFocus.mask_selection import Ui_MaskWindow
 
 #custom made integration functions
 from PyFocus.plot import plot_XZ_XY
@@ -30,14 +29,25 @@ from PyFocus.sim import VP, no_mask, custom
 User interface class that allows seting up parameters, running simulations and saving the obtained fields as .txt files
 '''
 
+class Mask_window(QtGui.QMainWindow,Ui_MaskWindow):
+    def __init__(self):
+        QtGui.QWidget.__init__(self)
+        self.ui = Ui_MaskWindow()
+        self.ui.setupUi(self)
+        self.pushButton.clicked.connect(self.change_mask_function)
+
+
 class UI(QtGui.QMainWindow,Ui_MainWindow):
     def __init__(self, *args, **kwargs):
         print('PyFocus is running')    
         time.sleep(0.2)#so that tqdm can write
+        #if running locally, uncomment these 2 lines:
+        self.app = QtGui.QApplication.instance()#if running from spyder
+        if self.app is None:
+            self.app = QtGui.QApplication(sys.argv)#if running from console
+        self.app.setStyleSheet(qdarkstyle.load_stylesheet())#set a dark style
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
-        app = QtGui.QApplication.instance()
-        app.setStyleSheet(qdarkstyle.load_stylesheet())#set a dark style
-
+        
         #Main functions:
         self.counter=0# counts the numer of simulations realized in this sesion, to avoid overwriting save files with the same name
         self.setupUi(self)
@@ -47,6 +57,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         self.pushButton_4.clicked.connect(self.save_amplitudes)        
         self.pushButton_5.clicked.connect(self.selectsavefolder)   
         self.pushButton_6.clicked.connect(self.clear_plots)   
+        self.pushButton_7.clicked.connect(self.change_default_name_and_open_dialog)   
         self.radioButton.toggled.connect(self.lineEdit_19.setEnabled)#enable modifying parameters for simulation of the field inciding on the lens
         self.radioButton.toggled.connect(self.lineEdit_22.setEnabled)
         self.radioButton_2.toggled.connect(self.lineEdit_23.setEnabled)#enable modifying parameters for an interface
@@ -60,7 +71,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         self.modified_saving_name=False #Used later to avoid overwriting the changes in the name of the figure made by the user
         self.default_file_name='VP mask simulation' #default name for simulations if nothing is changed
         self.previous_figure_name=''#used to aoid overwriting previous figures which have the same name
-        
+                
     def selectsavefolder(self):
         '''
         Allows selecting a save folder for the txt files
@@ -227,38 +238,41 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
             if selected==0:#VP mask
                 self.default_file_name='VP mask simulation'
                 self.lineEdit_21.setText(self.default_file_name)
+                self.pushButton_7.setEnabled(False)
             if selected==1:#No mask (gaussian beam)
                 self.default_file_name='Gaussian beam simulation'
                 self.lineEdit_21.setText(self.default_file_name)
+                self.pushButton_7.setEnabled(False)
             if selected==2:#Custom mask
-                self.default_file_name='Custom mask simulation'
-                self.lineEdit_21.setText(self.default_file_name)
-                # app = QtWidgets.QApplication(sys.argv)
-                Dialog = QtWidgets.QDialog()
-                ui2 = Ui_Dialog()
-                ui2.setupUi(Dialog)
-                Dialog.exec_()
+                self.pushButton_7.setEnabled(True)
+                try:
+                    self.default_file_name='Custom mask simulation'
+                    self.lineEdit_21.setText(self.default_file_name)
+                    self.ui2 = Mask_window()
+                    self.ui2.show()
+                except:
+                    print("Unexpected error:", sys.exc_info())
     
     def simulate(self):
         '''
         Simulate with the UI using the functions provided in "sim"
         '''
-        self.counter+=1
-        self.get_parameters()
-        x_range=self.parameters[10]
-        z_range=self.parameters[11]
-        figure_name=self.parameters[-1]
-        #used to avoid overwriting previous figures which have the same name:
-        if figure_name==self.default_file_name:
-            figure_name+=' '+str(self.counter)
-        if figure_name==self.previous_figure_name:
-            figure_name+=' '+str(self.counter)
-        self.previous_figure_name=figure_name        
-        self.figure_name=figure_name #used as name for saving texts 
-        
-        selected=self.comboBox.currentIndex()
-        
         try:      
+            self.counter+=1
+            self.get_parameters()
+            x_range=self.parameters[10]
+            z_range=self.parameters[11]
+            figure_name=self.parameters[-1]
+            #used to avoid overwriting previous figures which have the same name:
+            if figure_name==self.default_file_name:
+                figure_name+=' '+str(self.counter)
+            if figure_name==self.previous_figure_name:
+                figure_name+=' '+str(self.counter)
+            self.previous_figure_name=figure_name        
+            self.figure_name=figure_name #used as name for saving texts 
+            
+            selected=self.comboBox.currentIndex()
+        
             propagation=self.radioButton.isChecked() #then no need to calculate the field at the entrance of the lens
             interface=self.radioButton_2.isChecked()
             if selected==0: #VP mask
@@ -270,14 +284,17 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                 ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=no_mask(propagation,interface,*self.parameters)
         
             if selected==2: #Custom mask
-                if config.y==True: #internal variable used to check if given mask function is a functionor a matrix
-                    aux='self.mask_function=lambda rho,phi,w0,f,k:'+config.x                       
-                    exec(aux)
-                else:
-                    self.mask_function=config.x
-                #calculate field at the focal plane:
-                ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(self.mask_function,propagation,interface,*self.parameters)
-
+                try:
+                    if config.y==True: #internal variable used to check if given mask function is a functionor a matrix
+                        aux='self.mask_function=lambda rho,phi,w0,f,k:'+config.x                       
+                        exec(aux)
+                    else:
+                        self.mask_function=config.x
+                    #calculate field at the focal plane:
+                    ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(self.mask_function,propagation,interface,*self.parameters)
+                except:
+                    print('Please define a phase mask with the "Define mask" or "Load mask from txt file" buttons')
+                    return
             #plot the fields at the focus:
             plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name) #ex, ey and ez have tha values of the field on the XY plane
             
@@ -288,15 +305,17 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         except:
             print("Unexpected error:", sys.exc_info())
 
-    def closeEvent(self, event, *args, **kwargs):
+    def closeEvent(self, event):
         '''
-	Close the user interface
-	'''
+     	Close the user interface
+     	'''
         print('PyFocus is closed')        
-        super().closeEvent(*args, **kwargs)
-
+        event.accept()
         
         
-if __name__ == '__main__':        
+if __name__ == '__main__':     
+    # Dialog = QtWidgets.QDialog()
+    # ui2 = Ui_Dialog()
+    # ui2.setupUi(Dialog)
     gui=UI()
     gui.show()

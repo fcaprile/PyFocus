@@ -6,6 +6,7 @@ First we import the user interface class and define an instance:
 .. code-block:: python
 
    from PyFocus import user_interface 
+   
    ui=user_interface.UI()
 
 To show the interface we use the function "show":

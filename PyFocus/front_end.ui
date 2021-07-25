@@ -820,6 +820,23 @@
      <string>Save amplitudes on the XY plane:</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_7">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>360</y>
+      <width>101</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Select custom
+phase mask</string>
+    </property>
+   </widget>
    <zorder>groupBox</zorder>
    <zorder>pushButton</zorder>
    <zorder>pushButton_2</zorder>
@@ -840,6 +857,7 @@
    <zorder>label_22</zorder>
    <zorder>label_27</zorder>
    <zorder>label_28</zorder>
+   <zorder>pushButton_7</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
