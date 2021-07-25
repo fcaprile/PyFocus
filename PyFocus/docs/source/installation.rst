@@ -14,6 +14,7 @@ Dependences
 PyFocus uses various packages. Here we show an example of the needed installation, some packages are preferably installed using conda:
 
 .. code-block:: python
+
    conda install numpy
    conda install scipy
    conda install qdarkstyle 

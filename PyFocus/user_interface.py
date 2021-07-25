@@ -30,6 +30,9 @@ User interface class that allows seting up parameters, running simulations and s
 '''
 
 class Mask_window(QtGui.QMainWindow,Ui_MaskWindow):
+    '''
+    Extra window for the selection of a custom phase mask
+    '''
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.ui = Ui_MaskWindow()
@@ -230,7 +233,8 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         
     def change_default_name_and_open_dialog(self):
         '''
-        Quality of life modification, if a new mask is selected and the name has never been modified, then change the default simulation name 
+        If a new mask is selected and the name has never been modified, then change the default simulation name
+	Open the phase mask selection window if the "custom" option is selected 
         '''
         selected=self.comboBox.currentIndex()
         if self.modified_saving_name==False:
