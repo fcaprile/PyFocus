@@ -38,7 +38,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="PyFocus" href="modules.html" />
+    <link rel="next" title="User interface" href="modules.html" />
     <link rel="prev" title="Intallation" href="installation.html" />
     <link href="_static/style.css" rel="stylesheet" type="text/css">
 
@@ -112,13 +112,12 @@
 </ul>
 <p class="caption"><span class="caption-text">Modules:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">PyFocus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#user-interface">User interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#high-level-simulation-functions">High-level simulation functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#internal-functions-for-vpp">Internal functions for VPP</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#internal-functions-for-no-mask">Internal functions for no mask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#internal-functions-for-a-custom-mask">Internal functions for a custom mask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#internal-functions-for-an-interface">Internal functions for an interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-sim">High-level simulation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-VP_functions">Internal functions for VPP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-no_mask_functions">Internal functions for no mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-custom_mask_functions">Internal functions for a custom mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-interface">Internal functions for an interface</a></li>
 </ul>
 
             
@@ -187,7 +186,8 @@
   <div class="section" id="examples-using-pyfocus-user-interface">
 <h1>Examples using PyFocus User Interface<a class="headerlink" href="#examples-using-pyfocus-user-interface" title="Permalink to this headline">¶</a></h1>
 <p>First we import the user interface class and define an instance:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">user_interface</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyFocus</span> <span class="kn">import</span> <span class="n">user_interface</span>
+
 <span class="n">ui</span><span class="o">=</span><span class="n">user_interface</span><span class="o">.</span><span class="n">UI</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -292,9 +292,9 @@
 </div>
 <div class="section" id="gaussian-beam-without-modulation">
 <h2>Gaussian beam without modulation<a class="headerlink" href="#gaussian-beam-without-modulation" title="Permalink to this headline">¶</a></h2>
-<p>Simulation of a focused gaussian beam without phase modulation by using the “no_mask” function. We obtain the “fields” tuple, which contains 6 arrays with the resulting field, and then we plot them using the “plot” function:</p>
+<p>Simulation of a focused gaussian beam without phase modulation by using the “no_mask” function. We obtain the “fields” tuple, which contains 6 arrays with the resulting field, and then we plot them using the “plot_XZ_XY” function. This function returns a figure of the total intensity and polarization, here called fig1 and a figure of the intensity of each cartesian component:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">no_mask</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
-<span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
+<span class="n">fig1</span><span class="p">,</span><span class="n">fig2</span><span class="o">=</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -303,7 +303,7 @@
 <h1>VP phase mask<a class="headerlink" href="#vp-phase-mask" title="Permalink to this headline">¶</a></h1>
 <p>Simulation of a focused gaussian beam with VP modulation by using the “VP” function. Remember that the 2 first ariables are boolean parameters that define if we simulate the propagation of the incident field and if there is an interface.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">VP</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
-<span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
+<span class="n">fig1</span><span class="p">,</span><span class="n">fig2</span><span class="o">=</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -315,7 +315,7 @@
 <span class="n">parameters</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">NA</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">x_steps</span><span class="p">,</span> <span class="n">z_steps</span><span class="p">,</span> <span class="n">x_range</span><span class="p">,</span> <span class="n">z_range</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">z_int</span><span class="p">,</span> <span class="n">figure_name</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 
 <span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">VP</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
-<span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
+<span class="n">fig1</span><span class="p">,</span><span class="n">fig2</span><span class="o">=</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -328,7 +328,7 @@
 <span class="n">parameters</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">NA</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">x_steps</span><span class="p">,</span> <span class="n">z_steps</span><span class="p">,</span> <span class="n">x_range</span><span class="p">,</span> <span class="n">z_range</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">z_int</span><span class="p">,</span> <span class="n">figure_name</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 
 <span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">VP</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
-<span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
+<span class="n">fig1</span><span class="p">,</span><span class="n">fig2</span><span class="o">=</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="multilayer-system">
@@ -340,7 +340,7 @@
 <span class="n">parameters</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">NA</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">x_steps</span><span class="p">,</span> <span class="n">z_steps</span><span class="p">,</span> <span class="n">x_range</span><span class="p">,</span> <span class="n">z_range</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">z_int</span><span class="p">,</span> <span class="n">figure_name</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 
 <span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">VP</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
-<span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
+<span class="n">fig1</span><span class="p">,</span><span class="n">fig2</span><span class="o">=</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -360,7 +360,7 @@
 <span class="n">divisions_theta</span><span class="o">=</span><span class="mi">200</span>
 <span class="n">divisions_phi</span><span class="o">=</span><span class="mi">200</span>
 <span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">custom</span><span class="p">(</span><span class="n">mask_function</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">,</span><span class="n">divisions_theta</span><span class="p">,</span><span class="n">divisions_phi</span><span class="p">)</span>
-<span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
+<span class="n">fig1</span><span class="p">,</span><span class="n">fig2</span><span class="o">=</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -378,7 +378,7 @@
 <span class="n">divisions_theta</span><span class="o">=</span><span class="mi">200</span>
 <span class="n">divisions_phi</span><span class="o">=</span><span class="mi">200</span>
 <span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">custom</span><span class="p">(</span><span class="n">mask_function</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">,</span><span class="n">divisions_theta</span><span class="p">,</span><span class="n">divisions_phi</span><span class="p">)</span>
-<span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
+<span class="n">fig1</span><span class="p">,</span><span class="n">fig2</span><span class="o">=</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -398,7 +398,7 @@
         <span class="k">return</span> <span class="mi">0</span>
 
 <span class="n">fields</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">custom</span><span class="p">(</span><span class="n">mask_function</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="o">*</span><span class="n">parameters</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
-<span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
+<span class="n">fig1</span><span class="p">,</span><span class="n">fig2</span><span class="o">=</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_XZ_XY</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span><span class="n">x_range</span><span class="p">,</span><span class="n">z_range</span><span class="p">,</span><span class="n">figure_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -412,7 +412,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="modules.html" class="btn btn-neutral float-right" title="PyFocus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="User interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="installation.html" class="btn btn-neutral float-left" title="Intallation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

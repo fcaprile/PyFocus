@@ -5,7 +5,8 @@ First we import the user interface class and define an instance:
 
 .. code-block:: python
 
-   import user_interface 
+   from PyFocus import user_interface 
+   
    ui=user_interface.UI()
 
 To show the interface we use the function "show":
@@ -100,12 +101,12 @@ To simplify the code, we define the "parameters" array:
 Gaussian beam without modulation
 --------------------------------
 
-Simulation of a focused gaussian beam without phase modulation by using the "no_mask" function. We obtain the "fields" tuple, which contains 6 arrays with the resulting field, and then we plot them using the "plot" function:
+Simulation of a focused gaussian beam without phase modulation by using the "no_mask" function. We obtain the "fields" tuple, which contains 6 arrays with the resulting field, and then we plot them using the "plot_XZ_XY" function. This function returns a figure of the total intensity and polarization, here called fig1 and a figure of the intensity of each cartesian component:
 
 .. code-block:: python
 
    fields=sim.no_mask(False,False,*parameters) 
-   plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+   fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 VP phase mask
 ==============
@@ -115,7 +116,7 @@ Simulation of a focused gaussian beam with VP modulation by using the "VP" funct
 .. code-block:: python
 
    fields=sim.VP(False,False,*parameters) 
-   plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+   fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 
 Propagation with a VP phase mask
@@ -130,7 +131,7 @@ To simulate the propagation of the incident field from the phase mask to the obj
    parameters=np.array((NA, n, h, w0, wavelength, gamma, beta, z, x_steps, z_steps, x_range, z_range, I0, L, R, ds, z_int, figure_name), dtype=object)
 
    fields=sim.VP(True,False,*parameters)
-   plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+   fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 Interface with a VP phase mask
 ==============================
@@ -145,7 +146,7 @@ To simulate a glass-water interface located at the focal plane, we redefine the 
    parameters=np.array((NA, n, h, w0, wavelength, gamma, beta, z, x_steps, z_steps, x_range, z_range, I0, L, R, ds, z_int, figure_name), dtype=object)
 
    fields=sim.VP(False,True,*parameters)
-   plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+   fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 Multilayer system
 -----------------
@@ -160,7 +161,7 @@ For a multilayer system, we add 2 more layers of refraction index 0.14+3.55j and
    parameters=np.array((NA, n, h, w0, wavelength, gamma, beta, z, x_steps, z_steps, x_range, z_range, I0, L, R, ds, z_int, figure_name), dtype=object)
 
    fields=sim.VP(False,True,*parameters)
-   plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+   fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 
 Custom mask examples
@@ -185,7 +186,7 @@ Then we define the mask function and begin the simulation. We set the 2D integra
    divisions_theta=200
    divisions_phi=200
    fields=sim.custom(mask_function,False,False,*parameters,divisions_theta,divisions_phi)
-   plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+   fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 Inclination (tilt)
 -------------------
@@ -205,7 +206,7 @@ For inclination in an angle of 3.11*10**-5 radians
    divisions_theta=200
    divisions_phi=200
    fields=sim.custom(mask_function,False,False,*parameters,divisions_theta,divisions_phi)
-   plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+   fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 TIRF
 -----
@@ -227,7 +228,7 @@ After setting a water-glass interface, to simulate TIRF with modulation of a VP 
            return 0
 
    fields=sim.custom(mask_function,False,True,*parameters,200,200)
-   plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
+   fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 
 

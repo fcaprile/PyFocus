@@ -1,28 +1,31 @@
 Intallation
 ===============================
 
-To install from pip:
+To install from pip, for package name issues the package name was chosen as PyCustomFocus:
 
 .. code-block:: python
 
-   pip install Py_Focus
+   pip install PyCustomFocus
 
 
 Dependences
 ------------
 
-PyFocus uses the following packages (install them with pip):
+PyFocus uses various packages. Here we show an example of the needed installation, some packages are preferably installed using conda:
 
 .. code-block:: python
 
-   pip install config tqdm numpy matplotlib scipy PyQt5 qtpy pyqtgraph qdarkstyle os configparser time
+   conda install numpy
+   conda install scipy
+   conda install qdarkstyle 
+   pip install config tqdm matplotlib PyQt5 qtpy pyqtgraph os configparser time 
 
 Importing
 ----------
 
-For the examples we use the following modules:
+The modules used in the examples are imported with:
 
 .. code-block:: python
 
-   from Py_Focus import sim, plot
+   from PyFocus import sim, plot
    import numpy as np

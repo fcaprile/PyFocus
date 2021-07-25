@@ -105,13 +105,12 @@
 </ul>
 <p class="caption"><span class="caption-text">Modules:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">PyFocus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#user-interface">User interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#high-level-simulation-functions">High-level simulation functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#internal-functions-for-vpp">Internal functions for VPP</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#internal-functions-for-no-mask">Internal functions for no mask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#internal-functions-for-a-custom-mask">Internal functions for a custom mask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#internal-functions-for-an-interface">Internal functions for an interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-sim">High-level simulation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-VP_functions">Internal functions for VPP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-no_mask_functions">Internal functions for no mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-custom_mask_functions">Internal functions for a custom mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-interface">Internal functions for an interface</a></li>
 </ul>
 
             
@@ -179,21 +178,24 @@
             
   <div class="section" id="intallation">
 <h1>Intallation<a class="headerlink" href="#intallation" title="Permalink to this headline">¶</a></h1>
-<p>To install from pip:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">Py_Focus</span>
+<p>To install from pip, for package name issues the package name was chosen as PyCustomFocus:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">PyCustomFocus</span>
 </pre></div>
 </div>
 <div class="section" id="dependences">
 <h2>Dependences<a class="headerlink" href="#dependences" title="Permalink to this headline">¶</a></h2>
-<p>PyFocus uses the following packages (install them with pip):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">config</span> <span class="n">tqdm</span> <span class="n">numpy</span> <span class="n">matplotlib</span> <span class="n">scipy</span> <span class="n">PyQt5</span> <span class="n">qtpy</span> <span class="n">pyqtgraph</span> <span class="n">qdarkstyle</span> <span class="n">os</span> <span class="n">configparser</span> <span class="n">time</span>
+<p>PyFocus uses various packages. Here we show an example of the needed installation, some packages are preferably installed using conda:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="n">numpy</span>
+<span class="n">conda</span> <span class="n">install</span> <span class="n">scipy</span>
+<span class="n">conda</span> <span class="n">install</span> <span class="n">qdarkstyle</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">config</span> <span class="n">tqdm</span> <span class="n">matplotlib</span> <span class="n">PyQt5</span> <span class="n">qtpy</span> <span class="n">pyqtgraph</span> <span class="n">os</span> <span class="n">configparser</span> <span class="n">time</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="importing">
 <h2>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h2>
-<p>For the examples we use the following modules:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Py_Focus</span> <span class="kn">import</span> <span class="n">sim</span><span class="p">,</span> <span class="n">plot</span>
+<p>The modules used in the examples are imported with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyFocus</span> <span class="kn">import</span> <span class="n">sim</span><span class="p">,</span> <span class="n">plot</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 </pre></div>
 </div>

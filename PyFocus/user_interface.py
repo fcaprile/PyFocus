@@ -40,6 +40,9 @@ class Mask_window(QtGui.QMainWindow,Ui_MaskWindow):
 
 
 class UI(QtGui.QMainWindow,Ui_MainWindow):
+    '''
+    User Interface class for simulatons of PyFocus
+    '''
     def __init__(self, *args, **kwargs):
         print('PyFocus is running')    
         time.sleep(0.2)#so that tqdm can write
