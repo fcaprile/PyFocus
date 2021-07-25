@@ -8,7 +8,7 @@ To install from pip, for package name issues the package name was chosen as PyCu
    pip install PyCustomFocus
 
 
-Dependences
+Dependencies
 ------------
 
 PyFocus uses various packages. Here we show an example of the needed installation, some packages are preferably installed using conda:
