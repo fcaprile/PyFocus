@@ -108,8 +108,8 @@ Simulation of a focused gaussian beam without phase modulation by using the "no_
    fields=sim.no_mask(False,False,*parameters) 
    fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
-VP phase mask
-==============
+VP mask modulation
+==================
 
 Simulation of a focused gaussian beam with VP modulation by using the "VP" function. Remember that the 2 first ariables are boolean parameters that define if we simulate the propagation of the incident field and if there is an interface.
 
@@ -119,8 +119,8 @@ Simulation of a focused gaussian beam with VP modulation by using the "VP" funct
    fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 
-Propagation with a VP phase mask
-================================
+Propagation and modulation by a VP mask
+=======================================
 
 To simulate the propagation of the incident field from the phase mask to the objective lens, we redefine the parameters L and R and set the propagation variable of VP to True:
 
@@ -133,8 +133,8 @@ To simulate the propagation of the incident field from the phase mask to the obj
    fields=sim.VP(True,False,*parameters)
    fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
-Interface with a VP phase mask
-==============================
+Interface and modulation by a VP mask
+=======================================
 
 To simulate a glass-water interface located at the focal plane, we redefine the parameters n, ds and z_int and set the interface variable of VP to True:
 
