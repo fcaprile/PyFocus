@@ -1,4 +1,4 @@
-Intallation
+Installation
 ===============================
 
 To install from pip, for package name issues the package name was chosen as PyCustomFocus:
@@ -9,7 +9,7 @@ To install from pip, for package name issues the package name was chosen as PyCu
 
 
 Dependencies
-------------
+============
 
 PyFocus uses various packages. Here we show an example of the needed installation, some packages are preferably installed using conda:
 
@@ -21,7 +21,7 @@ PyFocus uses various packages. Here we show an example of the needed installatio
    pip install config tqdm matplotlib PyQt5 qtpy pyqtgraph os configparser time 
 
 Importing
-----------
+============
 
 The modules used in the examples are imported with:
 
