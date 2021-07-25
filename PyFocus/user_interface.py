@@ -34,7 +34,6 @@ class Mask_window(QtGui.QMainWindow,Ui_MaskWindow):
         QtGui.QWidget.__init__(self)
         self.ui = Ui_MaskWindow()
         self.ui.setupUi(self)
-        self.pushButton.clicked.connect(self.change_mask_function)
 
 
 class UI(QtGui.QMainWindow,Ui_MainWindow):
