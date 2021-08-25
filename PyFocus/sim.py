@@ -9,7 +9,7 @@ With:
     
         :NA (float): Numerical aperture
         
-        :n (float or array): Type depends on interface: float for no interface, array for interface. Refraction index for the medium of the optical system.
+        :n (float or array): Type depends on presence of multilayer: float for no multilayer, array for multilayer. Refraction index for the medium of the optical system.
         
         :h (float): Radius of aperture of the objective lens(mm)
                 
@@ -37,9 +37,9 @@ With:
         
         :R (float, optional): Phase mask radius (mm), only used if propagation=True
         
-        :ds (array, optional): Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if interface=True
+        :ds (array, optional): Thickness of each interface in the multilayer system (nm), must be given as a numpy array with the first and last values a np.inf. Only used if multilayer=True
         
-        :z_int (float, optional): Axial position of the interphase. Only used if interface=True
+        :z_int (float, optional): Axial position of the interphase. Only used if multilayer=True
         
         :figure_name (string, optional): Name for the images of the field. Also used as saving name if using the UI    
 '''
@@ -60,14 +60,14 @@ from PyFocus.no_mask_functions import no_mask_integration, no_mask_fields
 from PyFocus.custom_mask_functions import generate_incident_field, plot_in_cartesian, custom_mask_objective_field, custom_mask_focus_field_XZ_XY
 from PyFocus.interface import interface_custom_mask_focus_field_XZ_XY
 
-def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name=''):
+def VP(propagation=False,multilayer=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name=''):
     '''
     Simulate the field obtained by focusing a gaussian beam modulated by a VP mask 
     
     Args:        
         :propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer's difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation 
        
-        :interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
+        :multilayer (bool): True for calculating the focused field with an multilayer, in which case ds and z_int are needed; Flase for calculating the field obtained without an multilayer
     
         :Parameters: NA,n,h,w0,wavelength,gamma,beta,z,x_steps,z_steps,x_range,z_range,I0,L,R,ds,z_int,figure_name: Simulation parameters, defined as part of the 'parameters' array
         
@@ -88,7 +88,7 @@ def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,ga
     '''
     
     
-    if interface==False:#no interface
+    if multilayer==False:#no multilayer
         alpha=np.arcsin(NA / n)
         f=h*n/NA#sine's law
         if propagation==False:
@@ -124,10 +124,10 @@ def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,ga
             #calculate field at the focal plane:
             ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength/n,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range)
     
-    else:#interface is given
+    else:#multilayer is given
         alpha=np.arcsin(NA / n[0])
         f=h*n[0]/NA    
-        mask_function_VP=lambda theta, phi,w0,f,wavelength: np.exp(1j*phi)# is the VP mask function
+        custom_field_function_VP=lambda theta, phi,w0,f,wavelength: np.exp(1j*phi)# is the VP mask function
         #Usual parameters for integration precision:
         #resolution for field at objective
         divisions_theta=200
@@ -142,7 +142,7 @@ def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,ga
         if propagation==False:
             #calculate field inciding on the lens by multiplying the phase mask's function and the gaussian amplitude
             #(ex_lens,ey_lens) are 2 matrixes with the values of the incident amplitude for each value in phi,theta                   
-            ex_lens,ey_lens=generate_incident_field(mask_function_VP,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength/n[0])            
+            ex_lens,ey_lens=generate_incident_field(custom_field_function_VP,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength/n[0])            
             #plot field at the entrance of the lens:
             #since ex_lens and ey_lens are given in theta and phi coordinates, the have to be transformed to cartesian in order to be ploted, hence the name of this function
         else:
@@ -150,21 +150,21 @@ def VP(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,ga
             #N_rho and N_phi are the number of divisions for fraunhoffer's integral by the trapecium's method
             N_rho=400
             N_phi=400                
-            ex_lens,ey_lens,I_cartesian,Ex_cartesian,Ey_cartesian=custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho,N_phi,alpha,f,mask_function_VP,R,L,I0,wavelength,w0,figure_name,plot=True)
+            ex_lens,ey_lens,I_cartesian,Ex_cartesian,Ey_cartesian=custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho,N_phi,alpha,f,custom_field_function_VP,R,L,I0,wavelength,w0,figure_name,plot=True)
 
         #calculate field at the focal plane:
         ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range)
     
     return ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY
 
-def no_mask(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name=''):#f (the focal distance) is given by the sine's law, but can be modified if desired
+def no_mask(propagation=False,multilayer=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name=''):#f (the focal distance) is given by the sine's law, but can be modified if desired
     '''
     Simulate the field obtained by focusing a gaussian beam without being modulated in phase
     
     Args:        
         :propagation (bool): Kept for homogeneity of the functions, True yields no diference from False, where the field incident on the lens is calculated by neglecting the propagation towards the objective lens
         
-        :interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
+        :multilayer (bool): True for calculating the focused field with an multilayer, in which case ds and z_int are needed; Flase for calculating the field obtained without an multilayer
     
         :Parameters: NA,n,h,w0,wavelength,gamma,beta,z,x_steps,z_steps,x_range,z_range,I0,L,R,ds,z_int,figure_name: Simulation parameters, defined as part of the 'parameters' array
         
@@ -187,32 +187,32 @@ def no_mask(propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=6
     if propagation==True:
         print('Propagation for field incident on the lens is only done for VP and custom masks. Calculating focused field with propagation=False:')
         time.sleep(0.5)
-    if interface==False:#no interface
+    if multilayer==False:#no multilayer
         alpha=np.arcsin(NA / n)
         f=h*n/NA
         II1,II2,II3=no_mask_integration(alpha,n,f,w0,wavelength/n,x_range,z_range,z_steps,x_steps)
         ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=no_mask_fields(II1,II2,II3,wavelength/n,I0,beta,gamma,z_steps,x_steps,x_range,z_range,0,n,f,z)
 
-    else:#interface
+    else:#multilayer
         f=h*n[0]/NA    
         alpha=np.arcsin(NA / n[0])
-        mask_function=lambda theta, phi,w0,f,wavelength: 1# is the nule mask function
+        custom_field_function=lambda theta, phi,w0,f,wavelength: 1# is the nule mask function
         divisions_theta=200
         divisions_phi=200
         resolution_focus=int(x_range/x_steps)
         resolution_z=int(z_range/z_steps)
 
-        ex_lens,ey_lens=generate_incident_field(mask_function,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength/n[0])
+        ex_lens,ey_lens=generate_incident_field(custom_field_function,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength/n[0])
         ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range,x0=0,y0=0,z0=0,plot_plane='X')
 
     return ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY
 
-def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name='',divisions_theta=200,divisions_phi=200,plot_Ei=True):#f (the focal distance) is given by the sine's law, but can be modified if desired
+def custom(custom_field_function, propagation=False,multilayer=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name='',divisions_theta=200,divisions_phi=200,plot_Ei=True):#f (the focal distance) is given by the sine's law, but can be modified if desired
     '''
     Simulate the field obtained by focusing a gaussian beam modulated by a custom phase mask
     
     Args:        
-        :mask_function (array or function): Parameter defining the custom phase mask to be simulated:
+        :custom_field_function (array or function): Parameter defining the custom phase mask to be simulated:
             If array: Complex amplitude of the custom phase mask for each value of the spherical coordinates theta and phi: custom_mask[phi_position,theta_position] for phi_position a value in np.linspace(0,2*np.pi,divisions_phi) and theta_position a value in np.linspace(0,alpha,divisions_theta) 
                 
             If function: Analytical function that defines the phase mask, must be a function of the 5 internal variables: rho, phi, w0, f and k, with:
@@ -231,7 +231,7 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=
         
         :propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer's difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation
         
-        :interface (bool): True for calculating the focused field with an interface, in which case ds and z_int are needed; Flase for calculating the field obtained without an interface
+        :multilayer (bool): True for calculating the focused field with an multilayer, in which case ds and z_int are needed; Flase for calculating the field obtained without an multilayer
     
         :Parameters: NA,n,h,w0,wavelength,gamma,beta,z,x_steps,z_steps,x_range,z_range,I0,L,R,ds,z_int,figure_name: Simulation parameters, defined as part of the 'parameters' array
     Returns:        
@@ -250,7 +250,7 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=
         The unit of the intensity is the same as the initial intensity (mW/cm^2)
     '''
     #moving to wavelength in the optical system's medium
-    if interface==False:
+    if multilayer==False:
         alpha=np.arcsin(NA / n)
         wavelength/=n
         f=h*n/NA    
@@ -259,7 +259,7 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=
         wavelength/=n[0]
         f=h*n[0]/NA    
 
-    # mask_function=lambda theta, phi: np.exp(1j*phi) is the VP mask function
+    # custom_field_function=lambda theta, phi: np.exp(1j*phi) is the VP mask function
     #Usual parameters for integration precision:
     
     #resolution for field near the focus
@@ -268,11 +268,11 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=
     
     #smaller numbers give faster integration times
     
-    if callable(mask_function)==True:#if a function is given, turn it into the ex_lens and ey_lens variables
+    if callable(custom_field_function)==True:#if a function is given, turn it into the ex_lens and ey_lens variables
         #resolution for field at objective
         if propagation==False:
             #calculate field inciding on the lens by multiplying the phase mask's function and the gaussian amplitude
-            ex_lens,ey_lens=generate_incident_field(mask_function,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength)
+            ex_lens,ey_lens=generate_incident_field(custom_field_function,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength)
             #plot field at the entrance of the lens:
             #since ex_lens and ey_lens are given in theta and phi coordinates, the have to be transformed to cartesian in order to be ploted, hence the name of this function
             if plot_Ei==True:
@@ -283,25 +283,25 @@ def custom(mask_function, propagation=False,interface=False,NA=1.4,n=1.5,h=3,w0=
             #N_rho and N_phi are the number of divisions for fraunhoffer's integral by the trapecium's method
             N_rho=200
             N_phi=200                
-            ex_lens,ey_lens,I_cartesian,Ex_cartesian,Ey_cartesian=custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho,N_phi,alpha,f,mask_function,R,L,I0,wavelength,w0,figure_name,plot=True)
+            ex_lens,ey_lens,I_cartesian,Ex_cartesian,Ey_cartesian=custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho,N_phi,alpha,f,custom_field_function,R,L,I0,wavelength,w0,figure_name,plot=True)
             if plot_Ei==True:
                 print('Showing incident field:')
                 plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
 
-    elif type(mask_function)==np.ndarray:#if an array is given
+    elif type(custom_field_function)==np.ndarray:#if an array is given
         if propagation==True:
-            print('Giving mask function as an array not implemented for calculation of incient field propagation. Can be implemented by obtaining "ex_lens" and "ey_lens" arrays using the "generate_incident_field" function manualy replacing "mask_function" with the desired array')
+            print('Giving mask function as an array not implemented for calculation of incient field propagation. Can be implemented by obtaining "ex_lens" and "ey_lens" arrays using the "generate_incident_field" function manualy replacing "custom_field_function" with the desired array')
             print('Simulation will continue with propagation=False')
-        ex_lens,ey_lens=mask_function*np.cos(gamma*np.pi/180)*I0**0.5,mask_function*np.sin(gamma*np.pi/180)*np.exp(1j*beta*np.pi/180)*I0**0.5 #make the x and y component based on polarization
+        ex_lens,ey_lens=custom_field_function*np.cos(gamma*np.pi/180)*I0**0.5,custom_field_function*np.sin(gamma*np.pi/180)*np.exp(1j*beta*np.pi/180)*I0**0.5 #make the x and y component based on polarization
         if plot_Ei==True:
             print('Showing incident field:')
             plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
-        divisions_phi,divisions_theta=np.shape(mask_function)
+        divisions_phi,divisions_theta=np.shape(custom_field_function)
     else:
         print('Wrong format for mask function, acceptable formats are functions or arrays')
         
     #calculate field at the focal plane:
-    if interface==False:#no interface
+    if multilayer==False:#no multilayer
         ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range)
     else:
         wavelength*=n[0] #to return to wavelength at vacuum

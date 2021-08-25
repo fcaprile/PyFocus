@@ -159,7 +159,7 @@ def plot_in_cartesian(Ex,Ey,r_range,alpha,f,figure_name):
     
     return I_cartesian,Ex_cartesian,Ey_cartesian
 
-def custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho,N_phi,alpha,focus,mask_function,R,L,I0,wavelength,w0,fig_name,plot=True):
+def custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho,N_phi,alpha,focus,custom_field_function,R,L,I0,wavelength,w0,fig_name,plot=True):
     '''
     Calculate the incident field on the objective by fraunhofer's difraction formula for a custom phase mask
 
@@ -210,12 +210,12 @@ def custom_mask_objective_field(h,gamma,beta,divisions_theta,divisions_phi,N_rho
     kl=np.pi/wavelength/L
     '''
     #the function to integrate is:
-    f=wavelength rho,phi: rho*mask_function(rho,phi)*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))
+    f=wavelength rho,phi: rho*custom_field_function(rho,phi)*np.exp(1j*(kl*(rho**2-2*rho*rhop*np.cos(phi-phip))))
     '''
     
     k=2*np.pi/wavelength
     #in order to save computing time, i do separatedly the calculation of terms that would otherwise e claculated multiple times, since they do not depend on rhop,phip (the coordinates at which the field is calculated)
-    prefactor=rho*np.exp(1j*(k*L+kl*rho**2))*mask_function(rho,phi,w0,focus,k)*weight
+    prefactor=rho*np.exp(1j*(k*L+kl*rho**2))*custom_field_function(rho,phi,w0,focus,k)*weight
     #numerical 2D integration: 
     for j in tqdm(range(divisions_phi)):
         phip=phip_values[j]

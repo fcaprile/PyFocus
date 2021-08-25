@@ -60,9 +60,12 @@ class Ui_MaskWindow(object):
         print('Function defined')
 
     def load_mask_function(self):
-        config.x=np.loadtxt(QtWidgets.QFileDialog.getOpenFileName(None,'Select mask function File')[0],dtype=complex)
-        config.y=False #internal parameter to set whether or the mask function is a function or a txt
-        print('File loaded')
+        try:
+            config.x=np.loadtxt(QtWidgets.QFileDialog.getOpenFileName(None,'Select mask function File')[0],dtype=complex)
+            config.y=False #internal parameter to set whether or the mask function is a function or a txt
+            print('File loaded')
+        except:
+            print('File could not be loaded')
 
     def retranslateUi(self, MaskWindow):
         _translate = QtCore.QCoreApplication.translate

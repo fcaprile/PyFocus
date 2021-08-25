@@ -7,8 +7,6 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import config
-import numpy as np
 
 class Ui_MaskWindow(object):
     def setupUi(self, MaskWindow):
@@ -45,17 +43,8 @@ class Ui_MaskWindow(object):
         self.statusbar.setObjectName("statusbar")
         MaskWindow.setStatusBar(self.statusbar)
 
-
-        self.pushButton.clicked.connect(self.change_mask_function)
-        
         self.retranslateUi(MaskWindow)
         QtCore.QMetaObject.connectSlotsByName(MaskWindow)
-
-
-    def change_mask_function(self):
-        config.x=self.textEdit.toPlainText()
-        config.y=True #internal parameter to set whether or the mask function is a function or a txt
-        print('Function defined')
 
     def retranslateUi(self, MaskWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -72,10 +61,6 @@ class Ui_MaskWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">np.exp(1j*phi)</p></body></html>"))
-        try:
-            self.textEdit.setText(config.x)#if a phase mask has already been given
-        except:
-            pass
 
 
 if __name__ == "__main__":

@@ -197,11 +197,8 @@ For inclination in an angle of 3.11*10**-5 radians
 
    angle=3.11*10**-5
    f=h*n/NA
-   d=f*np.tan(angle)
 
-   rho2=lambda rho,phi:(rho**2+d**2-2*rho*d*np.cos(phi))**0.5
-   phi2=lambda rho,phi:np.arctan2(rho*np.sin(phi),rho*np.cos(phi)-d)
-   mask_function=lambda rho,phi,w0,f,k: np.exp(-(rho2(rho,phi)/w0)**2+1j*(phi2(rho,phi)+k*np.sin(angle)*rho*np.cos(phi2(rho,phi))))
+   mask_function=lambda rho,phi,w0,f,k: np.exp(-(rho/w0)**2+1j*(phi+k*np.sin(ang)*rho*np.cos(phi)))
 
    divisions_theta=200
    divisions_phi=200

@@ -62,7 +62,8 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         self.pushButton_4.clicked.connect(self.save_amplitudes)        
         self.pushButton_5.clicked.connect(self.selectsavefolder)   
         self.pushButton_6.clicked.connect(self.clear_plots)   
-        self.pushButton_7.clicked.connect(self.change_default_name_and_open_dialog)   
+        self.pushButton_7.clicked.connect(self.open_custom_mask_window)   
+        self.pushButton_8.clicked.connect(self.load_field_from_txt)   
         self.radioButton.toggled.connect(self.lineEdit_19.setEnabled)#enable modifying parameters for simulation of the field inciding on the lens
         self.radioButton.toggled.connect(self.lineEdit_22.setEnabled)
         self.radioButton_2.toggled.connect(self.lineEdit_23.setEnabled)#enable modifying parameters for an interface
@@ -91,7 +92,10 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         NA=float(self.lineEdit.text()) #numerical aperture
         n=float(self.lineEdit_2.text())#medium's density
         h=float(self.lineEdit_18.text()) #radius of aperture converted to nm
-        w0=float(self.lineEdit_16.text()) #incident gaussian beam's radius, converted to nm
+        if self.comboBox_2.currentIndex()==0:#Gaussian beam
+            w0=float(self.lineEdit_16.text()) #incident gaussian beam's radius, converted to nm
+        else:
+            w0=10000#uniform field
         wavelength=float(self.lineEdit_3.text())#wavelength in vacuum
         I0=float(self.lineEdit_15.text())#maximum intensity for the incident beam (|A|^2)
         zp0=float(self.lineEdit_12.text())#axial distance in wich to calculate the XY plane (z=cte=zp0 is the plane)
@@ -122,7 +126,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                 ds.append(np.inf)
                 ds=np.array(ds)
             except:
-                print('wrong format, explample of correct format: ns=1.5,1.4,1.4+1.4j,1.2j,1.33, ds=5,10,2',sys.exc_info())
+                print('Wrong format, explample of correct format: ns=1.5,1.4,1.4+1.4j,1.2j,1.33, ds=5,10,2',sys.exc_info())
             if not len(ds)==len(n):
                 print('The refraction index array or the thickness array are missing a parameter, check that there are 2 parameters less for thickness than for refraction index')
                 raise ValueError('The refraction index array or the thickness array are missing a parameter, check that there are 2 parameters less for thickness than for refraction index')
@@ -144,7 +148,11 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                 name=name+' parameters'
             else:
                 name=name[:-4]+' parameters'
-                        
+            
+            radius=np.copy(self.parameters[3])
+            if radius==10000:#in case of uniform field
+                radius='Uniform field'
+            
             config = configparser.ConfigParser()
             # #check if an interface as simualted:
             # if len(self.parameters[1])==1:#no interface
@@ -153,7 +161,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
             'NA': self.parameters[0],
             'Aperture radius (mm)':self.parameters[2],
             # 'focal distance (mm)': self.parameters[3],#removed since it is given by sine's law
-            'incident beam radius (mm)': self.parameters[3],
+            'incident beam radius (mm)': radius,
             'wavelength at vacuum (nm)': self.parameters[4],
             'gamma, arctan(ey ex) (degrees)': self.parameters[5],
             'beta, Delta phase (degrees)': self.parameters[6],
@@ -234,6 +242,13 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         self.modified_saving_name=True
         self.name=self.lineEdit_21.text()
         
+    def open_custom_mask_window(self):
+        try:
+            self.ui2 = Mask_window()
+            self.ui2.show()
+        except:
+            print("Unexpected error:", sys.exc_info())
+        
     def change_default_name_and_open_dialog(self):
         '''
         If a new mask is selected and the name has never been modified, then change the default simulation name
@@ -244,13 +259,10 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
             if selected==0:#VP mask
                 self.default_file_name='VP mask simulation'
                 self.lineEdit_21.setText(self.default_file_name)
-                self.pushButton_7.setEnabled(False)
             if selected==1:#No mask (gaussian beam)
                 self.default_file_name='Gaussian beam simulation'
                 self.lineEdit_21.setText(self.default_file_name)
-                self.pushButton_7.setEnabled(False)
             if selected==2:#Custom mask
-                self.pushButton_7.setEnabled(True)
                 try:
                     self.default_file_name='Custom mask simulation'
                     self.lineEdit_21.setText(self.default_file_name)
@@ -258,6 +270,15 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                     self.ui2.show()
                 except:
                     print("Unexpected error:", sys.exc_info())
+    
+    def load_field_from_txt(self):
+        try:
+            config.x=np.loadtxt(QtWidgets.QFileDialog.getOpenFileName(None,'Select mask function File')[0],dtype=complex)
+            config.y=False #internal parameter to set whether or the mask function is a function or a txt
+            print('File loaded')
+        except:
+            print('File could not be loaded')
+
     
     def simulate(self):
         '''
@@ -276,7 +297,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                 figure_name+=' '+str(self.counter)
             self.previous_figure_name=figure_name        
             self.figure_name=figure_name #used as name for saving texts 
-            
+            self.parameters[-1]=self.figure_name
             selected=self.comboBox.currentIndex()
         
             propagation=self.radioButton.isChecked() #then no need to calculate the field at the entrance of the lens
@@ -292,12 +313,12 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
             if selected==2: #Custom mask
                 try:
                     if config.y==True: #internal variable used to check if given mask function is a functionor a matrix
-                        aux='self.mask_function=lambda rho,phi,w0,f,k:'+config.x                       
+                        aux='self.custom_field_function =lambda rho,phi,w0,f,k:np.exp(-(rho/w0)**2)*'+config.x                       
                         exec(aux)
                     else:
-                        self.mask_function=config.x
+                        self.custom_field_function =config.x
                     #calculate field at the focal plane:
-                    ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(self.mask_function,propagation,interface,*self.parameters)
+                    ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(self.custom_field_function ,propagation,interface,*self.parameters)
                 except:
                     print('Please define a phase mask with the "Define mask" or "Load mask from txt file" buttons')
                     return
