@@ -3,14 +3,11 @@ Classes for the user interface
 .. toctree::
    :maxdepth: 4
 
-
-User interface
---------------
 .. automodule:: user_interface
 
 
 High-level simulation functions
--------------------------------
+===============================
 .. automodule:: sim
 
 

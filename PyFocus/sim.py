@@ -127,7 +127,7 @@ def VP(propagation=False,multilayer=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,g
     else:#multilayer is given
         alpha=np.arcsin(NA / n[0])
         f=h*n[0]/NA    
-        custom_field_function_VP=lambda theta, phi,w0,f,wavelength: np.exp(1j*phi)# is the VP mask function
+        custom_field_function_VP=lambda rho, phi,w0,f,k: np.exp(1j*phi)# is the VP mask function
         #Usual parameters for integration precision:
         #resolution for field at objective
         divisions_theta=200
@@ -196,7 +196,7 @@ def no_mask(propagation=False,multilayer=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=
     else:#multilayer
         f=h*n[0]/NA    
         alpha=np.arcsin(NA / n[0])
-        custom_field_function=lambda theta, phi,w0,f,wavelength: 1# is the nule mask function
+        custom_field_function=lambda rho, phi,w0,f,k: 1# is the nule mask function
         divisions_theta=200
         divisions_phi=200
         resolution_focus=int(x_range/x_steps)
@@ -207,16 +207,13 @@ def no_mask(propagation=False,multilayer=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=
 
     return ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY
 
-def custom(custom_field_function, propagation=False,multilayer=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name='',divisions_theta=200,divisions_phi=200,plot_Ei=True):#f (the focal distance) is given by the sine's law, but can be modified if desired
+def custom(entrance_field, custom_mask, propagation=False,multilayer=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name='',divisions_theta=200,divisions_phi=200,plot_Ei=True):#f (the focal distance) is given by the sine's law, but can be modified if desired
     '''
     Simulate the field obtained by focusing a gaussian beam modulated by a custom phase mask
     
-    Args:        
-        :custom_field_function (array or function): Parameter defining the custom phase mask to be simulated:
-            If array: Complex amplitude of the custom phase mask for each value of the spherical coordinates theta and phi: custom_mask[phi_position,theta_position] for phi_position a value in np.linspace(0,2*np.pi,divisions_phi) and theta_position a value in np.linspace(0,alpha,divisions_theta) 
-                
-            If function: Analytical function that defines the phase mask, must be a function of the 5 internal variables: rho, phi, w0, f and k, with:
-                
+    Args:
+        :entrance_field (function): Analytical function that defines the entrance beam, must be a function of the 5 internal variables: rho, phi, w0, f and k, with:        
+                            
             rho: Radial coordinate from 0 to the aperture radius of the objective.
             
             phi: Azimutal coordinate from 0 to 2pi.
@@ -227,7 +224,14 @@ def custom(custom_field_function, propagation=False,multilayer=False,NA=1.4,n=1.
             
             k: Wavenumber in the objective lens medium IMPORTANT:(mm)
             
-        The real part defines the amplitude of the incident field
+
+        :custom_mask (2D array or function): Custom phase mask to be simulated
+        
+            If 2D array: Complex amplitude of the custom phase mask for each value of the spherical coordinates theta and phi: custom_mask[phi_position,theta_position] for phi_position a value in np.linspace(0,2*np.pi,divisions_phi) and theta_position a value in np.linspace(0,alpha,divisions_theta) 
+                
+            If function: Analytical function that defines the phase mask, must be a function of the 5 internal variables: rho, phi, w0, f and k defined previously.
+
+        The real part defines the amplitude modulation of the entrance beam
         
         :propagation (bool): True for calculating and ploting the field incident on the lens by fraunhofer's difractin formula, in which case R and L are needed; False for calculating the field incident on the lens while neglecting the propagation
         
@@ -267,8 +271,8 @@ def custom(custom_field_function, propagation=False,multilayer=False,NA=1.4,n=1.
     resolution_z=int(z_range/z_steps)
     
     #smaller numbers give faster integration times
-    
-    if callable(custom_field_function)==True:#if a function is given, turn it into the ex_lens and ey_lens variables
+    if callable(custom_mask)==True:#if a function is given, turn it into the ex_lens and ey_lens variables
+        custom_field_function=lambda rho, phi,w0,f,k: entrance_field(rho, phi,w0,f,k)* custom_mask(rho, phi,w0,f,k)
         #resolution for field at objective
         if propagation==False:
             #calculate field inciding on the lens by multiplying the phase mask's function and the gaussian amplitude
@@ -288,7 +292,8 @@ def custom(custom_field_function, propagation=False,multilayer=False,NA=1.4,n=1.
                 print('Showing incident field:')
                 plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
 
-    elif type(custom_field_function)==np.ndarray:#if an array is given
+    elif type(custom_mask)==np.ndarray:#if an array is given
+        custom_field_function=lambda rho, phi,w0,f,k: entrance_field(rho, phi,w0,f,k)*custom_mask
         if propagation==True:
             print('Giving mask function as an array not implemented for calculation of incient field propagation. Can be implemented by obtaining "ex_lens" and "ey_lens" arrays using the "generate_incident_field" function manualy replacing "custom_field_function" with the desired array')
             print('Simulation will continue with propagation=False')

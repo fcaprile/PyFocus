@@ -182,27 +182,29 @@ Then we define the mask function and begin the simulation. We set the 2D integra
 
 .. code-block:: python
 
-   mask_function=lambda rho,phi,w0,f,k: np.exp(-(rho2(rho,phi)/w0)**2+1j*phi2(rho,phi))
+   entrance_field=lambda rho,phi,w0,f,k: np.exp(-(rho2(rho,phi)/w0)**2)
+   custom_mask=lambda rho,phi,w0,f,k: np.exp(1j*phi2(rho,phi))
    divisions_theta=200
    divisions_phi=200
-   fields=sim.custom(mask_function,False,False,*parameters,divisions_theta,divisions_phi)
+   fields=sim.custom(entrance_field,custom_mask,False,False,*parameters,divisions_theta,divisions_phi)
    fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 Inclination (tilt)
 -------------------
 
-For inclination in an angle of 3.11*10**-5 radians
+For inclination in an angle of 3.11*10**-5 radians:
 
 .. code-block:: python
 
    angle=3.11*10**-5
    f=h*n/NA
-
-   mask_function=lambda rho,phi,w0,f,k: np.exp(-(rho/w0)**2+1j*(phi+k*np.sin(ang)*rho*np.cos(phi)))
+   
+   entrance_field=lambda rho,phi,w0,f,k: np.exp(-(rho/w0)**2)
+   custom_mask=lambda rho,phi,w0,f,k: np.exp(1j*(phi+k*np.sin(ang)*rho*np.cos(phi)))
 
    divisions_theta=200
    divisions_phi=200
-   fields=sim.custom(mask_function,False,False,*parameters,divisions_theta,divisions_phi)
+   fields=sim.custom(entrance_field,custom_mask,False,False,*parameters,divisions_theta,divisions_phi)
    fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 TIRF
@@ -218,13 +220,14 @@ After setting a water-glass interface, to simulate TIRF with modulation of a VP 
    parameters=np.array((NA, n, h, w0, wavelength, gamma, beta, z, x_steps, z_steps, x_range, z_range, I0, L, R, ds, z_int, figure_name), dtype=object)
 
    theta_crit=np.arcsin(n[1]/n[0])
-   def mask_function(rho,phi,w0,f,k):
+   entrance_field=lambda rho,phi,w0,f,k: np.exp(-(rho/w0)**2)
+   def custom_mask(rho,phi,w0,f,k):
        if rho>f*np.sin(theta_crit):
            return np.exp(1j*phi)
        else:
            return 0
 
-   fields=sim.custom(mask_function,False,True,*parameters,200,200)
+   fields=sim.custom(entrance_field,custom_mask,False,True,*parameters,200,200)
    fig1,fig2=plot.plot_XZ_XY(*fields,x_range,z_range,figure_name)
 
 

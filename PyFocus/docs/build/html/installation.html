@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Intallation &mdash; PyFocus  documentation</title>
+  <title>Installation &mdash; PyFocus  documentation</title>
   
 
   
@@ -86,31 +86,26 @@
               
             
             
-              <p class="caption"><span class="caption-text">Instalation:</span></p>
+              <p class="caption"><span class="caption-text">Installation:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Intallation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#importing">Importing</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#importing">Importing</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples using PyFocus User Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html#examples-using-pyfocus-in-custom-codes">Examples using PyFocus in custom codes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html#vp-phase-mask">VP phase mask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html#propagation-with-a-vp-phase-mask">Propagation with a VP phase mask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html#interface-with-a-vp-phase-mask">Interface with a VP phase mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#vp-mask-modulation">VP mask modulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#propagation-and-modulation-by-a-vp-mask">Propagation and modulation by a VP mask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#interface-and-modulation-by-a-vp-mask">Interface and modulation by a VP mask</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html#custom-mask-examples">Custom mask examples</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Modules:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Classes for the user interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html#module-sim">High-level simulation functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#module-VP_functions">Internal functions for VPP</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#module-no_mask_functions">Internal functions for no mask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#module-custom_mask_functions">Internal functions for a custom mask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html#module-interface">Internal functions for an interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#internal-functions">Internal functions</a></li>
 </ul>
 
             
@@ -157,7 +152,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Intallation</li>
+      <li>Installation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -176,14 +171,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="intallation">
-<h1>Intallation<a class="headerlink" href="#intallation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>To install from pip, for package name issues the package name was chosen as PyCustomFocus:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">PyCustomFocus</span>
 </pre></div>
 </div>
+</div>
 <div class="section" id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
 <p>PyFocus uses various packages. Here we show an example of the needed installation, some packages are preferably installed using conda:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="n">numpy</span>
 <span class="n">conda</span> <span class="n">install</span> <span class="n">scipy</span>
@@ -193,12 +189,11 @@
 </div>
 </div>
 <div class="section" id="importing">
-<h2>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h2>
+<h1>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h1>
 <p>The modules used in the examples are imported with:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyFocus</span> <span class="kn">import</span> <span class="n">sim</span><span class="p">,</span> <span class="n">plot</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 </pre></div>
-</div>
 </div>
 </div>
 
