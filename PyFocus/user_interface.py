@@ -312,15 +312,18 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         
             if selected==2: #Custom mask
                 try:
-                    if config.y==True: #internal variable used to check if given mask function is a functionor a matrix
-                        aux='self.custom_field_function =lambda rho,phi,w0,f,k:np.exp(-(rho/w0)**2)*'+config.x                       
+                    if config.y==True: #internal variable used to check if given mask function is a function or a matrix
+                        aux='self.custom_mask=lambda rho,phi,w0,f,k:'+config.x 
+                        entrance_field=lambda rho,phi,w0,f,k:np.exp(-(rho/w0)**2)
                         exec(aux)
                     else:
-                        self.custom_field_function =config.x
+                        self.custom_mask=config.x
+                        entrance_field=lambda rho,phi,w0,f,k:1
                     #calculate field at the focal plane:
-                    ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(self.custom_field_function ,propagation,interface,*self.parameters)
+                    ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(entrance_field,self.custom_mask ,propagation,interface,*self.parameters)
                 except:
                     print('Please define a phase mask with the "Define mask" or "Load mask from txt file" buttons')
+                    print("Unexpected error:", sys.exc_info())
                     return
             #plot the fields at the focus:
             plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name) #ex, ey and ez have tha values of the field on the XY plane
