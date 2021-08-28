@@ -323,7 +323,6 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
                     ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(entrance_field,self.custom_mask ,propagation,interface,*self.parameters)
                 except:
                     print('Please define a phase mask with the "Define mask" or "Load mask from txt file" buttons')
-                    print("Unexpected error:", sys.exc_info())
                     return
             #plot the fields at the focus:
             plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name) #ex, ey and ez have tha values of the field on the XY plane
