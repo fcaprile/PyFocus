@@ -6,10 +6,10 @@ PyFocus\__init__.py
 PyFocus\complex_quadrature.py
 PyFocus\complex_quadrature_2D.py
 PyFocus\custom_mask_functions.py
-PyFocus\examples.py
 PyFocus\front_end_ui.py
 PyFocus\interface.py
 PyFocus\mask_selection.py
+PyFocus\mask_selection2.py
 PyFocus\mask_selection_modified.py
 PyFocus\no_mask_functions.py
 PyFocus\plot.py
