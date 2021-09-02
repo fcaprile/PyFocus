@@ -197,7 +197,6 @@ For inclination in an angle of 3.11*10**-5 radians:
 .. code-block:: python
 
    angle=3.11*10**-5
-   f=h*n/NA
    
    entrance_field=lambda rho,phi,w0,f,k: np.exp(-(rho/w0)**2)
    custom_mask=lambda rho,phi,w0,f,k: np.exp(1j*(phi+k*np.sin(ang)*rho*np.cos(phi)))
