@@ -330,7 +330,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
             #make internal variables to save the fields as txts
             self.amplitudes_xy=(ex_XY,ey_XY,ez_XY)
             self.Ifield_xy=np.abs(ex_XY)**2+np.abs(ey_XY)**2+np.abs(ez_XY)**2#used to generate the save file
-            self.Ifield_xz=np.zeros((2,2))#since it is not calculated i return a matrix of zeros so there is no error while trying to save the data
+            self.Ifield_xz=np.abs(ex_XZ)**2+np.abs(ey_XZ)**2+np.abs(ez_XZ)**2#used to generate the save file
         except:
             print("Unexpected error:", sys.exc_info())
 
