@@ -302,7 +302,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         
             propagation=self.radioButton.isChecked() #then no need to calculate the field at the entrance of the lens
             interface=self.radioButton_2.isChecked()
-            if config.y==True: #internal variable that checks if 
+            if config.y==True: #internal variable that checks if the incident field is given by a txt, True means no
                 if selected==0: #VP mask
                     #calculate field at the focal plane:
                     ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=VP(propagation,interface,*self.parameters)                
