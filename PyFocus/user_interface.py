@@ -302,28 +302,32 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         
             propagation=self.radioButton.isChecked() #then no need to calculate the field at the entrance of the lens
             interface=self.radioButton_2.isChecked()
-            if selected==0: #VP mask
-                #calculate field at the focal plane:
-                ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=VP(propagation,interface,*self.parameters)                
-                    
-            if selected==1: #No mask (gaussian beam)
-                #calculate field at the focal plane:
-                ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=no_mask(propagation,interface,*self.parameters)
-        
-            if selected==2: #Custom mask
-                try:
-                    if config.y==True: #internal variable used to check if given mask function is a function or a matrix
+            if config.y==True: #internal variable that checks if 
+                if selected==0: #VP mask
+                    #calculate field at the focal plane:
+                    ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=VP(propagation,interface,*self.parameters)                
+                        
+                if selected==1: #No mask (gaussian beam)
+                    #calculate field at the focal plane:
+                    ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=no_mask(propagation,interface,*self.parameters)
+            
+                if selected==2: #Custom mask
+                    try:
                         aux='self.custom_mask=lambda rho,phi,w0,f,k:'+config.x 
                         entrance_field=lambda rho,phi,w0,f,k:np.exp(-(rho/w0)**2)
                         exec(aux)
-                    else:
-                        self.custom_mask=config.x
-                        entrance_field=lambda rho,phi,w0,f,k:1
-                    #calculate field at the focal plane:
-                    ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(entrance_field,self.custom_mask ,propagation,interface,*self.parameters)
-                except:
-                    print('Please define a phase mask with the "Define mask" or "Load mask from txt file" buttons')
-                    return
+                        #calculate field at the focal plane:
+                        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(entrance_field,self.custom_mask ,propagation,interface,*self.parameters)
+                    except:
+                        print('Please define a phase mask with the "Define mask" button')
+                        return
+            else:
+                self.custom_mask=config.x
+                entrance_field=lambda rho,phi,w0,f,k:1
+                #calculate field at the focal plane:
+                ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom(entrance_field,self.custom_mask ,propagation,interface,*self.parameters)
+                config.y=True
+                print('File unloaded, if you want to repeat the simulation please reload the file')
             #plot the fields at the focus:
             plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name) #ex, ey and ez have tha values of the field on the XY plane
             

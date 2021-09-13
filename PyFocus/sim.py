@@ -293,15 +293,14 @@ def custom(entrance_field, custom_mask, propagation=False,multilayer=False,NA=1.
                 plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
 
     elif type(custom_mask)==np.ndarray:#if an array is given
-        custom_field_function=lambda rho, phi,w0,f,k: entrance_field(rho, phi,w0,f,k)*custom_mask
         if propagation==True:
             print('Giving mask function as an array not implemented for calculation of incient field propagation. Can be implemented by obtaining "ex_lens" and "ey_lens" arrays using the "generate_incident_field" function manualy replacing "custom_field_function" with the desired array')
             print('Simulation will continue with propagation=False')
-        ex_lens,ey_lens=custom_field_function*np.cos(gamma*np.pi/180)*I0**0.5,custom_field_function*np.sin(gamma*np.pi/180)*np.exp(1j*beta*np.pi/180)*I0**0.5 #make the x and y component based on polarization
+        ex_lens,ey_lens=custom_mask*np.cos(gamma*np.pi/180)*I0**0.5,custom_mask*np.sin(gamma*np.pi/180)*np.exp(1j*beta*np.pi/180)*I0**0.5 #make the x and y component based on polarization
         if plot_Ei==True:
             print('Showing incident field:')
             plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
-        divisions_phi,divisions_theta=np.shape(custom_field_function)
+        divisions_phi,divisions_theta=np.shape(ex_lens)
     else:
         print('Wrong format for mask function, acceptable formats are functions or arrays')
         
