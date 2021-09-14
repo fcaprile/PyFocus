@@ -77,7 +77,8 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         self.modified_saving_name=False #Used later to avoid overwriting the changes in the name of the figure made by the user
         self.default_file_name='VP mask simulation' #default name for simulations if nothing is changed
         self.previous_figure_name=''#used to aoid overwriting previous figures which have the same name
-                
+        config.y=True
+        
     def selectsavefolder(self):
         '''
         Allows selecting a save folder for the txt files
