@@ -29,13 +29,15 @@ PyFocus uses various packages. Here we show an example of the needed installatio
    conda install scipy
    conda install qdarkstyle
    pip install PyCustomFocus
-   pip install config 
-   pip install tqdm 
-   pip install matplotlib 
-   pip install PyQt5 
-   pip install qtpy 
-   pip install pyqtgraph 
-   pip install configparser  
+   pip install config==0.5.1 
+   pip install tqdm==4.62.3 
+   pip install matplotlib==3.3.4
+   pip install PyQt5==5.15.4
+   pip install qtpy==1.11.2 
+   pip install pyqtgraph==0.11.1 
+   pip install configparser==5.0.2  
+
+Package versions are specified for consistency. If a package does not have the specified version available (represented by the ==version part of pip install), you can try removing this restrain (by deleting the ==version part of the command).  
 
 After this, we can use a python script.
 
