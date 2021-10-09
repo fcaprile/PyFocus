@@ -15,6 +15,7 @@ To show the interface we use the function "show":
 
    ui.show()
 
+If this example does not work, please contact us. You can continue with the rest of the examples using PyFocus's high-level functions, or use the previously mentioned "PyFocus.exe" windows executable. 
 
 Examples using PyFocus in custom codes
 ===================================================
