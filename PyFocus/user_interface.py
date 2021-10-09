@@ -50,9 +50,8 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         self.app = QtGui.QApplication.instance()#if running from spyder
         if self.app is None:
             self.app = QtGui.QApplication(sys.argv)#if running from console
-        self.app.exec_()
         self.app.setStyleSheet(qdarkstyle.load_stylesheet())#set a dark style
-
+        
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         #Main functions:
         self.counter=0# counts the numer of simulations realized in this sesion, to avoid overwriting save files with the same name
