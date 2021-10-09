@@ -194,6 +194,7 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>If this example does not work, please contact us. You can continue with the rest of the examples using PyFocus’s high-level functions, or use the previously mentioned “PyFocus.exe” windows executable.</p>
 </div>
 <div class="section" id="examples-using-pyfocus-in-custom-codes">
 <h1>Examples using PyFocus in custom codes<a class="headerlink" href="#examples-using-pyfocus-in-custom-codes" title="Permalink to this headline">¶</a></h1>
@@ -368,7 +369,6 @@
 <h2>Inclination (tilt)<a class="headerlink" href="#inclination-tilt" title="Permalink to this headline">¶</a></h2>
 <p>For inclination in an angle of 3.11*10**-5 radians:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">angle</span><span class="o">=</span><span class="mf">3.11</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">5</span>
-<span class="n">f</span><span class="o">=</span><span class="n">h</span><span class="o">*</span><span class="n">n</span><span class="o">/</span><span class="n">NA</span>
 
 <span class="n">entrance_field</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">,</span><span class="n">w0</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">rho</span><span class="o">/</span><span class="n">w0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">custom_mask</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rho</span><span class="p">,</span><span class="n">phi</span><span class="p">,</span><span class="n">w0</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="n">phi</span><span class="o">+</span><span class="n">k</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)))</span>

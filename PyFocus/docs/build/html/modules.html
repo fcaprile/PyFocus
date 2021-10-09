@@ -410,9 +410,9 @@ Open the phase mask selection window if the “custom” option is selected</p>
 <p>f: Focal distane of the objective lens</p>
 <p>k: Wavenumber in the objective lens medium IMPORTANT:(mm)</p>
 </dd>
-<dt class="field-even">custom_field_function (array or function)</dt>
+<dt class="field-even">custom_mask (2D array or function)</dt>
 <dd class="field-even"><p>Custom phase mask to be simulated</p>
-<p>If array: Complex amplitude of the custom phase mask for each value of the spherical coordinates theta and phi: custom_mask[phi_position,theta_position] for phi_position a value in np.linspace(0,2*np.pi,divisions_phi) and theta_position a value in np.linspace(0,alpha,divisions_theta)</p>
+<p>If 2D array: Complex amplitude of the custom phase mask for each value of the spherical coordinates theta and phi: custom_mask[phi_position,theta_position] for phi_position a value in np.linspace(0,2*np.pi,divisions_phi) and theta_position a value in np.linspace(0,alpha,divisions_theta)</p>
 <p>If function: Analytical function that defines the phase mask, must be a function of the 5 internal variables: rho, phi, w0, f and k defined previously.</p>
 </dd>
 </dl>

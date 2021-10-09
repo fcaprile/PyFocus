@@ -173,6 +173,12 @@
             
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>At <a class="reference external" href="https://github.com/Stefani-Lab/PyFocus">https://github.com/Stefani-Lab/PyFocus</a> we provide a windows executable version of PyFocus’s GUI, called “PyFocus.exe”, that can be downloaded and executed without any other installation or Python enviroment.</p>
+<p>For instalation of the high-level functions and the GUI class for use in custom scripts, first we install a new enviroment in wich we use Python 3.6. This version is needed for using the GUI, but is not required for the high-level functions we provide. From an anaconda prompt with admin privileges:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">--</span><span class="n">name</span> <span class="n">pyfocus</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.6</span>
+<span class="n">conda</span> <span class="n">activate</span> <span class="n">pyfocus</span>
+</pre></div>
+</div>
 <p>To install from pip, for package name issues the package name was chosen as PyCustomFocus:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">PyCustomFocus</span>
 </pre></div>
@@ -184,9 +190,17 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="n">numpy</span>
 <span class="n">conda</span> <span class="n">install</span> <span class="n">scipy</span>
 <span class="n">conda</span> <span class="n">install</span> <span class="n">qdarkstyle</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">config</span> <span class="n">tqdm</span> <span class="n">matplotlib</span> <span class="n">PyQt5</span> <span class="n">qtpy</span> <span class="n">pyqtgraph</span> <span class="n">os</span> <span class="n">configparser</span> <span class="n">time</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">PyCustomFocus</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">config</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">tqdm</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">matplotlib</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">PyQt5</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">qtpy</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">pyqtgraph</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">configparser</span>
 </pre></div>
 </div>
+<p>After this, we can use a python script.</p>
 </div>
 <div class="section" id="importing">
 <h1>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h1>
