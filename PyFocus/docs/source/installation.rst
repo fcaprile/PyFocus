@@ -1,7 +1,7 @@
 Installation
 ===============================
 
-At https://github.com/Stefani-Lab/PyFocus we provide a windows executable version of PyFocus's GUI, called "PyFocus.exe", that can be downloaded and executed without any other installation or Python enviroment.
+At https://github.com/Stefani-Lab/PyFocus we provide a Windows executable version of PyFocus's GUI, called "PyFocus.exe", that can be downloaded and executed without any installations or Python enviroment.
 
 For instalation of the high-level functions and the GUI class for use in custom scripts, first we install a new enviroment in wich we use Python 3.6. This version is needed for using the GUI, but is not required for the high-level functions we provide. From an anaconda prompt with admin privileges:
 
