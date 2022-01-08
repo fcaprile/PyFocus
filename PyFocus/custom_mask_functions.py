@@ -335,7 +335,7 @@ def custom_mask_focus_field_XY(ex_lens,ey_lens,alpha,h,wavelength,zp0,resolution
     prefactor_general=cos_theta_sqrt*sin_theta
     prefactor_x=prefactor_general*(cos_theta+(1-cos_theta)*sin_phi_square)
     prefactor_y=prefactor_general*(1-cos_theta)*cos_phi*sin_phi
-    prefactor_z=prefactor_general*sin_theta*cos_phi
+    prefactor_z=prefactor_general*(-sin_theta*cos_phi)
     
     Axx=prefactor_x*ex_lens*weight_trapezoid
     Axy=prefactor_y*ex_lens*weight_trapezoid
@@ -492,7 +492,7 @@ def custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,res
     prefactor_general=cos_theta_sqrt*sin_theta
     prefactor_x=prefactor_general*(cos_theta+(1-cos_theta)*sin_phi_square)
     prefactor_y=prefactor_general*(1-cos_theta)*cos_phi*sin_phi
-    prefactor_z=prefactor_general*sin_theta*cos_phi
+    prefactor_z=prefactor_general*(-sin_theta*cos_phi)
 
     Axx=prefactor_x*ex_lens*weight_trapezoid
     Axy=prefactor_y*ex_lens*weight_trapezoid

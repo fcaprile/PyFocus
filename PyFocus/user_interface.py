@@ -50,7 +50,7 @@ class UI(QtGui.QMainWindow,Ui_MainWindow):
         self.app = QtGui.QApplication.instance()#if running from spyder
         if self.app is None:
             self.app = QtGui.QApplication(sys.argv)#if running from console
-        self.app.setStyleSheet(qdarkstyle.load_stylesheet())#set a dark style
+        self.app.setStyleSheet(qdarkstyle.load_stylesheet())#set a dark style, removed since it fixates the font size
         
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         #Main functions:

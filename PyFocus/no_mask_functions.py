@@ -124,7 +124,7 @@ def no_mask_fields(II1,II2,II3,wavelength,I0,beta,gamma,z_steps,r_steps,x_range,
     #for negative z values there is a minus sign that comes out, and so the first part of the vstack has a - multiplyed
     exx=-a1*1j*np.hstack((np.fliplr(II1)+np.cos(2*phip)*np.fliplr(II3), II1[:,1:rtotalsteps-1]+np.cos(2*phip)*II3[:,1:rtotalsteps-1]))
     eyx=-a1*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:rtotalsteps-1]))
-    ezx=-a1*2*np.hstack((-np.fliplr(II2)*np.cos(phip), np.cos(phip)*II2[:,1:rtotalsteps-1]))
+    ezx=a1*2*np.hstack((-np.fliplr(II2)*np.cos(phip), np.cos(phip)*II2[:,1:rtotalsteps-1]))
 
     exy=-a2*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:rtotalsteps-1]))
     eyy=-a2*1j*np.hstack((np.fliplr(II1)-np.cos(2*phip)*np.fliplr(II3), II1[:,1:rtotalsteps-1]-np.cos(2*phip)*II3[:,1:rtotalsteps-1]))
@@ -153,7 +153,7 @@ def no_mask_fields(II1,II2,II3,wavelength,I0,beta,gamma,z_steps,r_steps,x_range,
             rp=int(np.rint(rp))
             exx2[yy,xx]=-a1*1j*(II1[zz,rp]+np.cos(2*phip)*II3[zz,rp])
             eyx2[yy,xx]=-a1*1j*(np.sin(2*phip)*II3[zz,rp])
-            ezx2[yy,xx]=-a1*2*(np.cos(phip)*II2[zz,rp])
+            ezx2[yy,xx]=a1*2*(np.cos(phip)*II2[zz,rp])
             exy2[yy,xx]=-a2*1j*(np.sin(2*phip)*II3[zz,rp])
             eyy2[yy,xx]=-a2*1j*(II1[zz,rp]-np.cos(2*phip)*II3[zz,rp])
             ezy2[yy,xx]=-a2*2*(np.sin(phip)*II2[zz,rp])

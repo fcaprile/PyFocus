@@ -154,7 +154,7 @@ def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,w
     prefactor_general=cos_theta_sqrt*sin_theta*k1
     prefactor_x=prefactor_general*(cos_theta+(1-cos_theta)*sin_phi_square)
     prefactor_y=prefactor_general*(1-cos_theta)*cos_phi*sin_phi
-    prefactor_z=prefactor_general*sin_theta*cos_phi
+    prefactor_z=prefactor_general*(-sin_theta*cos_phi)
     
     Axx=-prefactor_x*ex_lens*weight_trapezoid
     Axy=-prefactor_y*ex_lens*weight_trapezoid
@@ -182,7 +182,7 @@ def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,w
     #For integration of the reflected and transmited fields (Er and Et):
     prefactor_x_r=-prefactor_general*(-rs_i_theta*sin_phi_square+rp_i_theta*cos_phi_square*cos_theta)
     prefactor_y_r=-prefactor_general*(rs_i_theta+rp_i_theta*cos_theta)*cos_phi*sin_phi
-    prefactor_z_r=prefactor_general*rp_i_theta*sin_theta*cos_phi
+    prefactor_z_r=prefactor_general*rp_i_theta*(-sin_theta*cos_phi)
     
     phase_z_r=np.exp(2*1j*k1*np.cos(theta)*z_int)
     
@@ -207,7 +207,7 @@ def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,w
 
     prefactor_x_t=prefactor_general_t*(ts_t_theta*sin_phi_square+tp_t_theta*cos_phi_square*cos_theta_t)
     prefactor_y_t=prefactor_general_t*(-ts_t_theta+tp_t_theta*cos_theta_t)*cos_phi*sin_phi
-    prefactor_z_t=-prefactor_general_t*tp_t_theta*sin_theta_t*cos_phi
+    prefactor_z_t=prefactor_general_t*tp_t_theta*sin_theta_t*cos_phi
     
     phase_z_t=np.exp(1j*z_int*(k2*cos_theta_t+k1*cos_theta))
     
@@ -431,7 +431,7 @@ def interface_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha,
     prefactor_general=cos_theta_sqrt*sin_theta*k1
     prefactor_x=prefactor_general*(sin_phi_square+cos_phi_square*cos_theta)
     prefactor_y=prefactor_general*(-1+cos_theta)*cos_phi*sin_phi
-    prefactor_z=-prefactor_general*sin_theta*cos_phi
+    prefactor_z=prefactor_general*(-sin_theta*cos_phi)
     
     Axx=-prefactor_x*ex_lens*weight_trapezoid
     Axy=prefactor_y*ex_lens*weight_trapezoid
@@ -463,7 +463,7 @@ def interface_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha,
     #For integration of the reflected and transmited fields (Er and Et):
     prefactor_x_r=prefactor_general*(rs_i_theta*sin_phi_square-rp_i_theta*cos_phi_square*cos_theta)
     prefactor_y_r=prefactor_general*(-rs_i_theta-rp_i_theta*cos_theta)*cos_phi*sin_phi
-    prefactor_z_r=-prefactor_general*rp_i_theta*sin_theta*cos_phi
+    prefactor_z_r=prefactor_general*rp_i_theta*(-sin_theta*cos_phi)
     
     phase_z_r=np.exp(2*1j*k1*np.cos(theta)*z_int)
     
@@ -488,7 +488,7 @@ def interface_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha,
 
     prefactor_x_t=prefactor_general_t*(ts_t_theta*sin_phi_square+tp_t_theta*cos_phi_square*cos_theta_t)
     prefactor_y_t=prefactor_general_t*(-ts_t_theta+tp_t_theta*cos_theta_t)*cos_phi*sin_phi
-    prefactor_z_t=-prefactor_general_t*tp_t_theta*sin_theta_t*cos_phi
+    prefactor_z_t=prefactor_general_t*tp_t_theta*sin_theta_t*cos_phi
     
     phase_z_t=np.exp(1j*z_int*(k2*cos_theta_t+k1*cos_theta))
     

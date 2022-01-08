@@ -132,11 +132,11 @@ def VP_fields(II1,II2,II3,II4,II5,wavelength,I0,gamma,beta,x_steps,z_steps,x_ran
     #for negative z values there is a minus sign that comes out, and so the first part of the vstack has a - multiplyed
     exx=a1*np.hstack((- np.fliplr(II1)*np.exp(1j*phip) + 0.5*np.fliplr(II2)*np.exp(- 1j*phip) - 0.5*np.fliplr(II3)*np.exp(3j*phip),II1[:,1:rtotalsteps-1]*np.exp(1j*phip) - 0.5*II2[:,1:rtotalsteps-1]*np.exp(- 1j*phip) + 0.5*II3[:,1:rtotalsteps-1]*np.exp(3j*phip)))
     eyx=-0.5*1j*a1*np.hstack((- np.fliplr(II2)*np.exp(- 1j*phip) - np.fliplr(II3)*np.exp(3j*phip),II2[:,1:rtotalsteps-1]*np.exp(- 1j*phip) + II3[:,1:rtotalsteps-1]*np.exp(3j*phip)))
-    ezx=a1*1j*np.hstack((np.fliplr(II4) - np.fliplr(II5)*np.exp(2j*phip),II4[:,1:rtotalsteps-1] - II5[:,1:rtotalsteps-1]*np.exp(2j*phip)))
+    ezx=-a1*1j*np.hstack((np.fliplr(II4) - np.fliplr(II5)*np.exp(2j*phip),II4[:,1:rtotalsteps-1] - II5[:,1:rtotalsteps-1]*np.exp(2j*phip)))
     
     exy=- 0.5*a2*1j*np.hstack((- np.fliplr(II2)*np.exp(- 1j*phip) - np.fliplr(II3)*np.exp(3j*phip),II2[:,1:rtotalsteps-1]*np.exp(- 1j*phip) + II3[:,1:rtotalsteps-1]*np.exp(3j*phip)))
     eyy=a2*np.hstack((- np.fliplr(II1)*np.exp(1j*phip) - 0.5*np.fliplr(II2)*np.exp(- 1j*phip) + 0.5*np.fliplr(II3)*np.exp(3j*phip),II1[:,1:rtotalsteps-1]*np.exp(1j*phip) + 0.5*II2[:,1:rtotalsteps-1]*np.exp(- 1j*phip) - 0.5*II3[:,1:rtotalsteps-1]*np.exp(3j*phip)))
-    ezy=- a2*np.hstack((np.fliplr(II4) + np.fliplr(II5)*np.exp(2j*phip),II4[:,1:rtotalsteps-1] +II5[:,1:rtotalsteps-1]*np.exp(2j*phip)))
+    ezy=a2*np.hstack((np.fliplr(II4) + np.fliplr(II5)*np.exp(2j*phip),II4[:,1:rtotalsteps-1] +II5[:,1:rtotalsteps-1]*np.exp(2j*phip)))
 
     Ex=exx + exy
     Ey=eyx + eyy
@@ -161,10 +161,10 @@ def VP_fields(II1,II2,II3,II4,II5,wavelength,I0,gamma,beta,x_steps,z_steps,x_ran
             rp=int(np.rint(rp))
             exx2[yy,xx]=a1*(II1[zz,rp]*np.exp(1j*phip) - 0.5*II2[zz,rp]*np.exp(-1j*phip) + 0.5*II3[zz,rp]*np.exp(3j*phip))
             eyx2[yy,xx]=- 0.5*a1*1j*(II2[zz,rp]*np.exp(- 1j*phip) + II3[zz,rp]*np.exp(3j*phip))
-            ezx2[yy,xx]=a1*1j*(II4[zz,rp] - II5[zz,rp]*np.exp(2j*phip))
+            ezx2[yy,xx]=-a1*1j*(II4[zz,rp] - II5[zz,rp]*np.exp(2j*phip))
             exy2[yy,xx]=-0.5*a2*1j*(II2[zz,rp]*np.exp(- 1j*phip) +II3[zz,rp]*np.exp(3j*phip))
             eyy2[yy,xx]=a2*(II1[zz,rp]*np.exp(1j*phip) + 0.5*II2[zz,rp]*np.exp(- 1j*phip) - 0.5*II3[zz,rp]*np.exp(3j*phip))
-            ezy2[yy,xx]=- a2*(II4[zz,rp] + II5[zz,rp]*np.exp(2j*phip))
+            ezy2[yy,xx]=a2*(II4[zz,rp] + II5[zz,rp]*np.exp(2j*phip))
     Ex2=exx2 + exy2
     Ey2=eyx2 + eyy2
     Ez2=ezx2 + ezy2
