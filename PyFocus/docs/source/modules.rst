@@ -14,6 +14,7 @@ High-level simulation functions
 Internal functions
 ===========================================
 
+IMPORTANT: In these functions the wavelength corresponds to the wavelegth on the lens's medium unless stated otherwise
 
 Functions for a VP mask
 --------------------------

@@ -28,7 +28,7 @@ First, we define the parameters of the simulation:
                 
         :w0 (float): Radius of the incident gaussian beam (mm)
         
-        :wavelength (float): Wavelength in the medium of the objective lens (equals to wavelength in vacuum/n)
+        :wavelength (float): Wavelength in vacuum
         
         :gamma (float): Parameter that determines the polarization, arctan(ey/ex) (gamma=45, beta=90 gives right circular polarization and a donut shape)
         
