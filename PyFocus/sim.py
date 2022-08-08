@@ -57,7 +57,7 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from PyFocus.VP_functions import VP_integration, VP_fields, VP_fraunhofer
 from PyFocus.no_mask_functions import no_mask_integration, no_mask_fields
-from PyFocus.custom_mask_functions import generate_incident_field, plot_in_cartesian, custom_mask_objective_field, custom_mask_focus_field_XZ_XY
+from PyFocus.custom_mask_functions import generate_incident_field, generate_rotated_incident_field, plot_in_cartesian, custom_mask_objective_field, custom_mask_focus_field_XZ_XY
 from PyFocus.interface import interface_custom_mask_focus_field_XZ_XY
 
 def VP(propagation=False,multilayer=False,NA=1.4,n=1.5,h=3,w0=5,wavelength=640,gamma=45,beta=90,z=0,x_steps=5,z_steps=8,x_range=1000,z_range=2000,I0=1,L='',R='',ds='',z_int='',figure_name=''):
@@ -275,13 +275,18 @@ def custom(entrance_field, custom_mask, propagation=False,multilayer=False,NA=1.
         custom_field_function=lambda rho, phi,w0,f,k: entrance_field(rho, phi,w0,f,k)* custom_mask(rho, phi,w0,f,k)
         #resolution for field at objective
         if propagation==False:
-            #calculate field inciding on the lens by multiplying the phase mask's function and the gaussian amplitude
-            ex_lens,ey_lens=generate_incident_field(custom_field_function,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength)
-            #plot field at the entrance of the lens:
-            #since ex_lens and ey_lens are given in theta and phi coordinates, the have to be transformed to cartesian in order to be ploted, hence the name of this function
             if plot_Ei==True:
+                #calculate field inciding on the lens by multiplying the phase mask's function and the gaussian amplitude
+                ex_lens,ey_lens=generate_incident_field(custom_field_function,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength)
+                #plot field at the entrance of the lens:
+                #since ex_lens and ey_lens are given in theta and phi coordinates, the have to be transformed to cartesian in order to be ploted, hence the name of this function
+
                 print('Showing incident field:')
                 plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
+                
+            #In the next calculus the incident filed must be evaluated at phi-180º for ex_lens and at phi-270º for ey_lens
+            #I do this with an extra function
+            ex_lens,ey_lens=generate_rotated_incident_field(custom_field_function,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength)
         else:
             #calculate field inciding on the lens by fraunhofer's difraction formula
             #N_rho and N_phi are the number of divisions for fraunhoffer's integral by the trapecium's method
@@ -291,6 +296,7 @@ def custom(entrance_field, custom_mask, propagation=False,multilayer=False,NA=1.
             if plot_Ei==True:
                 print('Showing incident field:')
                 plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
+        field_is_already_rotated = True # To tell the next function that the field is already evaluated at phi-180º and phi-270º
 
     elif type(custom_mask)==np.ndarray:#if an array is given
         if propagation==True:
@@ -301,15 +307,16 @@ def custom(entrance_field, custom_mask, propagation=False,multilayer=False,NA=1.
             print('Showing incident field:')
             plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
         divisions_phi,divisions_theta=np.shape(ex_lens)
+        field_is_already_rotated = False # To tell the next function that the field has not been evaluated at phi-180º and phi-270º
     else:
         print('Wrong format for mask function, acceptable formats are functions or arrays')
         
     #calculate field at the focal plane:
     if multilayer==False:#no multilayer
-        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range)
+        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range,field_is_already_rotated)
     else:
         wavelength*=n[0] #to return to wavelength at vacuum
-        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range)
+        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range,field_is_already_rotated)
 
     return ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY
 

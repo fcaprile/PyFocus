@@ -11,7 +11,7 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 from PyFocus.tmm_core import coh_tmm
 
 
-def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,wavelength,z_int,zp0,resolution_x,divisions_theta,divisions_phi,x_range,countdown=True,x0=0,y0=0):
+def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,wavelength,z_int,zp0,resolution_x,divisions_theta,divisions_phi,x_range,countdown=True,x0=0,y0=0,field_is_already_rotated=False):
     '''
     2D integration to calculate the field focused by a high aperture lens on the XY plane with an interface
     
@@ -74,8 +74,9 @@ def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,w
     #To use the incident field as the function to be integrated in the equations deried from born and wolf, the incident field must be evaluated at phi-pi for the X component and at phi-3*pi/2 for the Y component. 
     #The motives for this correspond to a difference in the coordinate system used when deriving the equations, where the z versor points in the oposite direction
     #This fact is not described in the paper since i am not 100% sure this is the motive, but the rotation is necesary to obtain the needed result in all my tests with custom masks
-    ex_lens=rotate_180º(ex_lens)
-    ey_lens=rotate_270º(ey_lens)
+    if not field_is_already_rotated:
+        ex_lens=rotate_180º(ex_lens)
+        ey_lens=rotate_270º(ey_lens)
 
     #Functions for computing the reflection and transmitinos coeficients between 2 interfaces. Subindexes _i meant incident and _t meand transmited  
     #given incident angle (theta_i), compute the reflection coeficients:
@@ -285,7 +286,7 @@ def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,w
     
     return ex,ey,ez
 
-def interface_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,zp0,resolution_x,divisions_theta,divisions_phi,x_range,x0=0,y0=0,z0=0,plot_plane='X'):
+def interface_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,zp0,resolution_x,divisions_theta,divisions_phi,x_range,x0=0,y0=0,z0=0,plot_plane='X',field_is_already_rotated=False):
     '''
     2D integration to calculate the field focused by a high aperture lens on the XY and XZ planes with an interface
     
@@ -336,7 +337,7 @@ def interface_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha,
     n1=n_list[0]
     n2=n_list[-1]
     #XY plane: 
-    Ex_XY,Ey_XY,Ez_XY=interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,wavelength,z_int,zp0,resolution_x,divisions_theta,divisions_phi,x_range,True,x0,y0)
+    Ex_XY,Ey_XY,Ez_XY=interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,wavelength,z_int,zp0,resolution_x,divisions_theta,divisions_phi,x_range,True,x0,y0,field_is_already_rotated)
     
     #XZ plane:
     if int(resolution_z%2)==0:
@@ -363,8 +364,9 @@ def interface_custom_mask_focus_field_XZ_XY(n_list,d_list,ex_lens,ey_lens,alpha,
     #To use the incident field as the function to be integrated in the equations deried from born and wolf, the incident field must be evaluated at phi-pi for the X component and at phi-3*pi/2 for the Y component. 
     #The motives for this correspond to a difference in the coordinate system used when deriving the equations, where the z versor points in the oposite direction
     #This fact is not described in the paper since i am not 100% sure this is the motive, but the rotation is necesary to obtain the needed result in all my tests with custom masks
-    ex_lens=rotate_180º(ex_lens)
-    ey_lens=rotate_270º(ey_lens)
+    if not field_is_already_rotated:
+        ex_lens=rotate_180º(ex_lens)
+        ey_lens=rotate_270º(ey_lens)
 
     '''
     #functions to integrate: Focused field without interface (Ef)
