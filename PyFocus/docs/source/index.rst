@@ -5,6 +5,11 @@
 
 Welcome to PyFocus's documentation!
 ====================================
+.. toctree::
+   :caption: Citing:
+   :maxdepth: 2
+   
+   citing
 
 .. toctree::
    :caption: Installation:
