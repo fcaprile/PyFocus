@@ -307,7 +307,7 @@ def custom(entrance_field, custom_mask, propagation=False,multilayer=False,NA=1.
             print('Showing incident field:')
             plot_in_cartesian(ex_lens,ey_lens,h,alpha,f,figure_name)
         divisions_phi,divisions_theta=np.shape(ex_lens)
-        field_is_already_rotated = False # To tell the next function that the field has not been evaluated at phi-180º and phi-270º
+        field_is_already_rotated = True # To tell the next function that the field has not been evaluated at phi-180º and phi-270º
     else:
         print('Wrong format for mask function, acceptable formats are functions or arrays')
         
