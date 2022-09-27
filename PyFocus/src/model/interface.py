@@ -8,7 +8,7 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from PyFocus.tmm_core import coh_tmm
+from PyFocus.src.model.transfer_matrix.tmm_core import coh_tmm
 
 
 def interface_custom_mask_focus_field_XY(n_list,d_list,ex_lens,ey_lens,alpha,h,wavelength,z_int,zp0,resolution_x,divisions_theta,divisions_phi,x_range,countdown=True,x0=0,y0=0,field_is_already_rotated=False):

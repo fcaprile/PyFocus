@@ -11,7 +11,7 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 
 import numpy as np
-from PyFocus.complex_quadrature import complex_quadrature
+from PyFocus.src.equations.complex_quadrature import complex_quadrature
 from tqdm import tqdm
 from scipy.special import jv
 

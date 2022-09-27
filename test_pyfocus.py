@@ -5,7 +5,8 @@ Created on Mon Dec 20 09:45:35 2021
 @author: Fernando Caprile
 """
 
-from PyFocus import sim, plot
+from PyFocus import sim
+from PyFocus.src.plot import plot
 import numpy as np
 from matplotlib import pyplot as plt
 

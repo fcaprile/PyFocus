@@ -17,12 +17,12 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 #from Pyqt5 user interface packages
-from PyFocus.front_end_ui import Ui_MainWindow
+from PyFocus.src.user_interface.front_end_ui import Ui_MainWindow
 # from PyFocus.mask_selection import Ui_Dialog
-from PyFocus.mask_selection import Ui_MaskWindow
+from PyFocus.src.user_interface.mask_selection.mask_selection import Ui_MaskWindow
 
 #custom made integration functions
-from PyFocus.plot import plot_XZ_XY
+from PyFocus.src.plot.plot import plot_XZ_XY
 from PyFocus.sim import VP, no_mask, custom
 
 '''
