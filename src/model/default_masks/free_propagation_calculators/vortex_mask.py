@@ -4,6 +4,7 @@ Functions for the simulation of the foci obtained by a VP mask
 from equations.vortex_phase_mask import load_vortex_mask_functions
 from equations.helpers import cart2pol
 from equations.complex_quadrature import complex_quadrature
+from src.equations.gaussian_profile import gaussian_rho
 from src.model.default_masks.free_propagation_calculators.base import DefaultMaskFreePropagationCalculator
 
 import numpy as np
@@ -14,10 +15,7 @@ from scipy import interpolate
 
 
 class VortexMaskFreePropagationCalculator(DefaultMaskFreePropagationCalculator):
-    
-    def __init__(self, plot_function: callable = None) -> None:
-        super().__init__(plot_function=plot_function)
-    
+        
     def execute(self, gamma=45,beta=-90,steps=500,R=5,L=100,I0=1,wavelength=640,FOV=11,w0=5,limit=2000,div=1,plot=True, figure_name=''):
         '''
         Calculate and plot the field inciding on the lens by Fraunhofer's difraction formula
@@ -28,7 +26,7 @@ class VortexMaskFreePropagationCalculator(DefaultMaskFreePropagationCalculator):
         rvalues=np.linspace(0,rmax*2**0.5,steps)
         
         # Incident field is a gaussean beam
-        E_xy=lambda rho: np.exp(-(rho/w0)**2) 
+        E_xy = gaussian_rho(w0) 
         a1, a2 = self.calculate_factors(I0, gamma, beta, wavelength)    
         fun=lambda rho: E_xy(rho)*rho*np.exp(1j*np.pi/wavelength/L*rho**2)*jv(1,k/L*rho*rhop)
         

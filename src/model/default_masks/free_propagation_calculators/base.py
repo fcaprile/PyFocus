@@ -1,4 +1,4 @@
-from abc import ABC, abstractclassmethod
+from abc import ABC, abstractclassmethod, abstractmethod
 from src.equations.helpers.plot.plot_objective_field import plot_objective_field
 
 import functools
@@ -13,10 +13,7 @@ from equations.helpers import cart2pol
 
 class DefaultMaskFreePropagationCalculator(ABC):
     
-    def __init__(self, plot_function: callable = None) -> None:
-        self.plot_function = plot_function if plot_function else plot_objective_field
-    
-    @abstractclassmethod
+    @abstractmethod
     def execute(*args, **kwargs):
         raise NotImplementedError
         

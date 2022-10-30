@@ -1,6 +1,7 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class MaskType(Enum):
-    no_mask = 1
-    vortex_mask = 2
+    no_mask = auto()
+    vortex_mask = auto()
+    rotation_simmetry = auto()
