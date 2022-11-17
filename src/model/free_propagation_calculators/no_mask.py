@@ -1,19 +1,24 @@
-
+"""
+Functions for the simulation of the field obtained by focuisng a gaussian beam
+"""
 import functools
+from scipy import interpolate
 from typing import Dict, List, Tuple
 
 from equations.complex_quadrature import complex_quadrature
+from equations.no_phase_mask import load_no_mask_functions
 from equations.helpers import cart2pol
 
 import numpy as np
 from tqdm import tqdm
+from src.equations.gaussian_profile import gaussian_rho
 
-from src.model.default_masks.free_propagation_calculators.base import DefaultMaskFreePropagationCalculator
+from src.model.default_masks.free_propagation_calculators.base import FreePropagationCalculator
 
 
-class RotationSimmetryFreePropagationCalculator(DefaultMaskFreePropagationCalculator):
+class NoMaskFreePropagationCalculator(FreePropagationCalculator):
     
-    def execute(self, gamma=45,beta=-90,steps=500,R=5,L=100,I0=1,wavelength=640,FOV=11,w0=5,limit=2000,div=1,plot=True, figure_name=''):
+    def calculate(self, gamma=45,beta=-90,steps=500,R=5,L=100,I0=1,wavelength=640,FOV=11,w0=5,limit=2000,div=1,plot=True, figure_name=''):
         raise NotImplementedError
         '''
         # calculating the rho values in wich to integrate
@@ -23,7 +28,7 @@ class RotationSimmetryFreePropagationCalculator(DefaultMaskFreePropagationCalcul
         
         # Incident field is a gaussean beam
         E_xy = gaussian_rho(w0) 
-        a1, a2 = self.calculate_factors(I0, gamma, beta, wavelength)    
+        a1, a2 = self.calculate_amplitude_factors(I0, gamma, beta, wavelength)    
         fun=lambda rho: E_xy(rho)*rho*np.exp(1j*np.pi/wavelength/L*rho**2)*jv(1,k/L*rho*rhop) # TODO actualizar la función a la de un haz gaussiano que se propaga
         
         Int=np.zeros(steps,dtype=complex)
@@ -58,8 +63,6 @@ class RotationSimmetryFreePropagationCalculator(DefaultMaskFreePropagationCalcul
             for j in range(y):
                 Ifield[j,i]=np.real(Ex[j,i]*np.conj(Ex[j,i])+Ey[j,i]*np.conj(Ey[j,i]))
         
-        if plot==True:
-            self.plot_function(Ifield, Ex, Ey, xmax=xmax, figure_name=figure_name)
         
         return E_fun,Ex,Ey
         '''

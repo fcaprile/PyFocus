@@ -1,10 +1,9 @@
 """
 Functions for the simulation of the field obtained by focuisng a gaussian beam
 """
-import functools
 from typing import Dict, List, Tuple
 
-from model.default_masks.focus_field_calculators.base import DefaultMaskFocusFieldCalculator
+from model.focus_field_calculators.base import FocusFieldCalculator
 from equations.complex_quadrature import complex_quadrature
 from equations.no_phase_mask import load_no_mask_functions
 from equations.helpers import cart2pol
@@ -13,12 +12,12 @@ import numpy as np
 from tqdm import tqdm
 
 
-class NoMaskFocusFieldCalculator(DefaultMaskFocusFieldCalculator):
+class NoMaskFocusFieldCalculator(FocusFieldCalculator):
     MATRIX_AMOUNT: int = 3
     INTEGRATION_EQUATIONS: callable = load_no_mask_functions
     DESCRIPTION: str = 'No mask calulation'
     
-    def execute(self,alpha,beta,gamma,n,f,w0,wavelength,I0,x_range,z_range,z_steps,x_steps, zp0, phip0):        
+    def calculate(self,alpha,beta,gamma,n,f,w0,wavelength,I0,x_range,z_range,z_steps,x_steps, zp0, phip0):        
         ztotalsteps, rtotalsteps = self.calculate_steps(z_range, z_steps, x_range, x_steps)    
         functions_to_integrate = self.INTEGRATION_EQUATIONS(f,w0)
         
@@ -29,7 +28,7 @@ class NoMaskFocusFieldCalculator(DefaultMaskFocusFieldCalculator):
         return field
         
     def _calculate_field(self, input_matrixes,wavelength,I0,beta,gamma,ztotalsteps, rtotalsteps, x_steps,x_range,z_range,phip0,n,f,zp0):
-        a1, a2 = self.calculate_factors(I0, gamma, beta, wavelength, f)
+        a1, a2 = self.calculate_amplitude_factors(I0, gamma, beta, wavelength, f)
         II1, II2, II3 = input_matrixes
         
         ######################xz plane#######################
@@ -68,5 +67,5 @@ class NoMaskFocusFieldCalculator(DefaultMaskFocusFieldCalculator):
         Ey2=eyx2+eyy2
         Ez2=ezx2+ezy2
         
-        return Ex,Ey,Ez,Ex2,Ey2,Ez2
+        return self.FieldAtFocus(Ex,Ey,Ez,Ex2,Ey2,Ez2)
 

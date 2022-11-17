@@ -2,7 +2,7 @@
 import functools
 from typing import Dict, List, Tuple
 
-from model.default_masks.focus_field_calculators.base import DefaultMaskFocusFieldCalculator
+from model.default_masks.focus_field_calculators.base import FocusFieldCalculator
 from equations.complex_quadrature import complex_quadrature
 from equations.helpers import cart2pol
 
@@ -12,12 +12,12 @@ from tqdm import tqdm
 from src.equations.radial_simmetry import load_radial_simmetry_mask_functions
 
 
-class RotationSimmetryFocusFieldCalculator(DefaultMaskFocusFieldCalculator):
+class PropagatedVortexMaskFocusFieldCalculator(FocusFieldCalculator):
     MATRIX_AMOUNT: int = 5
     INTEGRATION_EQUATIONS: callable = load_radial_simmetry_mask_functions
     DESCRIPTION: str = 'Rotation simmetry mask calulation'
     
-    def execute(self, E_rho,alpha,beta,gamma,n,f,w0,wavelength,I0,x_range,z_range,z_steps,x_steps, zp0, phip0):        
+    def calculate(self, E_rho,alpha,beta,gamma,n,f,w0,wavelength,I0,x_range,z_range,z_steps,x_steps, zp0, phip0):        
         ztotalsteps, rtotalsteps = self.calculate_steps(z_range, z_steps, x_range, x_steps)    
         functions_to_integrate = self.INTEGRATION_EQUATIONS(f,w0)
         
@@ -32,7 +32,7 @@ class RotationSimmetryFocusFieldCalculator(DefaultMaskFocusFieldCalculator):
 
 
     def _calculate_field(self, input_matrixes,wavelength,I0,beta,gamma,ztotalsteps, rtotalsteps, x_steps,x_range,z_range,phip0,n,f,zp0):
-        a1, a2 = self.calculate_factors(I0, gamma, beta, wavelength, f)
+        a1, a2 = self.calculate_amplitude_factors(I0, gamma, beta, wavelength, f)
         I1, I2, I3, I4, I5 = input_matrixes            
 
         x_size, y_size = self._calculate_matrix_size(x_range=x_range, x_steps=x_steps)
@@ -54,4 +54,4 @@ class RotationSimmetryFocusFieldCalculator(DefaultMaskFocusFieldCalculator):
         Ey=eyx + eyy
         Ez=ezx + ezy
 
-        return Ex,Ey,Ez
+        return self.FieldAtFocus(None, None, None, Ex,Ey,Ez)

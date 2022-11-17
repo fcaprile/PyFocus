@@ -3,22 +3,18 @@ Functions for the simulation of the foci obtained by a VP mask
 """
 from equations.vortex_phase_mask import load_vortex_mask_functions
 from equations.helpers import cart2pol
-from equations.complex_quadrature import complex_quadrature
-from model.default_masks.focus_field_calculators.base import DefaultMaskFocusFieldCalculator
+from model.focus_field_calculators.base import FocusFieldCalculator
 
+from typing import Tuple, List
 import numpy as np
-from scipy.special import jv
-from tqdm import tqdm
-from matplotlib import pyplot as plt
-from scipy.integrate import quad
-from scipy import interpolate
 
-class VortexMaskFocusFieldCalculator(DefaultMaskFocusFieldCalculator):
+
+class VortexMaskFocusFieldCalculator(FocusFieldCalculator):
     MATRIX_AMOUNT: int = 5
     INTEGRATION_EQUATIONS: callable = load_vortex_mask_functions
     DESCRIPTION: str = 'Vortex mask calulation'
     
-    def execute(self,alpha,beta,gamma,n,f,w0,wavelength,I0,x_range,z_range,z_steps,x_steps, zp0, phip0):        
+    def calculate(self,alpha,beta,gamma,n,f,w0,wavelength,I0,x_range,z_range,z_steps,x_steps, zp0, phip0):        
         ztotalsteps, rtotalsteps = self.calculate_steps(z_range, z_steps, x_range, x_steps)    
         functions_to_integrate = self.INTEGRATION_EQUATIONS(f,w0)
         
@@ -29,7 +25,7 @@ class VortexMaskFocusFieldCalculator(DefaultMaskFocusFieldCalculator):
         return field
         
     def _calculate_field(self, input_matrixes,wavelength,I0,beta,gamma,ztotalsteps, rtotalsteps, x_steps,x_range,z_range,phip0,n,f,zp0):
-        a1, a2 = self.calculate_factors(I0, gamma, beta, wavelength, f)
+        a1, a2 = self.calculate_amplitude_factors(I0, gamma, beta, wavelength, f)
         II1, II2, II3, II4, II5 = input_matrixes
 
         ######################xz plane#######################

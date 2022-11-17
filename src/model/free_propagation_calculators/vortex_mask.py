@@ -1,26 +1,25 @@
+﻿"""
+Functions for the simulation of the foci obtained by a VP mask
 """
-Functions for the simulation of the field obtained by focuisng a gaussian beam
-"""
-import functools
-from scipy import interpolate
-from typing import Dict, List, Tuple
-
-from equations.complex_quadrature import complex_quadrature
-from equations.no_phase_mask import load_no_mask_functions
+from equations.vortex_phase_mask import load_vortex_mask_functions
 from equations.helpers import cart2pol
+from equations.complex_quadrature import complex_quadrature
+from src.equations.gaussian_profile import gaussian_rho
+from src.model.default_masks.free_propagation_calculators.base import FreePropagationCalculator
 
 import numpy as np
+from scipy.special import jv
 from tqdm import tqdm
-from src.equations.gaussian_profile import gaussian_rho
+from scipy.integrate import quad
+from scipy import interpolate
 
-from src.model.default_masks.free_propagation_calculators.base import DefaultMaskFreePropagationCalculator
 
-
-class NoMaskFreePropagationCalculator(DefaultMaskFreePropagationCalculator):
-    
-    def execute(self, gamma=45,beta=-90,steps=500,R=5,L=100,I0=1,wavelength=640,FOV=11,w0=5,limit=2000,div=1,plot=True, figure_name=''):
-        raise NotImplementedError
+class VortexMaskFreePropagationCalculator(FreePropagationCalculator):
+        
+    def calculate(self, gamma=45,beta=-90,steps=500,R=5,L=100,I0=1,wavelength=640,FOV=11,w0=5,limit=2000,div=1,plot=True, figure_name=''):
         '''
+        Calculate and plot the field inciding on the lens by Fraunhofer's difraction formula
+        '''    
         # calculating the rho values in wich to integrate
         rmax=FOV
         k=2*np.pi/wavelength 
@@ -28,8 +27,8 @@ class NoMaskFreePropagationCalculator(DefaultMaskFreePropagationCalculator):
         
         # Incident field is a gaussean beam
         E_xy = gaussian_rho(w0) 
-        a1, a2 = self.calculate_factors(I0, gamma, beta, wavelength)    
-        fun=lambda rho: E_xy(rho)*rho*np.exp(1j*np.pi/wavelength/L*rho**2)*jv(1,k/L*rho*rhop) # TODO actualizar la función a la de un haz gaussiano que se propaga
+        a1, a2 = self.calculate_amplitude_factors(I0, gamma, beta, wavelength)    
+        fun=lambda rho: E_xy(rho)*rho*np.exp(1j*np.pi/wavelength/L*rho**2)*jv(1,k/L*rho*rhop)
         
         Int=np.zeros(steps,dtype=complex)
         
@@ -63,6 +62,10 @@ class NoMaskFreePropagationCalculator(DefaultMaskFreePropagationCalculator):
             for j in range(y):
                 Ifield[j,i]=np.real(Ex[j,i]*np.conj(Ex[j,i])+Ey[j,i]*np.conj(Ey[j,i]))
         
+        if plot==True:
+            self.plot_function(Ifield, Ex, Ey, xmax=xmax, figure_name=figure_name)
         
         return E_fun,Ex,Ey
-        '''
+
+
+

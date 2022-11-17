@@ -1,63 +1,36 @@
-﻿import numpy as np
+﻿from typing import List, Tuple
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+import numpy as np
 from matplotlib import pyplot as plt
-# from plot_polarization_elipses import polarization_elipse
-import sys
-import os
+from plot_functions.plot_polarization_elipses import polarization_elipse
+from model.focus_field_calculators.base import FocusFieldCalculator
+from plot_functions import PlotParameters
 
-PACKAGE_PARENT = '..'
-SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
-sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+def plot_on_ax(fig: Figure, ax: Axes, title: str, values: List[list], extent: Tuple[int, int], x_label: str, y_label: str, colorbar_label: str, pad: int = 20):
+    ax.set_title(title,pad=pad)
+    pos=ax.imshow(values,extent=extent, interpolation='none', aspect='equal')
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    cbar1= fig.colorbar(pos, ax=ax)
+    cbar1.ax.set_ylabel(colorbar_label)
 
-from PyFocus.src.plot.plot_polarization_elipses import polarization_elipse
-
-def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name=''):
-    '''
-    Plot the calculated fields ont the XY and XZ planes
+def plot_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters):
+    focus_field.calculate_intensity()
     
-    Args:    
-        :ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY (arrays): arrays with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
+    fig = plt.figure(num=params.name,figsize=params.size)
+    spec = fig.add_gridspec(ncols=3, nrows=2)
     
-    Each index of the matrixes corresponds to a different pair of coordinates, for example:
-        
-    ex_XZ[z,x] with z each index of the coordinates np.linspace(z_range/2,-z_range/2,2*int(z_range/zsteps/2)) and x each index for np.linspace(-x_range/2**0.5,x_range/2**0.5,2*int(x_range/rsteps/2**0.5)) in which the field is calculated
+    ax1 = fig.add_subplot(spec[0, 0])
+    extent = [-rmax-radial_pixel_width,rmax-radial_pixel_width,-zmax,zmax]
+    plot_on_ax(fig, ax1, 'Normalized intensity')
     
-    ex_XZ[y,x2] with y each index of the coordinates np.linspace(x_range/2,-x_range/2,2*int(x_range/rsteps/2)) and x each index for np.linspace(-x_range/2,x_range/2,2*int(x_range/rsteps/2)) in which the field is calculated
-    
-    The intensity is ploted in (kW/cm^2) since most focused fields at NA=1.4 have a maximum intensity in the order of 10^6 to 10^8 mW/cm^2
-    
-        :x_range,z_range: Range in the x and z coordinates respectively in which to plot the XZ and XY planes
-    
-    Returns;
-        :fig1 (matplotlib figure): Figure showing the intensity on the XZ plane, the XY plane, the X axis and the polarization on the XY plane
-        
-        :fig2 (matplotlib figure): Figure showing the intensity and phase of each cartesian component on the XY plane
-    '''
-    #For pasage from (mW/cm^2) to (kW/cm^2) the intensity will be divided by 10**6
-    
-    zmax=z_range/2
-    rmax=x_range*2**0.5/2 #the maximum radial distance is calculated sqrt(2) times biger than the maximum x or y distnace in the previous functions
-    x,y=np.shape(ex_XZ)
-
-    radial_pixel_width=x_range*2**0.5/2/y#value used to show the pixels centered at the radial position at which they are calculated
-    Ifield_xz=np.abs(ex_XZ)**2+np.abs(ey_XZ)**2+np.abs(ez_XZ)**2
-    Ifield_xz/=10**6
-    
-    plt.rcParams['font.size']=14
-    #intensity plot
-    fig1 = plt.figure(num=str(figure_name)+'_Intensity',figsize=(16, 8))
-    spec = fig1.add_gridspec(ncols=3, nrows=2)
-    ax1 = fig1.add_subplot(spec[0, 0])
-    ax1.set_title('Normalized intensity',pad=20)
-    pos=ax1.imshow(Ifield_xz,extent=[-rmax-radial_pixel_width,rmax-radial_pixel_width,-zmax,zmax], interpolation='none', aspect='equal')
+    ax1.set_title(,pad=20)
+    pos=ax1.imshow(focus_field.Intensity_XZ,extent=, interpolation='none', aspect='equal')
     ax1.set_xlabel('x (nm)')
     ax1.set_ylabel('z (nm)')
     cbar1= fig1.colorbar(pos, ax=ax1)
     cbar1.ax.set_ylabel('Intensity (kW/cm\u00b2)')
-
-    
-    x2,y2=np.shape(ex_XY)
-    Ifield_xy=np.abs(ex_XY)**2+np.abs(ey_XY)**2+np.abs(ez_XY)**2
-    Ifield_xy/=10**6
 
     xmax=x_range/2
     extent=[-xmax-radial_pixel_width,xmax-radial_pixel_width,-xmax+radial_pixel_width,xmax+radial_pixel_width]
@@ -110,8 +83,49 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name='
     '''
     fig1.tight_layout()
     fig1.subplots_adjust(top=0.90)
+    
 
-    #Amplitud de  and fase plot 
+def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name=''):
+    '''
+    Plot the calculated fields ont the XY and XZ planes
+    
+    Args:    
+        :ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY (arrays): arrays with the amplitude of each cartesian component on the XZ plane (ex_XZ,ey_XZ,ez_XZ) or on the XY plane (ex_XY,ey_XY,ez_XY)
+    
+    Each index of the matrixes corresponds to a different pair of coordinates, for example:
+        
+    ex_XZ[z,x] with z each index of the coordinates np.linspace(z_range/2,-z_range/2,2*int(z_range/zsteps/2)) and x each index for np.linspace(-x_range/2**0.5,x_range/2**0.5,2*int(x_range/rsteps/2**0.5)) in which the field is calculated
+    
+    ex_XZ[y,x2] with y each index of the coordinates np.linspace(x_range/2,-x_range/2,2*int(x_range/rsteps/2)) and x each index for np.linspace(-x_range/2,x_range/2,2*int(x_range/rsteps/2)) in which the field is calculated
+    
+    The intensity is ploted in (kW/cm^2) since most focused fields at NA=1.4 have a maximum intensity in the order of 10^6 to 10^8 mW/cm^2
+    
+        :x_range,z_range: Range in the x and z coordinates respectively in which to plot the XZ and XY planes
+    
+    Returns;
+        :fig (matplotlib figure): Figure showing the intensity on the XZ plane, the XY plane, the X axis and the polarization on the XY plane
+        
+        :fig2 (matplotlib figure): Figure showing the intensity and phase of each cartesian component on the XY plane
+    '''
+    #For pasage from (mW/cm^2) to (kW/cm^2) the intensity will be divided by 10**6
+    
+    zmax=z_range/2
+    rmax=x_range*2**0.5/2 #the maximum radial distance is calculated sqrt(2) times biger than the maximum x or y distnace in the previous functions
+    x,y=np.shape(ex_XZ)
+
+    radial_pixel_width=x_range*2**0.5/2/y#value used to show the pixels centered at the radial position at which they are calculated
+    Ifield_xz=np.abs(ex_XZ)**2+np.abs(ey_XZ)**2+np.abs(ez_XZ)**2
+    Ifield_xz/=10**6
+    
+    plt.rcParams['font.size']=14
+    #intensity plot
+
+    
+    x2,y2=np.shape(ex_XY)
+    Ifield_xy=np.abs(ex_XY)**2+np.abs(ey_XY)**2+np.abs(ez_XY)**2
+    Ifield_xy/=10**6
+
+    #Amplitude and fase plot 
     Amp_max=np.abs(np.max([np.max(np.abs(ex_XY)),np.max(np.abs(ey_XY)),np.max(np.abs(ez_XY))]))**2
     plt.rcParams['font.size']=14
     #ex
@@ -168,5 +182,5 @@ def plot_XZ_XY(ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY,x_range,z_range,figure_name='
     fig2.tight_layout()
     plt.show()
     
-    return fig1,fig2
+    return fig,fig2
 
