@@ -1,16 +1,13 @@
 ﻿"""
 Functions for the simulation of the foci obtained by a VP mask
 """
-from equations.vortex_phase_mask import load_vortex_mask_functions
-from equations.helpers import cart2pol
 from equations.complex_quadrature import complex_quadrature
 from src.equations.gaussian_profile import gaussian_rho
-from src.model.default_masks.free_propagation_calculators.base import FreePropagationCalculator
+from src.model.free_propagation_calculators.base import FreePropagationCalculator
 
 import numpy as np
 from scipy.special import jv
 from tqdm import tqdm
-from scipy.integrate import quad
 from scipy import interpolate
 
 
@@ -27,7 +24,7 @@ class VortexMaskFreePropagationCalculator(FreePropagationCalculator):
         
         # Incident field is a gaussean beam
         E_xy = gaussian_rho(w0) 
-        a1, a2 = self.calculate_amplitude_factors(I0, gamma, beta, wavelength)    
+        a1, a2 = self._calculate_amplitude_factors(I0, gamma, beta, wavelength)    
         fun=lambda rho: E_xy(rho)*rho*np.exp(1j*np.pi/wavelength/L*rho**2)*jv(1,k/L*rho*rhop)
         
         Int=np.zeros(steps,dtype=complex)

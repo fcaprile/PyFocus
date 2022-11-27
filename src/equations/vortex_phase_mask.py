@@ -1,10 +1,9 @@
-from typing import List
 import numpy as np
 from scipy.special import jv
 
 from src.equations.gaussian_profile import gaussian_theta
 
-def load_vortex_mask_functions(f, w0) -> List[callable]:
+def load_vortex_mask_functions(f, w0) -> list[callable]:
     gaussian=gaussian_theta(f, w0)
 
     fun1=lambda theta, kr, kz: gaussian(theta)*np.cos(theta)**0.5*np.sin(theta)*(1 + np.cos(theta))*jv(1,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))

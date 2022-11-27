@@ -5,27 +5,24 @@ from equations.vortex_phase_mask import load_vortex_mask_functions
 from equations.helpers import cart2pol
 from model.focus_field_calculators.base import FocusFieldCalculator
 
-from typing import Tuple, List
 import numpy as np
 
 
 class VortexMaskFocusFieldCalculator(FocusFieldCalculator):
     MATRIX_AMOUNT: int = 5
-    INTEGRATION_EQUATIONS: callable = load_vortex_mask_functions
     DESCRIPTION: str = 'Vortex mask calulation'
     
-    def calculate(self,alpha,beta,gamma,n,f,w0,wavelength,I0,x_range,z_range,z_steps,x_steps, zp0, phip0):        
-        ztotalsteps, rtotalsteps = self.calculate_steps(z_range, z_steps, x_range, x_steps)    
-        functions_to_integrate = self.INTEGRATION_EQUATIONS(f,w0)
+    def calculate(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
+        functions_to_integrate = load_vortex_mask_functions(focus_field_parameters.f,focus_field_parameters.w0)
         
-        matrixes = self.integrate(self.MATRIX_AMOUNT, functions_to_integrate, wavelength, alpha, z_range, x_range, ztotalsteps, rtotalsteps, self.description)
+        matrixes = self.integrate(self.MATRIX_AMOUNT, functions_to_integrate, focus_field_parameters, self.DESCRIPTION)
         matrixes = self.mirror_on_z_axis(matrixes)
-        field = self._calculate_field(matrixes,wavelength,I0,beta,gamma,ztotalsteps, rtotalsteps, x_steps,x_range,z_range,phip0,n,f,zp0)
+        field = self._calculate_field(matrixes, focus_field_parameters)
         
         return field
         
     def _calculate_field(self, input_matrixes,wavelength,I0,beta,gamma,ztotalsteps, rtotalsteps, x_steps,x_range,z_range,phip0,n,f,zp0):
-        a1, a2 = self.calculate_amplitude_factors(I0, gamma, beta, wavelength, f)
+        a1, a2 = self._calculate_amplitude_factors(I0, gamma, beta, wavelength, f)
         II1, II2, II3, II4, II5 = input_matrixes
 
         ######################xz plane#######################

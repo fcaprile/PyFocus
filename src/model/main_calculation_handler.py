@@ -11,9 +11,10 @@ from model.free_propagation_calculators.vortex_mask import VortexMaskFreePropaga
 from model.free_propagation_calculators.no_mask import NoMaskFreePropagationCalculator
 from model.free_propagation_calculators.vortex_mask import VortexMaskFreePropagationCalculator
 from model.free_propagation_calculators.base import FreePropagationCalculator
+from plot_functions import PlotParameters
 
 from plot_functions.plot_objective_field import plot_objective_field
-from plot_functions.plot_at_focus import plot_intensity_at_focus, plot_amplitude_at_focus
+from plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_intensity_at_focus
 
 class MainCalculationHandler:
     _STRATEGY_MAPPER: Dict[MaskType, Tuple[Type[FreePropagationCalculator], Type[FocusFieldCalculator]]] = {
@@ -28,13 +29,13 @@ class MainCalculationHandler:
         
         propagate_incident_field: StrictBool
         plot_incident_field: StrictBool
-        incident_field_figure_name: StrictStr
+        incident_field_figure_name: StrictStr = 'Intensity of the incident field'
         
         plot_focus_field_intensity: StrictBool
-        focus_field_intensity_figure_name: StrictStr
+        focus_field_intensity_figure_name: StrictStr = 'Intensity at the focus'
         
-        plot_focus_field_amplitude: StrictBool
-        focus_field_amplitude_figure_name: StrictStr
+        plot_focus_field_amplitude: StrictBool 
+        focus_field_amplitude_figure_name: StrictStr = 'Focus field amplitude'
         
 
     def __init__(self, strategy: MaskType) -> None:
@@ -56,18 +57,17 @@ class MainCalculationHandler:
             objective_field_parameters: FreePropagationCalculator.ObjectiveFieldParameters, 
             focus_field_parameters: FocusFieldCalculator.FocusFieldParameters
         ):
-        
-        basic_parameters = self.BasicParameters(**basic_parameters)
-        
         if basic_parameters.propagate_incident_field:
             return self._handle_propagated_field_calculation(basic_parameters, objective_field_parameters)        
         
         focus_field = self._focus_field_calculator.calculate(focus_field_parameters)
         
         if basic_parameters.plot_focus_field_intensity == True:
-            self.plot_intensity_at_focus(focus_field, focus_field_parameters, basic_parameters.focus_field_intensity_figure_name)
+            plot_params=PlotParameters(name=basic_parameters.focus_field_intensity_figure_name)
+            plot_intensity_at_focus(focus_field, focus_field_parameters, params=plot_params) #TODO añadir el size
         if basic_parameters.plot_focus_field_amplitude == True:
-            self.plot_amplitude_at_focus(focus_field, focus_field_parameters, basic_parameters.focus_field_amplitude_figure_name)
+            plot_params=PlotParameters(name=basic_parameters.focus_field_amplitude_figure_name)
+            plot_amplitude_and_phase_at_focus(focus_field, focus_field_parameters, params=plot_params)
         
         return focus_field
         

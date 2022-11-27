@@ -686,7 +686,7 @@ def inc_group_layers(n_list,d_list,c_list):
     if (c_list[0] != 'i') or (c_list[-1] != 'i'):
         raise ValueError('c_list should start and end with "i"')
     if not((n_list.size) == (d_list.size) == (len(c_list))):
-        raise ValueError('List sizes do not match!')
+        raise ValueError('list sizes do not match!')
     inc_index=0
     stack_index=0
     stack_d_list = []

@@ -1,10 +1,12 @@
-def f():
-    return 1
+from pydantic import BaseModel
 
-class A:
-    fu = f()
+class A(BaseModel):
+    a: int
     
-    def exe(self):
-        return self.fu    
+    @property
+    def hola(self):
+        return f'hola {self.a}'
 
-print(A().exe())
+a = A(a=1)
+print(a)
+print(a.hola)
