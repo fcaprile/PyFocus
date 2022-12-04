@@ -1,7 +1,5 @@
-
 from dataclasses import dataclass
 import numpy as np
-
 
 @dataclass
 class PolarizationParameters:
@@ -16,7 +14,9 @@ class FieldParameters:
     polarization: PolarizationParameters
     
     def transform_input_parameter_units(self):
-        #transform to radians:
+        '''transform to radians and from milimeters to nanometers'''
+        self.w0 *= 10**6
+        
         self.polarization.beta *= np.pi/180
         self.polarization.gamma *= np.pi/180
 

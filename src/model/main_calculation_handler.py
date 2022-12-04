@@ -35,7 +35,7 @@ class MainCalculationHandler:
         focus_field_intensity_figure_name: StrictStr = 'Intensity at the focus'
         
         plot_focus_field_amplitude: StrictBool 
-        focus_field_amplitude_figure_name: StrictStr = 'Focus field amplitude'
+        focus_field_amplitude_figure_name: StrictStr = 'Amplitude at the focus'
         
 
     def __init__(self, strategy: MaskType) -> None:
@@ -58,8 +58,11 @@ class MainCalculationHandler:
             focus_field_parameters: FocusFieldCalculator.FocusFieldParameters
         ):
         if basic_parameters.propagate_incident_field:
+            objective_field_parameters.transform_input_parameter_units()
             return self._handle_propagated_field_calculation(basic_parameters, objective_field_parameters)        
         
+        focus_field_parameters.field_parameters.wavelength /= focus_field_parameters.n # TODO manejar diferencia multicapa o no
+        focus_field_parameters.transform_input_parameter_units()
         focus_field = self._focus_field_calculator.calculate(focus_field_parameters)
         
         if basic_parameters.plot_focus_field_intensity == True:

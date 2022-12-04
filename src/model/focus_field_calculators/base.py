@@ -1,4 +1,5 @@
 from abc import ABC, abstractclassmethod
+from copy import deepcopy
 from pydantic import BaseModel, StrictFloat, StrictInt
 from custom_typing import Matrix
 
@@ -34,14 +35,14 @@ class FocusFieldCalculator(ABC):
         NA: Union[StrictFloat, StrictInt] # Numerical aperture
         n: Union[StrictFloat, StrictInt] # Refraction index for the medium of the optical system.
         h: Union[StrictFloat, StrictInt] # Radius of aperture of the objective lens
-        f: Union[StrictFloat, StrictInt] # Focal distance
-        w0: Union[StrictFloat, StrictInt] # Radius of the incident gaussian beam
+        f: Union[StrictFloat, StrictInt] = 0 # Focal distance
         
-        z: Union[StrictFloat, StrictInt] # Axial position for the XY plane (nm)
         x_steps: Union[StrictFloat, StrictInt] # Resolution in the X or Y coordinate for the focused field (nm)
         z_steps: Union[StrictFloat, StrictInt] # Resolution in the axial coordinate (Z) for the focused field (nm)
         x_range: Union[StrictFloat, StrictInt] # Field of view in the X or Y coordinate in which the focused field is calculated (nm)
         z_range: Union[StrictFloat, StrictInt] # Field of view in the axial coordinate (z) in which the focused field is calculated (nm)
+        
+        z: Union[StrictFloat, StrictInt] # Axial position for the XY plane (nm)
         phip: Union[StrictFloat, StrictInt] # Angle of rotation along the z axis when calculating the field
         
         field_parameters: FieldParameters
@@ -60,13 +61,13 @@ class FocusFieldCalculator(ABC):
 
         
         def transform_input_parameter_units(self):
-            '''transforms input units to nanometers or radians'''
-            self.f*=10**6
-            self.w0*=10**6
+            '''transform to radians and from milimeters to nanometers'''
+            self.field_parameters.transform_input_parameter_units()
+            
+            self.f = self.h * self.n/ self.NA *10**6
             
             #transform to radians:
             self.phip /= 180*np.pi
-            self.field_parameters.transform_input_parameter_units()
 
     @abstractclassmethod
     def calculate(focus_field_parameters: FocusFieldParameters) -> FieldAtFocus:
@@ -83,21 +84,27 @@ class FocusFieldCalculator(ABC):
         return [np.zeros((x_size, y_size),dtype=complex) for _ in range(6)]
 
     def mirror_on_z_axis(self, matrixes):
-        for matrix in matrixes:
-            matrix=np.vstack((np.flipud(np.conj(matrix)),matrix[1:,:]))
-        return matrixes
+        output = []
+        for matrix in deepcopy(matrixes):
+            output.append(np.vstack((np.flipud(np.conj(matrix)),matrix[1:,:])))
+        return output
     
     def integrate(self, matrix_ammount, functions_to_integrate, focus_field_parameters: FocusFieldParameters, description):
         
         matrixes = [np.zeros((focus_field_parameters.ztotalsteps, focus_field_parameters.rtotalsteps),dtype=complex) for _ in range(matrix_ammount)]
         
-        for n_z in tqdm(range(focus_field_parameters.ztotalsteps),desc=description):
+        print(f'{focus_field_parameters.ztotalsteps=}')
+        print(f'{focus_field_parameters=}')
+        print(f'{focus_field_parameters.alpha=}')
+        for n_z in tqdm(range(focus_field_parameters.ztotalsteps),desc=description): #TODO ir ploteando los valores que toma n_z
             for n_r in range(focus_field_parameters.rtotalsteps):
                 kz=n_z*2*np.pi/focus_field_parameters.field_parameters.wavelength/focus_field_parameters.ztotalsteps*focus_field_parameters.z_range/2 
                 kr=n_r*2*np.pi/focus_field_parameters.field_parameters.wavelength/focus_field_parameters.rtotalsteps*focus_field_parameters.x_range/2*2**0.5
                 
-                for i in range(matrix_ammount):
-                    (matrixes[i])[n_z,n_r] = complex_quadrature(functools.partial(functions_to_integrate[i], kz, kr),0,focus_field_parameters.alpha)[0]
+                for i, matrix in enumerate(matrixes):
+                    result = complex_quadrature(functools.partial(functions_to_integrate[i], kz=kz, kr=kr),0,focus_field_parameters.alpha)[0]
+                    #print(f'{i=},{result=}')
+                    (matrixes[i])[n_z,n_r] = result
         
         return matrixes
     

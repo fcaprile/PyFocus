@@ -7,22 +7,22 @@ from plot_functions.plot_polarization_elipses import polarization_elipse
 from model.focus_field_calculators.base import FocusFieldCalculator
 from plot_functions import PlotParameters
 
-def plot_polarization_elipses_on_ax(ax, xmax, values):
+def plot_polarization_elipses_on_ax(ax, xmax, ex_values, ey_values, intensity_values):
     x_pos=np.linspace(-xmax*0.95,xmax*0.95,10)
     y_pos=np.linspace(-xmax*0.95,xmax*0.95,10)
-    x_values=np.linspace(-xmax,xmax,np.shape(values)[0])
-    y_values=np.linspace(xmax,-xmax,np.shape(values)[0])
+    x_values=np.linspace(-xmax,xmax,np.shape(intensity_values)[0])
+    y_values=np.linspace(xmax,-xmax,np.shape(intensity_values)[0])
     AMP=np.abs(xmax/6)
     for x_coor in x_pos:
         for y_coor in y_pos:
             x_index = (np.abs(x_values - x_coor)).argmin()
             y_index = (np.abs(y_values - y_coor)).argmin()
             # if np.abs(Ifield_xy[y_index,x_index]/np.max(Ifield_xy))>0.15 and np.abs(ez_XY[y_index,x_index])**2/np.max(Ifield_xy)<0.9:#added a condition for the z intensity to avoid point where the polarization is mostly along z
-            if np.abs(values[y_index,x_index]/np.max(values))>0.15: #removed the z intensity condition
+            if np.abs(intensity_values[y_index,x_index]/np.max(intensity_values))>0.15: #removed the z intensity condition
                 if x_coor==x_pos[5] and y_coor==y_pos[5]: #at x,y=0,0 usually the atan2 does not work well
                     x_index+=1
                     y_index+=1
-                polarization_elipse(ax,x_coor,y_coor,values[y_index,x_index],values[y_index,x_index],AMP)
+                polarization_elipse(ax,x_coor,y_coor,ex_values[y_index,x_index],ey_values[y_index,x_index],AMP)
 
 def line_plot_on_ax(ax: Axes, title: str, values: list[list], extent: list, horizontal_label: str, vertical_label: str, pad: int = 20):
     ax.set_title(title,pad=pad)
@@ -67,11 +67,11 @@ def plot_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focu
     color_plot_on_ax(fig, fig.add_subplot(spec[0, 0]), 'Intensity on the XZ plane', focus_field.Intensity_XZ, extent_XZ, 'x (nm)', 'z (nm)', 'Intensity (kW/cm\u00b2)', square_axis=False)
     color_plot_on_ax(fig, fig.add_subplot(spec[0, 1]), 'Intensity on the XY plane', focus_field.Intensity_XY, extent_XY, 'x (nm)', 'y (nm)', 'Intensity (kW/cm\u00b2)', square_axis=True)
     
-    line_plot_on_ax(fig.add_subplot(spec[0, 1]), 'Intensity along x', focus_field.Intensity_along_x, extent_X_axis, 'x (nm)', 'Intensity (kW/cm\u00b2)')
+    line_plot_on_ax(fig.add_subplot(spec[0, 2]), 'Intensity along x', focus_field.Intensity_along_x, extent_X_axis, 'x (nm)', 'Intensity (kW/cm\u00b2)')
     
     ax = fig.add_subplot(spec[1, 1])
     color_plot_on_ax(fig, ax, 'Polarization on the XY plane', focus_field.Intensity_XY, extent_XY, 'x (nm)', 'y (nm)', 'Intensity (kW/cm\u00b2)', square_axis=True, alpha=0.5)
-    plot_polarization_elipses_on_ax(ax, xmax=xmax, values=focus_field.Intensity_XY)
+    plot_polarization_elipses_on_ax(ax, xmax=xmax, ex_values=focus_field.Ex_XY, ey_values=focus_field.Ey_XY, intensity_values=focus_field.Intensity_XY)
     
     '''
     #formula to calculate fwhm

@@ -13,7 +13,7 @@ class VortexMaskFocusFieldCalculator(FocusFieldCalculator):
     DESCRIPTION: str = 'Vortex mask calulation'
     
     def calculate(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
-        functions_to_integrate = load_vortex_mask_functions(focus_field_parameters.f,focus_field_parameters.w0)
+        functions_to_integrate = load_vortex_mask_functions(focus_field_parameters.f,focus_field_parameters.field_parameters.w0)
         
         matrixes = self.integrate(self.MATRIX_AMOUNT, functions_to_integrate, focus_field_parameters, self.DESCRIPTION)
         matrixes = self.mirror_on_z_axis(matrixes)

@@ -10,7 +10,7 @@ from custom_dataclasses.mask import MaskType
 
 from model.main_calculation_handler import MainCalculationHandler
 
-def create_base_parameters(base_simulation_parameters=None, field_parameters=None, polarization=None, lens_parameters=None, focus_parameters=None):
+def create_base_parameters(base_simulation_parameters=None, field_parameters=None, polarization=None, lens_parameters=None, focus_parameters=None, precise_simulation:bool = False):
     if not base_simulation_parameters:
         base_simulation_parameters = MainCalculationHandler.BasicParameters(
             file_name='test', 
@@ -27,8 +27,11 @@ def create_base_parameters(base_simulation_parameters=None, field_parameters=Non
     
     if not lens_parameters: 
         lens_parameters = FreePropagationCalculator.ObjectiveFieldParameters(L=50, R=10, field_parameters=field_parameters)
-    if not focus_parameters: 
-        focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=1.4, n=1.5, h=3, f=100, w0=5, z=0, x_steps=100, z_steps=100, x_range=1000, z_range=1000, phip=0, field_parameters=field_parameters)
+    if not focus_parameters:
+        if precise_simulation: 
+            focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=1.4, n=1.5, h=3, w0=5, x_steps=10, z_steps=20, x_range=1000, z_range=1000, z=0, phip=0, field_parameters=field_parameters)
+        else:
+            focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=1.4, n=1.5, h=3, w0=5, x_steps=300, z_steps=300, x_range=1000, z_range=1000, z=0, phip=0, field_parameters=field_parameters)    
     
     return base_simulation_parameters, lens_parameters, focus_parameters
 
@@ -41,7 +44,8 @@ def test_default_mask_focus_field():
                 plot_incident_field=False, 
                 plot_focus_field_amplitude=True,
                 plot_focus_field_intensity=True
-            )
+            ),
+        precise_simulation=True
         )
     
     calculation_handler = MainCalculationHandler(strategy=MaskType.no_mask)
