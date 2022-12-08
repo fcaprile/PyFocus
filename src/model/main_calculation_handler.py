@@ -1,3 +1,4 @@
+import traceback
 from typing import Dict, Tuple, Type
 from custom_dataclasses.mask import MaskType
 from pydantic import BaseModel, StrictBool, StrictStr
@@ -64,7 +65,6 @@ class MainCalculationHandler:
         focus_field_parameters.field_parameters.wavelength /= focus_field_parameters.n # TODO manejar diferencia multicapa o no
         focus_field_parameters.transform_input_parameter_units()
         focus_field = self._focus_field_calculator.calculate(focus_field_parameters)
-        
         if basic_parameters.plot_focus_field_intensity == True:
             plot_params=PlotParameters(name=basic_parameters.focus_field_intensity_figure_name)
             plot_intensity_at_focus(focus_field, focus_field_parameters, params=plot_params) #TODO añadir el size

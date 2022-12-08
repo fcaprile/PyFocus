@@ -93,9 +93,6 @@ class FocusFieldCalculator(ABC):
         
         matrixes = [np.zeros((focus_field_parameters.ztotalsteps, focus_field_parameters.rtotalsteps),dtype=complex) for _ in range(matrix_ammount)]
         
-        print(f'{focus_field_parameters.ztotalsteps=}')
-        print(f'{focus_field_parameters=}')
-        print(f'{focus_field_parameters.alpha=}')
         for n_z in tqdm(range(focus_field_parameters.ztotalsteps),desc=description): #TODO ir ploteando los valores que toma n_z
             for n_r in range(focus_field_parameters.rtotalsteps):
                 kz=n_z*2*np.pi/focus_field_parameters.field_parameters.wavelength/focus_field_parameters.ztotalsteps*focus_field_parameters.z_range/2 
@@ -104,7 +101,7 @@ class FocusFieldCalculator(ABC):
                 for i, matrix in enumerate(matrixes):
                     result = complex_quadrature(functools.partial(functions_to_integrate[i], kz=kz, kr=kr),0,focus_field_parameters.alpha)[0]
                     #print(f'{i=},{result=}')
-                    (matrixes[i])[n_z,n_r] = result
+                    (matrix)[n_z,n_r] = result
         
         return matrixes
     

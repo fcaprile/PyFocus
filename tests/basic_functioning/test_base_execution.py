@@ -23,37 +23,49 @@ def create_base_parameters(base_simulation_parameters=None, field_parameters=Non
     if not field_parameters:
         if not polarization:
             polarization = PolarizationParameters(gamma=45, beta=90)
-        field_parameters = FieldParameters(w0=10, wavelength=500, I_0=1, polarization=polarization)
+        field_parameters = FieldParameters(w0=50, wavelength=640, I_0=1, polarization=polarization)
     
     if not lens_parameters: 
         lens_parameters = FreePropagationCalculator.ObjectiveFieldParameters(L=50, R=10, field_parameters=field_parameters)
     if not focus_parameters:
         if precise_simulation: 
-            focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=1.4, n=1.5, h=3, w0=5, x_steps=10, z_steps=20, x_range=1000, z_range=1000, z=0, phip=0, field_parameters=field_parameters)
+            focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=1.4, n=1.5, h=3, x_steps=10, z_steps=20, x_range=1000, z_range=2000, z=0, phip=0, field_parameters=field_parameters)
         else:
-            focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=1.4, n=1.5, h=3, w0=5, x_steps=300, z_steps=300, x_range=1000, z_range=1000, z=0, phip=0, field_parameters=field_parameters)    
+            focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=1.4, n=1.5, h=3, x_steps=300, z_steps=600, x_range=1000, z_range=2000, z=0, phip=0, field_parameters=field_parameters)    
     
     return base_simulation_parameters, lens_parameters, focus_parameters
 
 
-def test_default_mask_focus_field():
+def test_no_mask_focus_field():
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
         base_simulation_parameters = MainCalculationHandler.BasicParameters(
-                file_name='test_default_mask_focus_field', 
+                file_name='test_no_mask_focus_field', 
                 propagate_incident_field=False,
                 plot_incident_field=False, 
-                plot_focus_field_amplitude=True,
-                plot_focus_field_intensity=True
+                plot_focus_field_amplitude=False,
+                plot_focus_field_intensity=False
             ),
-        precise_simulation=True
+        precise_simulation=False
         )
     
     calculation_handler = MainCalculationHandler(strategy=MaskType.no_mask)
     field = calculation_handler.calculate_field(base_simulation_parameters, lens_parameters, focus_parameters)
 
 
-def test_default_mask_objective_field():
-    ...
+def test_VP_mask_focus_field():
+    base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
+        base_simulation_parameters = MainCalculationHandler.BasicParameters(
+                file_name='test_no_mask_focus_field', 
+                propagate_incident_field=False,
+                plot_incident_field=False, 
+                plot_focus_field_amplitude=False,
+                plot_focus_field_intensity=False
+            ),
+        precise_simulation=False
+        )
+    
+    calculation_handler = MainCalculationHandler(strategy=MaskType.vortex_mask)
+    field = calculation_handler.calculate_field(base_simulation_parameters, lens_parameters, focus_parameters)
     
 def test_custom_mask_focus_field():
     ...

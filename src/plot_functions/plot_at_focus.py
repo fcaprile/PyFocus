@@ -87,14 +87,10 @@ def plot_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focu
 
 def plot_amplitude_and_phase_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters) -> Figure:
     
-    zmax=focus_field_parameters.z_range/2
-    rmax=focus_field_parameters.x_range*2**0.5/2 #the maximum radial distance is calculated sqrt(2) times biger than the maximum x or y distnace in the previous functions
     xmax=focus_field_parameters.x_range/2
     
     radial_pixel_width=focus_field_parameters.x_range*2**0.5/2/np.shape(focus_field.Ex_XZ)[1]#value used to show the pixels centered at the radial position at which they are calculated
-    extent_XZ = [-rmax-radial_pixel_width,rmax-radial_pixel_width,-zmax,zmax]
     extent_XY = [-xmax-radial_pixel_width,xmax-radial_pixel_width,-xmax+radial_pixel_width,xmax+radial_pixel_width]
-    extent_X_axis = np.linspace(-xmax-radial_pixel_width,xmax-radial_pixel_width,np.shape(focus_field.Intensity_XY)[0])
     
     plt.rcParams['font.size']=14
 
@@ -103,7 +99,7 @@ def plot_amplitude_and_phase_at_focus(focus_field: FocusFieldCalculator.FieldAtF
     Amp_max=np.abs(np.max([np.max(np.abs(focus_field.Ex_XY)),np.max(np.abs(focus_field.Ey_XY)),np.max(np.abs(focus_field.Ez_XY))]))**2
     angles_ticks = [5, 90,180,270,355]
     
-    fig, ((ax_x1,ax_y1,ax_z1),(ax_x2,ax_y2,ax_z2)) = plt.subplots(num=params.name,figsize=params.size,nrows=2, ncols=3)
+    fig, ((ax_x1,ax_y1,ax_z1),(ax_x2,ax_y2,ax_z2)) = plt.subplots(num='hola',figsize=params.size,nrows=2, ncols=3)
     
     #Ex
     color_plot_on_ax(fig, ax_x1, '$|E_{f_x}|^2$', np.abs(focus_field.Ex_XY)**2/Amp_max, extent_XY, 'x (nm)', 'y (nm)', 'Relative intensity', True)
@@ -117,5 +113,6 @@ def plot_amplitude_and_phase_at_focus(focus_field: FocusFieldCalculator.FieldAtF
     color_plot_on_ax(fig, ax_z1, '$|E_{f_z}|^2$', np.abs(focus_field.Ez_XY)**2/Amp_max, extent_XY, 'x (nm)', 'y (nm)', 'Relative intensity', True)
     color_plot_on_ax(fig, ax_z2, '$E_{f_z}$ phase', np.angle(focus_field.Ez_XY, deg=True)+180, extent_XY, 'x (nm)', 'y (nm)', 'Phase (degrees)', True, colorbar_ticks=angles_ticks)
     
+    plt.show()
     return fig
 

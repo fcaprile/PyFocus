@@ -5,12 +5,13 @@ Created on Tue Jun 23 22:13:16 2020
 @author: ferchi
 """
 
+from matplotlib.axis import Axis
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import numpy as np
 
 
-def polarization_elipse(ax,x_center,y_center,Ex,Ey,Amp):
+def polarization_elipse(ax: Axis,x_center,y_center,Ex,Ey,Amp):
     beta=np.angle(Ey)-np.angle(Ex)
     theta=np.arctan2(np.abs(Ey),np.abs(Ex))
     inclination=np.arctan(np.tan(2*theta)*np.cos(beta))/2
@@ -25,7 +26,7 @@ def polarization_elipse(ax,x_center,y_center,Ex,Ey,Amp):
             beta+=2*np.pi        
         if np.abs(beta)>np.pi/2:
             inclination=-np.arctan2(np.abs(Ey),np.abs(Ex))
-        ax.add_artist(Ellipse((x_center,y_center),A,B,inclination*180/np.pi,fill=False))
+        ax.add_artist(Ellipse(xy=(x_center,y_center),width=A,height=B,angle=inclination*180/np.pi,fill=False))
         xdist=np.cos(inclination)*0.00001
         ydist=np.sin(inclination)*0.00001
         dx=np.sin(inclination)*B/2
