@@ -81,7 +81,6 @@ def plot_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focu
     
     fig.tight_layout()
     fig.subplots_adjust(top=0.90)
-    plt.show()
     
     return fig
 
@@ -113,6 +112,5 @@ def plot_amplitude_and_phase_at_focus(focus_field: FocusFieldCalculator.FieldAtF
     color_plot_on_ax(fig, ax_z1, '$|E_{f_z}|^2$', np.abs(focus_field.Ez_XY)**2/Amp_max, extent_XY, 'x (nm)', 'y (nm)', 'Relative intensity', True)
     color_plot_on_ax(fig, ax_z2, '$E_{f_z}$ phase', np.angle(focus_field.Ez_XY, deg=True)+180, extent_XY, 'x (nm)', 'y (nm)', 'Phase (degrees)', True, colorbar_ticks=angles_ticks)
     
-    plt.show()
     return fig
 

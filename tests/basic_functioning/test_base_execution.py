@@ -55,7 +55,7 @@ def test_no_mask_focus_field():
 def test_VP_mask_focus_field():
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
         base_simulation_parameters = MainCalculationHandler.BasicParameters(
-                file_name='test_no_mask_focus_field', 
+                file_name='test_VP_mask_focus_field', 
                 propagate_incident_field=False,
                 plot_incident_field=False, 
                 plot_focus_field_amplitude=False,
@@ -68,7 +68,21 @@ def test_VP_mask_focus_field():
     field = calculation_handler.calculate_field(base_simulation_parameters, lens_parameters, focus_parameters)
     
 def test_custom_mask_focus_field():
-    ...
+    base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
+        base_simulation_parameters = MainCalculationHandler.BasicParameters(
+                file_name='test_custom_mask_focus_field', 
+                propagate_incident_field=False,
+                plot_incident_field=False, 
+                plot_focus_field_amplitude=True,
+                plot_focus_field_intensity=True
+            ),
+        precise_simulation=True
+        )
+    
+    calculation_handler = MainCalculationHandler(strategy=MaskType.custom_mask)
+    import numpy as np
+    mask_function = lambda rho, phi,w0,f,k: 1#np.exp(1j*phi) 
+    field = calculation_handler.calculate_field(base_simulation_parameters, lens_parameters, focus_parameters, mask_function=mask_function)
 
 def test_custom_mask_objective_field():
     ...

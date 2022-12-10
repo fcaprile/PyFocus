@@ -10,18 +10,19 @@ from equations.complex_quadrature import complex_quadrature
 from tqdm import tqdm
 
 from custom_dataclasses.field_parameters import FieldParameters
+from custom_dataclasses.custom_mask import CustomMaskParameters
 from dataclasses import dataclass
 
 class FocusFieldCalculator(ABC):
     
     @dataclass
     class FieldAtFocus:
-        Ex_XZ: Matrix # Ex component at the XZ plane
-        Ey_XZ: Matrix # Ey component at the XZ plane
-        Ez_XZ: Matrix # Ez component at the XZ plane
-        Ex_XY: Matrix # Ex component at the XY plane
-        Ey_XY: Matrix # Ey component at the XY plane
-        Ez_XY: Matrix # Ez component at the XY plane
+        Ex_XZ: Matrix | None = None # Ex component at the XZ plane
+        Ey_XZ: Matrix | None = None # Ey component at the XZ plane
+        Ez_XZ: Matrix | None = None # Ez component at the XZ plane
+        Ex_XY: Matrix | None = None # Ex component at the XY plane
+        Ey_XY: Matrix | None = None # Ey component at the XY plane
+        Ez_XY: Matrix | None = None # Ez component at the XY plane
         
         def calculate_intensity(self):
             self.Intensity_XZ = np.abs(self.Ex_XZ)**2+np.abs(self.Ey_XZ)**2+np.abs(self.Ez_XZ)**2
@@ -42,10 +43,13 @@ class FocusFieldCalculator(ABC):
         x_range: Union[StrictFloat, StrictInt] # Field of view in the X or Y coordinate in which the focused field is calculated (nm)
         z_range: Union[StrictFloat, StrictInt] # Field of view in the axial coordinate (z) in which the focused field is calculated (nm)
         
-        z: Union[StrictFloat, StrictInt] # Axial position for the XY plane (nm)
-        phip: Union[StrictFloat, StrictInt] # Angle of rotation along the z axis when calculating the field
+        z: StrictFloat | StrictInt | None = 0 # Axial position for the XY plane (nm)
+        phip: StrictFloat | StrictInt | None = 0 # Angle of rotation along the z axis when calculating the field
+        x0: StrictFloat | StrictInt | None = 0
+        y0: StrictFloat | StrictInt | None = 0
         
         field_parameters: FieldParameters
+        custom_mask_parameters: CustomMaskParameters | None = CustomMaskParameters()
         
         @property
         def alpha(self) -> float:
@@ -72,11 +76,7 @@ class FocusFieldCalculator(ABC):
     @abstractclassmethod
     def calculate(focus_field_parameters: FocusFieldParameters) -> FieldAtFocus:
         raise NotImplementedError
-    
-    @abstractclassmethod
-    def _calculate_field(*args, **kwargs):
-        raise NotImplementedError
-    
+        
     def _calculate_matrix_size(self, x_range: int, x_steps: int) -> Tuple[int, int]:
         return int(np.rint(x_range/x_steps/2-1)*2), int(np.rint(x_range/x_steps/2-1)*2)
     

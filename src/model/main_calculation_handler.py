@@ -2,11 +2,14 @@ import traceback
 from typing import Dict, Tuple, Type
 from custom_dataclasses.mask import MaskType
 from pydantic import BaseModel, StrictBool, StrictStr
+from matplotlib import pyplot as plt
 
 from model.focus_field_calculators.propagated_vortex_mask import PropagatedVortexMaskFocusFieldCalculator
 from model.focus_field_calculators.no_mask import NoMaskFocusFieldCalculator
 from model.focus_field_calculators.vortex_mask import VortexMaskFocusFieldCalculator
 from model.focus_field_calculators.base import FocusFieldCalculator
+from model.focus_field_calculators.custom_mask import CustomMaskFocusFieldCalculator
+from model.free_propagation_calculators.custom_mask import CustomMaskFreePropagationCalculator
 
 from model.free_propagation_calculators.vortex_mask import VortexMaskFreePropagationCalculator
 from model.free_propagation_calculators.no_mask import NoMaskFreePropagationCalculator
@@ -21,7 +24,8 @@ class MainCalculationHandler:
     _STRATEGY_MAPPER: Dict[MaskType, Tuple[Type[FreePropagationCalculator], Type[FocusFieldCalculator]]] = {
         MaskType.no_mask: (NoMaskFreePropagationCalculator, NoMaskFocusFieldCalculator),
         MaskType.vortex_mask: (VortexMaskFreePropagationCalculator, VortexMaskFocusFieldCalculator),
-        MaskType.propagated_vortex_mask: (VortexMaskFreePropagationCalculator, PropagatedVortexMaskFocusFieldCalculator)
+        MaskType.custom_mask: (CustomMaskFreePropagationCalculator, CustomMaskFocusFieldCalculator),
+        MaskType.propagated_vortex_mask: (VortexMaskFreePropagationCalculator, PropagatedVortexMaskFocusFieldCalculator),
     }
     
     class BasicParameters(BaseModel):
@@ -56,21 +60,26 @@ class MainCalculationHandler:
             self, 
             basic_parameters: BasicParameters, 
             objective_field_parameters: FreePropagationCalculator.ObjectiveFieldParameters, 
-            focus_field_parameters: FocusFieldCalculator.FocusFieldParameters
+            focus_field_parameters: FocusFieldCalculator.FocusFieldParameters,
+            **kwargs
         ):
+        
         if basic_parameters.propagate_incident_field:
             objective_field_parameters.transform_input_parameter_units()
             return self._handle_propagated_field_calculation(basic_parameters, objective_field_parameters)        
         
         focus_field_parameters.field_parameters.wavelength /= focus_field_parameters.n # TODO manejar diferencia multicapa o no
         focus_field_parameters.transform_input_parameter_units()
-        focus_field = self._focus_field_calculator.calculate(focus_field_parameters)
+        focus_field = self._focus_field_calculator.calculate(focus_field_parameters,**kwargs)
+        
         if basic_parameters.plot_focus_field_intensity == True:
             plot_params=PlotParameters(name=basic_parameters.focus_field_intensity_figure_name)
             plot_intensity_at_focus(focus_field, focus_field_parameters, params=plot_params) #TODO añadir el size
+        
         if basic_parameters.plot_focus_field_amplitude == True:
             plot_params=PlotParameters(name=basic_parameters.focus_field_amplitude_figure_name)
             plot_amplitude_and_phase_at_focus(focus_field, focus_field_parameters, params=plot_params)
         
+        plt.show()
         return focus_field
         
