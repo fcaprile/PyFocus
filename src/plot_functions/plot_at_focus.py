@@ -44,7 +44,7 @@ def color_plot_on_ax(fig: Figure, ax: Axes, title: str, values: list[list], exte
     if square_axis:
         ax.axis('square')
 
-def plot_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters) -> Figure:
+def plot_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> Figure:
     plt.rcParams['font.size']=14
 
     #For pasage from (mW/cm^2) to (kW/cm^2) the intensity will be divided by 10**6
@@ -56,7 +56,10 @@ def plot_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focu
     fig = plt.figure(num=params.name,figsize=params.size)
     spec = fig.add_gridspec(ncols=3, nrows=2)
     
-    radial_pixel_width=focus_field_parameters.x_range*2**0.5/2/np.shape(focus_field.Ex_XZ)[1] #value used to show the pixels centered at the radial position at which they are calculated
+    if acount_for_pixel_width:
+        radial_pixel_width=focus_field_parameters.x_range*2**0.5/2/np.shape(focus_field.Ex_XZ)[1] #value used to show the pixels centered at the radial position at which they are calculated
+    else:
+        radial_pixel_width=0
     zmax=focus_field_parameters.z_range/2
     rmax=focus_field_parameters.x_range*2**0.5/2 #the maximum radial distance is calculated sqrt(2) times biger than the maximum x or y distnace in the previous functions
     xmax=focus_field_parameters.x_range/2
@@ -84,11 +87,14 @@ def plot_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focu
     
     return fig
 
-def plot_amplitude_and_phase_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters) -> Figure:
+def plot_amplitude_and_phase_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> Figure:
     
     xmax=focus_field_parameters.x_range/2
-    
-    radial_pixel_width=focus_field_parameters.x_range*2**0.5/2/np.shape(focus_field.Ex_XZ)[1]#value used to show the pixels centered at the radial position at which they are calculated
+    if acount_for_pixel_width:
+        radial_pixel_width=focus_field_parameters.x_range*2**0.5/2/np.shape(focus_field.Ex_XZ)[1]#value used to show the pixels centered at the radial position at which they are calculated
+    else:
+        radial_pixel_width=0
+
     extent_XY = [-xmax-radial_pixel_width,xmax-radial_pixel_width,-xmax+radial_pixel_width,xmax+radial_pixel_width]
     
     plt.rcParams['font.size']=14

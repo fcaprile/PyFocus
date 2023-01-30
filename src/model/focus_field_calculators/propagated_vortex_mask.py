@@ -18,14 +18,14 @@ class PropagatedVortexMaskFocusFieldCalculator(FocusFieldCalculator):
         E_theta=lambda theta: E_rho(np.sin(theta)*f)
         functions_to_integrate = self.INTEGRATION_EQUATIONS(f,w0, E_theta)
         
-        matrixes = self.integrate(self.MATRIX_AMOUNT, functions_to_integrate, wavelength, alpha, z_range, x_range, ztotalsteps, rtotalsteps, self.description)
-        matrixes = self.mirror_on_z_axis(matrixes)
-        field = self._calculate_field(matrixes,wavelength,I0,beta,gamma,ztotalsteps, rtotalsteps, x_steps,x_range,z_range,phip0,n,f,zp0)
+        matrixes = self._integrate(self.MATRIX_AMOUNT, functions_to_integrate, wavelength, alpha, z_range, x_range, z_steps, r_steps, self.description)
+        matrixes = self._mirror_on_z_axis(matrixes)
+        field = self._calculate_field(matrixes,wavelength,I0,beta,gamma,z_steps, r_steps, x_steps,x_range,z_range,phip0,n,f,zp0)
                 
         return field
 
 
-    def _calculate_field(self, input_matrixes,wavelength,I0,beta,gamma,ztotalsteps, rtotalsteps, x_steps,x_range,z_range,phip0,n,f,zp0):
+    def _calculate_field(self, input_matrixes,wavelength,I0,beta,gamma,z_steps, r_steps, x_steps,x_range,z_range,phip0,n,f,zp0):
         a1, a2 = self._calculate_amplitude_factors(I0, gamma, beta, wavelength, f)
         I1, I2, I3, I4, I5 = input_matrixes            
 
@@ -34,8 +34,8 @@ class PropagatedVortexMaskFocusFieldCalculator(FocusFieldCalculator):
 
         for xx in range(x_size):
             for yy in range(y_size):
-                xcord=xx - np.rint(2*rtotalsteps /np.sqrt(2))/2#not sure of multiplIng by 2 and dividing by 2 outside the int, i thought it was to be sure to get the 0,0 at xx=np.rint(2*rtotalsteps /np.sqrt(2))/2
-                ycord=yy - np.rint(2*rtotalsteps /np.sqrt(2))/2
+                xcord=xx - np.rint(2*r_steps /np.sqrt(2))/2#not sure of multiplIng by 2 and dividing by 2 outside the int, i thought it was to be sure to get the 0,0 at xx=np.rint(2*r_steps /np.sqrt(2))/2
+                ycord=yy - np.rint(2*r_steps /np.sqrt(2))/2
                 phip,rp=cart2pol(xcord+1,ycord+1)#nuevamente el +1 es para no tener problemas
                 rp=int(np.rint(rp))
                 exx[yy,xx]=a1*(I1[rp]*np.exp(1j*phip) - 0.5*I2[rp]*np.exp(-1j*phip) + 0.5*I3[rp]*np.exp(3j*phip))

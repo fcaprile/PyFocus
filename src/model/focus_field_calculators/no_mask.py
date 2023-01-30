@@ -19,8 +19,8 @@ class NoMaskFocusFieldCalculator(FocusFieldCalculator):
     def calculate(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
         functions_to_integrate = load_no_mask_functions(focus_field_parameters.f,focus_field_parameters.field_parameters.w0)
         
-        matrixes = self.integrate(self.MATRIX_AMOUNT, functions_to_integrate, focus_field_parameters, self.DESCRIPTION)
-        matrixes = self.mirror_on_z_axis(matrixes)
+        matrixes = self._integrate(self.MATRIX_AMOUNT, functions_to_integrate, focus_field_parameters, self.DESCRIPTION)
+        matrixes = self._mirror_on_z_axis(matrixes)
         field = self._calculate_field(matrixes, focus_field_parameters)
         
         return field
@@ -32,13 +32,13 @@ class NoMaskFocusFieldCalculator(FocusFieldCalculator):
         
         ######################xz plane#######################
         #for negative z values there is a minus sign that comes out, and so the first part of the vstack has a - multiplyed
-        exx=-a1*1j*np.hstack((np.fliplr(II1)+np.cos(2*phip)*np.fliplr(II3), II1[:,1:focus_field_parameters.rtotalsteps-1]+np.cos(2*phip)*II3[:,1:focus_field_parameters.rtotalsteps-1]))
-        eyx=-a1*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:focus_field_parameters.rtotalsteps-1]))
-        ezx=a1*2*np.hstack((-np.fliplr(II2)*np.cos(phip), np.cos(phip)*II2[:,1:focus_field_parameters.rtotalsteps-1]))
+        exx=-a1*1j*np.hstack((np.fliplr(II1)+np.cos(2*phip)*np.fliplr(II3), II1[:,1:focus_field_parameters.r_steps-1]+np.cos(2*phip)*II3[:,1:focus_field_parameters.r_steps-1]))
+        eyx=-a1*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:focus_field_parameters.r_steps-1]))
+        ezx=a1*2*np.hstack((-np.fliplr(II2)*np.cos(phip), np.cos(phip)*II2[:,1:focus_field_parameters.r_steps-1]))
         
-        exy=-a2*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:focus_field_parameters.rtotalsteps-1]))
-        eyy=-a2*1j*np.hstack((np.fliplr(II1)-np.cos(2*phip)*np.fliplr(II3), II1[:,1:focus_field_parameters.rtotalsteps-1]-np.cos(2*phip)*II3[:,1:focus_field_parameters.rtotalsteps-1]))
-        ezy=-a2*2*np.hstack((-np.fliplr(II2)*np.sin(phip), np.sin(phip)*II2[:,1:focus_field_parameters.rtotalsteps-1]))
+        exy=-a2*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:focus_field_parameters.r_steps-1]))
+        eyy=-a2*1j*np.hstack((np.fliplr(II1)-np.cos(2*phip)*np.fliplr(II3), II1[:,1:focus_field_parameters.r_steps-1]-np.cos(2*phip)*II3[:,1:focus_field_parameters.r_steps-1]))
+        ezy=-a2*2*np.hstack((-np.fliplr(II2)*np.sin(phip), np.sin(phip)*II2[:,1:focus_field_parameters.r_steps-1]))
         
         Ex=exx+exy
         Ey=eyx+eyy
@@ -48,7 +48,7 @@ class NoMaskFocusFieldCalculator(FocusFieldCalculator):
         #index 2 represents it's calculated on the xy plane
         x_size, y_size = self._calculate_matrix_size(x_range=focus_field_parameters.x_range, x_steps=focus_field_parameters.x_steps)
         exx2, eyx2, ezx2, exy2, eyy2, ezy2 = self._initialize_fields(x_size=x_size, y_size=y_size)
-        zz=focus_field_parameters.ztotalsteps + int(np.rint(focus_field_parameters.z/focus_field_parameters.z_range*2*focus_field_parameters.ztotalsteps)) -1  #zz signals to the row of kz=kz0 in each II
+        zz=focus_field_parameters.z_step_count + int(np.rint(focus_field_parameters.z/focus_field_parameters.z_range*2*focus_field_parameters.z_step_count)) -1  #zz signals to the row of kz=kz0 in each II
         
         for xx in range(x_size):
             for yy in range(y_size):

@@ -21,30 +21,30 @@ from plot_functions.plot_objective_field import plot_objective_field
 from plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_intensity_at_focus
 
 class MainCalculationHandler:
-    _STRATEGY_MAPPER: Dict[MaskType, Tuple[Type[FreePropagationCalculator], Type[FocusFieldCalculator]]] = {
-        MaskType.no_mask: (NoMaskFreePropagationCalculator, NoMaskFocusFieldCalculator),
-        MaskType.vortex_mask: (VortexMaskFreePropagationCalculator, VortexMaskFocusFieldCalculator),
-        MaskType.custom_mask: (CustomMaskFreePropagationCalculator, CustomMaskFocusFieldCalculator),
-        MaskType.propagated_vortex_mask: (VortexMaskFreePropagationCalculator, PropagatedVortexMaskFocusFieldCalculator),
+    _STRATEGY_MAPPER: Dict[MaskType, Tuple[Type[FreePropagationCalculator], Type[FocusFieldCalculator], bool]] = {
+        MaskType.no_mask: (NoMaskFreePropagationCalculator, NoMaskFocusFieldCalculator, True),
+        MaskType.vortex_mask: (VortexMaskFreePropagationCalculator, VortexMaskFocusFieldCalculator, True),
+        MaskType.custom_mask: (CustomMaskFreePropagationCalculator, CustomMaskFocusFieldCalculator, False),
+        MaskType.propagated_vortex_mask: (VortexMaskFreePropagationCalculator, PropagatedVortexMaskFocusFieldCalculator, True),
     }
     
     class BasicParameters(BaseModel):
-        '''Base configuration for the whole simulation''' # TODO comentar aca que es cada parametro
-        file_name: StrictStr
+        '''Basic configuration for the simulation'''
+        file_name: StrictStr # Name by wich to save the file containing the field's amplitude TODO not implemented yet
         
-        propagate_incident_field: StrictBool
-        plot_incident_field: StrictBool
+        propagate_incident_field: StrictBool # Wheter or not to calculate the field's propagation to the lens TODO if True, not implemented yet
+        plot_incident_field: StrictBool # Wheter or not to plot the field inciding at the lens
         incident_field_figure_name: StrictStr = 'Intensity of the incident field'
         
-        plot_focus_field_intensity: StrictBool
+        plot_focus_field_intensity: StrictBool # Wheter or not to plot the intensity of the field near the focus
         focus_field_intensity_figure_name: StrictStr = 'Intensity at the focus'
         
-        plot_focus_field_amplitude: StrictBool 
+        plot_focus_field_amplitude: StrictBool # Wheter or not to plot the amplitude and phase of the field near the focus
         focus_field_amplitude_figure_name: StrictStr = 'Amplitude at the focus'
         
 
     def __init__(self, strategy: MaskType) -> None:
-        _objective_field_calculator, _focus_field_calculator = self._STRATEGY_MAPPER[strategy]
+        _objective_field_calculator, _focus_field_calculator, self.acount_for_pixel_width = self._STRATEGY_MAPPER[strategy]
         self._objective_field_calculator = _objective_field_calculator()
         self._focus_field_calculator = _focus_field_calculator()
         
@@ -68,17 +68,19 @@ class MainCalculationHandler:
             objective_field_parameters.transform_input_parameter_units()
             return self._handle_propagated_field_calculation(basic_parameters, objective_field_parameters)        
         
-        focus_field_parameters.field_parameters.wavelength /= focus_field_parameters.n # TODO manejar diferencia multicapa o no
+        if focus_field_parameters.interface_parameters is None:
+            focus_field_parameters.field_parameters.wavelength /= focus_field_parameters.n
+        
         focus_field_parameters.transform_input_parameter_units()
         focus_field = self._focus_field_calculator.calculate(focus_field_parameters,**kwargs)
         
         if basic_parameters.plot_focus_field_intensity == True:
-            plot_params=PlotParameters(name=basic_parameters.focus_field_intensity_figure_name)
-            plot_intensity_at_focus(focus_field, focus_field_parameters, params=plot_params) #TODO añadir el size
+            plot_params=PlotParameters(name=basic_parameters.focus_field_intensity_figure_name) #TODO añadir el size
+            plot_intensity_at_focus(focus_field, focus_field_parameters, params=plot_params, acount_for_pixel_width=self.acount_for_pixel_width)
         
         if basic_parameters.plot_focus_field_amplitude == True:
             plot_params=PlotParameters(name=basic_parameters.focus_field_amplitude_figure_name)
-            plot_amplitude_and_phase_at_focus(focus_field, focus_field_parameters, params=plot_params)
+            plot_amplitude_and_phase_at_focus(focus_field, focus_field_parameters, params=plot_params, acount_for_pixel_width=self.acount_for_pixel_width)
         
         plt.show()
         return focus_field
