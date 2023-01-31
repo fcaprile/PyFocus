@@ -310,13 +310,12 @@ def custom(entrance_field, custom_mask, propagation=False,multilayer=False,NA=1.
         field_is_already_rotated = True # To tell the next function that the field has not been evaluated at phi-180º and phi-270º
     else:
         print('Wrong format for mask function, acceptable formats are functions or arrays')
-        
     #calculate field at the focal plane:
     if multilayer==False:#no multilayer
-        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range,field_is_already_rotated)
+        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=custom_mask_focus_field_XZ_XY(ex_lens,ey_lens,alpha,h,wavelength,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range,field_is_already_rotated=field_is_already_rotated)
     else:
         wavelength*=n[0] #to return to wavelength at vacuum
-        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range,field_is_already_rotated)
+        ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY=interface_custom_mask_focus_field_XZ_XY(n,ds,ex_lens,ey_lens,alpha,h,wavelength,z_int,z_range,resolution_z,z,resolution_focus,divisions_theta,divisions_phi,x_range,field_is_already_rotated=field_is_already_rotated)
 
     return ex_XZ,ey_XZ,ez_XZ,ex_XY,ey_XY,ez_XY
 

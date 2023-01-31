@@ -90,8 +90,9 @@ def generate_rotated_incident_field(maskfunction,alpha,f,divisions_phi,divisions
 
     theta_values=np.linspace(0,alpha,divisions_theta)  #divisions of theta in which the trapezoidal 2D integration is done
     rho_values=np.sin(theta_values)*f              #given by the sine's law
-    phi_values_x=np.linspace(np.pi,3*np.pi,divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
-    phi_values_y=np.linspace(3*np.pi/2,7*np.pi/2,divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
+    phi_values_x=np.linspace(0,2*np.pi,divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
+    phi_values_y=np.linspace(np.pi/2,5*np.pi/2,divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
+    
     for i,phi in enumerate(phi_values_x):
         for j,rho in enumerate(rho_values):
             phase=maskfunction(rho,phi,w0,f,k)
