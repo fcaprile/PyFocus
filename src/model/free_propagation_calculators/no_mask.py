@@ -11,9 +11,9 @@ from equations.helpers import cart2pol
 
 import numpy as np
 from tqdm import tqdm
-from src.equations.gaussian_profile import gaussian_rho
+from equations.gaussian_profile import gaussian_rho
 
-from src.model.free_propagation_calculators.base import FreePropagationCalculator
+from model.free_propagation_calculators.base import FreePropagationCalculator
 
 
 class NoMaskFreePropagationCalculator(FreePropagationCalculator):

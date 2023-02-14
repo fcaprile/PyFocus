@@ -15,7 +15,7 @@ class FieldParameters:
     I_0: float # Incident field intensity (mW/cm^2)
     polarization: PolarizationParameters
     
-    def transform_input_parameter_units(self):
+    def transform_input_parameter_units(self, n, interface_parameters):
         '''transform input unis from degrees to radians and from milimeters to nanometers'''
         self.w0 *= 10**6
         

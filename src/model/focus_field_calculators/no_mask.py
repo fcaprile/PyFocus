@@ -21,24 +21,24 @@ class NoMaskFocusFieldCalculator(FocusFieldCalculator):
         
         matrixes = self._integrate(self.MATRIX_AMOUNT, functions_to_integrate, focus_field_parameters, self.DESCRIPTION)
         matrixes = self._mirror_on_z_axis(matrixes)
-        field = self._calculate_field(matrixes, focus_field_parameters)
+        field = self._calculate_2D_fields(matrixes, focus_field_parameters)
         
         return field
         
-    def _calculate_field(self, input_matrixes,focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
+    def _calculate_2D_fields(self, input_matrixes,focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
         a1, a2 = self._calculate_amplitude_factors(focus_field_parameters)
         phip = focus_field_parameters.phip
         II1, II2, II3 = input_matrixes
         
         ######################xz plane#######################
         #for negative z values there is a minus sign that comes out, and so the first part of the vstack has a - multiplyed
-        exx=-a1*1j*np.hstack((np.fliplr(II1)+np.cos(2*phip)*np.fliplr(II3), II1[:,1:focus_field_parameters.r_steps-1]+np.cos(2*phip)*II3[:,1:focus_field_parameters.r_steps-1]))
-        eyx=-a1*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:focus_field_parameters.r_steps-1]))
-        ezx=a1*2*np.hstack((-np.fliplr(II2)*np.cos(phip), np.cos(phip)*II2[:,1:focus_field_parameters.r_steps-1]))
+        exx=-a1*1j*np.hstack((np.fliplr(II1)+np.cos(2*phip)*np.fliplr(II3), II1[:,1:focus_field_parameters.r_step_count-1]+np.cos(2*phip)*II3[:,1:focus_field_parameters.r_step_count-1]))
+        eyx=-a1*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:focus_field_parameters.r_step_count-1]))
+        ezx=a1*2*np.hstack((-np.fliplr(II2)*np.cos(phip), np.cos(phip)*II2[:,1:focus_field_parameters.r_step_count-1]))
         
-        exy=-a2*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:focus_field_parameters.r_steps-1]))
-        eyy=-a2*1j*np.hstack((np.fliplr(II1)-np.cos(2*phip)*np.fliplr(II3), II1[:,1:focus_field_parameters.r_steps-1]-np.cos(2*phip)*II3[:,1:focus_field_parameters.r_steps-1]))
-        ezy=-a2*2*np.hstack((-np.fliplr(II2)*np.sin(phip), np.sin(phip)*II2[:,1:focus_field_parameters.r_steps-1]))
+        exy=-a2*1j*np.hstack((np.fliplr(II3)*np.sin(2*phip), np.sin(2*phip)*II3[:,1:focus_field_parameters.r_step_count-1]))
+        eyy=-a2*1j*np.hstack((np.fliplr(II1)-np.cos(2*phip)*np.fliplr(II3), II1[:,1:focus_field_parameters.r_step_count-1]-np.cos(2*phip)*II3[:,1:focus_field_parameters.r_step_count-1]))
+        ezy=-a2*2*np.hstack((-np.fliplr(II2)*np.sin(phip), np.sin(phip)*II2[:,1:focus_field_parameters.r_step_count-1]))
         
         Ex=exx+exy
         Ey=eyx+eyy

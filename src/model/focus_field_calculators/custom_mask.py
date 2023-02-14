@@ -18,7 +18,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         
         # Generar campo incidente y rotarlo para ya hacer el cálculo. Si tambien se plotea campo incidente armar otra funcion que lo calcule y lo plotee, no meterse aca
         custom_field_function=lambda rho, phi,w0,f,k: (gaussian_rho(w0))(rho)* mask_function(rho, phi,w0,f,k)
-        ex_lens,ey_lens=self.generate_rotated_incident_field(custom_field_function, focus_field_parameters)
+        ex_lens,ey_lens=self._generate_rotated_incident_field(custom_field_function, focus_field_parameters)
         #plot_in_cartesian(ex_lens,ey_lens, focus_field_parameters.x_range, focus_field_parameters.alpha, focus_field_parameters.f, '') #TODO se maneja en una sección aparte del main
         Ex,Ey,Ez = self._calculate_field_along_XZ_plane(ex_lens,ey_lens, focus_field_parameters)
         Ex2,Ey2,Ez2 = self._calculate_field_along_XY_plane(ex_lens,ey_lens, focus_field_parameters)
@@ -109,33 +109,31 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
     def _calculate_factors_with_interface(self, ex_lens, ey_lens, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
         weight_trapezoid = self._calculate_2D_trapezoidal_method_weight(focus_field_parameters.alpha, focus_field_parameters.custom_mask_parameters.divisions_theta, focus_field_parameters.custom_mask_parameters.divisions_phi)
         theta, phi = self._calculate_polar_coordinates(focus_field_parameters)
-        #now begins the integration, in order to save computing time i do the trigonometric functions separatedly and save the value into an auxiliar variable. This reduces computing time up to 8 times
+        #now begins the integration, in order to save computing time i do the trigonometric functions separatedly and save the value into another variable
         cos_theta=np.cos(theta)
         cos_theta_sqrt=cos_theta**0.5
         sin_theta=np.sin(theta)
         cos_phi=np.cos(phi)
-        cos_phi_square=cos_phi**2
         sin_phi=np.sin(phi)
         sin_phi_square=sin_phi**2
         
-        n1 = focus_field_parameters.interface_parameters.ns[0]
-        n2 = focus_field_parameters.interface_parameters.ns[-1]
-        
-        #For integration of the field without interphace (Ef):
-        k1=2*np.pi/focus_field_parameters.field_parameters.wavelength*n1
-        k2=k1*n2/n1
-        prefactor_general=cos_theta_sqrt*sin_theta*k1
-        prefactor_x=prefactor_general*(sin_phi_square+cos_phi_square*cos_theta)
-        prefactor_y=prefactor_general*(-1+cos_theta)*cos_phi*sin_phi
+        prefactor_general=cos_theta_sqrt*sin_theta
+        prefactor_x=prefactor_general*(cos_theta+(1-cos_theta)*sin_phi_square)
+        prefactor_y=prefactor_general*(1-cos_theta)*cos_phi*sin_phi
         prefactor_z=prefactor_general*(-sin_theta*cos_phi)
         
-        Axx=-prefactor_x*ex_lens*weight_trapezoid
+        Axx=prefactor_x*ex_lens*weight_trapezoid
         Axy=prefactor_y*ex_lens*weight_trapezoid
         Axz=prefactor_z*ex_lens*weight_trapezoid
 
         Ayx=prefactor_y*ey_lens*weight_trapezoid
-        Ayy=prefactor_x*ey_lens*weight_trapezoid
+        Ayy=-prefactor_x*ey_lens*weight_trapezoid
         Ayz=prefactor_z*ey_lens*weight_trapezoid
+        
+        n1 = focus_field_parameters.interface_parameters.ns[0]
+        n2 = focus_field_parameters.interface_parameters.ns[-1]
+        k1=2*np.pi/focus_field_parameters.field_parameters.wavelength*n1
+        k2=k1*n2/n1
         
         #Calculus of the refraction and transmition coeficients
         rs_i_theta=np.zeros((focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.custom_mask_parameters.divisions_theta),dtype='complex')
@@ -143,8 +141,6 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         ts_t_theta=np.copy(rs_i_theta)
         tp_t_theta=np.copy(rs_i_theta)
         theta_values=np.linspace(0,focus_field_parameters.alpha,focus_field_parameters.custom_mask_parameters.divisions_theta) 
-        reflejado_values=np.zeros(focus_field_parameters.custom_mask_parameters.divisions_theta,dtype='complex')
-        transmitido_values=np.zeros(focus_field_parameters.custom_mask_parameters.divisions_theta,dtype='complex')
         for i, theta_val in enumerate(theta_values):
             tmm_p=coh_tmm('p', focus_field_parameters.interface_parameters.ns, focus_field_parameters.interface_parameters.ds, theta_val, focus_field_parameters.field_parameters.wavelength)
             tmm_s=coh_tmm('s', focus_field_parameters.interface_parameters.ns, focus_field_parameters.interface_parameters.ds, theta_val, focus_field_parameters.field_parameters.wavelength)
@@ -152,13 +148,6 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
             rp_i_theta[:,i]=tmm_p['r']
             ts_t_theta[:,i]=tmm_s['t']
             tp_t_theta[:,i]=tmm_p['t']
-            reflejado_values[i]=tmm_p['r']
-            transmitido_values[i]=tmm_p['t']
-        
-        n1 = focus_field_parameters.interface_parameters.ns[0]
-        n2 = focus_field_parameters.interface_parameters.ns[-1]
-        k1=2*np.pi/focus_field_parameters.field_parameters.wavelength*n1
-        k2=k1*n2/n1
         
         #For integration of the reflected and transmited fields (Er and Et):
         prefactor_x_r=prefactor_general*(rs_i_theta*sin_phi_square-rp_i_theta*cos_phi**2*cos_theta)
@@ -185,9 +174,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         cos_theta_t=(1-(n1/n2*sin_theta_complex)**2)**0.5
         sin_theta_t=n1/n2*sin_theta #snell
         prefactor_general_t=(cos_theta)**0.5*sin_theta*k1
-        print(f"{np.mean(prefactor_general)=}")
-        print(f"{np.mean(prefactor_general_t)=}")
-        
+
         prefactor_x_t=prefactor_general_t*(ts_t_theta*sin_phi_square+tp_t_theta*cos_phi**2*cos_theta_t)
         prefactor_y_t=prefactor_general_t*(-ts_t_theta+tp_t_theta*cos_theta_t)*cos_phi*sin_phi
         prefactor_z_t=prefactor_general_t*tp_t_theta*sin_theta_t*cos_phi
@@ -268,7 +255,11 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
     def _integrate_with_interface(self, horizontal_values: list[int], vertical_values: list[int], factors: list[any], focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes):
         Axx, Axy, Axz, Ayx, Ayy, Ayz, Axx_r, Axy_r, Axz_r, Ayx_r, Ayy_r, Ayz_r, Axx_t, Axy_t, Axz_t, Ayx_t, Ayy_t, Ayz_t, cos_theta, cos_theta_t, sin_theta, phi, k1, k2 = factors
         ex, ey, ez = self._initialize_fields(len(vertical_values), len(horizontal_values))
-        
+        # for i, val in enumerate([Axx, Axy, Axz, Ayx, Ayy, Ayz, Axx_r, Axy_r, Axz_r, Ayx_r, Ayy_r, Ayz_r, Axx_t, Axy_t, Axz_t, Ayx_t, Ayy_t, Ayz_t, cos_theta, cos_theta_t, sin_theta, phi, k1, k2]):
+        #     if isinstance(val, float) or isinstance(val, int):
+        #         print(f"{i} {val}")
+        #     else:
+        #         print(f"{i} {np.mean(val)}")
         if plane_to_plot == PlotPlanes.XZ or plane_to_plot == PlotPlanes.YZ:
             for j in tqdm(range(focus_field_parameters.z_step_count),desc=description):
                 zp0=vertical_values[j]
@@ -338,7 +329,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         
         return ex, ey, ez
 
-    def generate_incident_field(self, maskfunction,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength):
+    def _generate_incident_field(self, maskfunction,alpha,f,divisions_phi,divisions_theta,gamma,beta,w0,I0,wavelength):
         '''
         Generate a matrix for the field X and Y direction of the incident field on the lens, given the respective maskfunction
         
@@ -385,7 +376,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         
         return ex_lens,ey_lens
 
-    def generate_rotated_incident_field(self, maskfunction,focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
+    def _generate_rotated_incident_field(self, maskfunction,focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
         k=2*np.pi/focus_field_parameters.field_parameters.wavelength #k is given in nm, the same as wavelength
         
         ex_lens=np.zeros((focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.custom_mask_parameters.divisions_theta),dtype=complex)

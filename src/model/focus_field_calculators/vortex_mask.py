@@ -17,24 +17,24 @@ class VortexMaskFocusFieldCalculator(FocusFieldCalculator):
         
         matrixes = self._integrate(self.MATRIX_AMOUNT, functions_to_integrate, focus_field_parameters, self.DESCRIPTION)
         matrixes = self._mirror_on_z_axis(matrixes)
-        field = self._calculate_field(matrixes, focus_field_parameters)
+        field = self._calculate_2D_fields(matrixes, focus_field_parameters)
         
         return field
         
-    def _calculate_field(self, input_matrixes,focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
+    def _calculate_2D_fields(self, input_matrixes,focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
         a1, a2 = self._calculate_amplitude_factors(focus_field_parameters)
         phip = focus_field_parameters.phip
         II1, II2, II3, II4, II5 = input_matrixes
 
         ######################xz plane#######################
         #for negative z values there is a minus sign that comes out, and so the first part of the vstack has a - multiplyed
-        exx=a1*np.hstack((- np.fliplr(II1)*np.exp(1j*phip) + 0.5*np.fliplr(II2)*np.exp(- 1j*phip) - 0.5*np.fliplr(II3)*np.exp(3j*phip),II1[:,1:focus_field_parameters.r_steps-1]*np.exp(1j*phip) - 0.5*II2[:,1:focus_field_parameters.r_steps-1]*np.exp(- 1j*phip) + 0.5*II3[:,1:focus_field_parameters.r_steps-1]*np.exp(3j*phip)))
-        eyx=-0.5*1j*a1*np.hstack((- np.fliplr(II2)*np.exp(- 1j*phip) - np.fliplr(II3)*np.exp(3j*phip),II2[:,1:focus_field_parameters.r_steps-1]*np.exp(- 1j*phip) + II3[:,1:focus_field_parameters.r_steps-1]*np.exp(3j*phip)))
-        ezx=-a1*1j*np.hstack((np.fliplr(II4) - np.fliplr(II5)*np.exp(2j*phip),II4[:,1:focus_field_parameters.r_steps-1] - II5[:,1:focus_field_parameters.r_steps-1]*np.exp(2j*phip)))
+        exx=a1*np.hstack((- np.fliplr(II1)*np.exp(1j*phip) + 0.5*np.fliplr(II2)*np.exp(- 1j*phip) - 0.5*np.fliplr(II3)*np.exp(3j*phip),II1[:,1:focus_field_parameters.r_step_count-1]*np.exp(1j*phip) - 0.5*II2[:,1:focus_field_parameters.r_step_count-1]*np.exp(- 1j*phip) + 0.5*II3[:,1:focus_field_parameters.r_step_count-1]*np.exp(3j*phip)))
+        eyx=-0.5*1j*a1*np.hstack((- np.fliplr(II2)*np.exp(- 1j*phip) - np.fliplr(II3)*np.exp(3j*phip),II2[:,1:focus_field_parameters.r_step_count-1]*np.exp(- 1j*phip) + II3[:,1:focus_field_parameters.r_step_count-1]*np.exp(3j*phip)))
+        ezx=-a1*1j*np.hstack((np.fliplr(II4) - np.fliplr(II5)*np.exp(2j*phip),II4[:,1:focus_field_parameters.r_step_count-1] - II5[:,1:focus_field_parameters.r_step_count-1]*np.exp(2j*phip)))
         
-        exy=- 0.5*a2*1j*np.hstack((- np.fliplr(II2)*np.exp(- 1j*phip) - np.fliplr(II3)*np.exp(3j*phip),II2[:,1:focus_field_parameters.r_steps-1]*np.exp(- 1j*phip) + II3[:,1:focus_field_parameters.r_steps-1]*np.exp(3j*phip)))
-        eyy=a2*np.hstack((- np.fliplr(II1)*np.exp(1j*phip) - 0.5*np.fliplr(II2)*np.exp(- 1j*phip) + 0.5*np.fliplr(II3)*np.exp(3j*phip),II1[:,1:focus_field_parameters.r_steps-1]*np.exp(1j*phip) + 0.5*II2[:,1:focus_field_parameters.r_steps-1]*np.exp(- 1j*phip) - 0.5*II3[:,1:focus_field_parameters.r_steps-1]*np.exp(3j*phip)))
-        ezy=a2*np.hstack((np.fliplr(II4) + np.fliplr(II5)*np.exp(2j*phip),II4[:,1:focus_field_parameters.r_steps-1] +II5[:,1:focus_field_parameters.r_steps-1]*np.exp(2j*phip)))
+        exy=- 0.5*a2*1j*np.hstack((- np.fliplr(II2)*np.exp(- 1j*phip) - np.fliplr(II3)*np.exp(3j*phip),II2[:,1:focus_field_parameters.r_step_count-1]*np.exp(- 1j*phip) + II3[:,1:focus_field_parameters.r_step_count-1]*np.exp(3j*phip)))
+        eyy=a2*np.hstack((- np.fliplr(II1)*np.exp(1j*phip) - 0.5*np.fliplr(II2)*np.exp(- 1j*phip) + 0.5*np.fliplr(II3)*np.exp(3j*phip),II1[:,1:focus_field_parameters.r_step_count-1]*np.exp(1j*phip) + 0.5*II2[:,1:focus_field_parameters.r_step_count-1]*np.exp(- 1j*phip) - 0.5*II3[:,1:focus_field_parameters.r_step_count-1]*np.exp(3j*phip)))
+        ezy=a2*np.hstack((np.fliplr(II4) + np.fliplr(II5)*np.exp(2j*phip),II4[:,1:focus_field_parameters.r_step_count-1] +II5[:,1:focus_field_parameters.r_step_count-1]*np.exp(2j*phip)))
 
         Ex=exx + exy
         Ey=eyx + eyy

@@ -55,7 +55,10 @@ class FocusFieldCalculator(ABC):
         
         @property
         def alpha(self) -> float:
-            return np.arcsin(self.NA / self.n)
+            if self.interface_parameters is None:
+                return np.arcsin(self.NA / self.n)
+            else:
+                return np.arcsin(self.NA / self.interface_parameters.ns[0])
         
         @property
         def z_step_count(self) -> int:
@@ -70,7 +73,9 @@ class FocusFieldCalculator(ABC):
         
         def transform_input_parameter_units(self):
             '''transforms units from degrees to radians and from milimeters to nanometers'''
-            self.field_parameters.transform_input_parameter_units()
+            if self.interface_parameters is None:
+                self.field_parameters.wavelength /= self.n
+            self.field_parameters.transform_input_parameter_units(self.n, self.interface_parameters)
             
             self.f = self.h * self.n/ self.NA *10**6
             
@@ -107,7 +112,6 @@ class FocusFieldCalculator(ABC):
                 
                 for i, matrix in enumerate(matrixes):
                     result = complex_quadrature(functools.partial(functions_to_integrate[i], kz=kz, kr=kr),0,focus_field_parameters.alpha)[0]
-                    #print(f'{i=},{result=}')
                     (matrix)[n_z,n_r] = result
         
         return matrixes
@@ -116,3 +120,6 @@ class FocusFieldCalculator(ABC):
         E1=np.sqrt(parameters.field_parameters.I_0)*np.cos(parameters.field_parameters.polarization.gamma)/parameters.field_parameters.wavelength*np.pi*parameters.f
         E2=np.sqrt(parameters.field_parameters.I_0)*np.sin(parameters.field_parameters.polarization.gamma)/parameters.field_parameters.wavelength*np.pi*parameters.f*np.exp(1j*parameters.field_parameters.polarization.beta)
         return E1, E2
+    
+    def calculate_3D_field(self, *args, **kwargs):
+        raise NotImplementedError

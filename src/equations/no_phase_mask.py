@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.special import jv
 
-from src.equations.gaussian_profile import gaussian_theta
+from .gaussian_profile import gaussian_theta
 
 def load_no_mask_functions(f, w0) -> list[callable]:
     gaussian=gaussian_theta(f, w0)

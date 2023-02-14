@@ -4,8 +4,10 @@ from equations.helpers import cart2pol
 
 import numpy as np
 from tqdm import tqdm
+# import os, sys
+# sys.path.append(os.getcwd())
 
-from src.equations.radial_simmetry import load_radial_simmetry_mask_functions
+# from src.equations.radial_simmetry import load_radial_simmetry_mask_functions
 
 
 class PropagatedVortexMaskFocusFieldCalculator(FocusFieldCalculator):
@@ -20,12 +22,12 @@ class PropagatedVortexMaskFocusFieldCalculator(FocusFieldCalculator):
         
         matrixes = self._integrate(self.MATRIX_AMOUNT, functions_to_integrate, wavelength, alpha, z_range, x_range, z_steps, r_steps, self.description)
         matrixes = self._mirror_on_z_axis(matrixes)
-        field = self._calculate_field(matrixes,wavelength,I0,beta,gamma,z_steps, r_steps, x_steps,x_range,z_range,phip0,n,f,zp0)
+        field = self._calculate_2D_fields(matrixes,wavelength,I0,beta,gamma,z_steps, r_steps, x_steps,x_range,z_range,phip0,n,f,zp0)
                 
         return field
 
 
-    def _calculate_field(self, input_matrixes,wavelength,I0,beta,gamma,z_steps, r_steps, x_steps,x_range,z_range,phip0,n,f,zp0):
+    def _calculate_2D_fields(self, input_matrixes,wavelength,I0,beta,gamma,z_steps, r_steps, x_steps,x_range,z_range,phip0,n,f,zp0):
         a1, a2 = self._calculate_amplitude_factors(I0, gamma, beta, wavelength, f)
         I1, I2, I3, I4, I5 = input_matrixes            
 

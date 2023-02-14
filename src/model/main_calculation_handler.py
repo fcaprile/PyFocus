@@ -56,7 +56,7 @@ class MainCalculationHandler:
             self.plot_objective_field_function(Ex,Ey, objective_field_parameters)
         fields = self._focus_field_calculator(E_rho)
     
-    def calculate_field(
+    def calculate_2D_fields(
             self, 
             basic_parameters: BasicParameters, 
             objective_field_parameters: FreePropagationCalculator.ObjectiveFieldParameters, 
@@ -84,4 +84,28 @@ class MainCalculationHandler:
         
         plt.show()
         return focus_field
+    
+    def calculate_3D_fields(
+            self, 
+            basic_parameters: BasicParameters, 
+            objective_field_parameters: FreePropagationCalculator.ObjectiveFieldParameters, 
+            focus_field_parameters: FocusFieldCalculator.FocusFieldParameters,
+            **kwargs
+        ):
         
+        if focus_field_parameters.interface_parameters is None:
+            focus_field_parameters.field_parameters.wavelength /= focus_field_parameters.n
+        
+        focus_field_parameters.transform_input_parameter_units()
+        fields = self._focus_field_calculator.calculate_3D_field(focus_field_parameters,**kwargs)
+        
+        if basic_parameters.plot_focus_field_intensity == True:
+            plot_params=PlotParameters(name=basic_parameters.focus_field_intensity_figure_name) #TODO añadir el size
+            plot_intensity_at_focus(fields, focus_field_parameters, params=plot_params, acount_for_pixel_width=self.acount_for_pixel_width)
+        
+        if basic_parameters.plot_focus_field_amplitude == True:
+            plot_params=PlotParameters(name=basic_parameters.focus_field_amplitude_figure_name)
+            plot_amplitude_and_phase_at_focus(focus_field, focus_field_parameters, params=plot_params, acount_for_pixel_width=self.acount_for_pixel_width)
+        
+        plt.show()
+        return fields

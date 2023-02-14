@@ -57,7 +57,24 @@ def test_no_mask_focus_field():
         )
     
     calculation_handler = MainCalculationHandler(strategy=MaskType.no_mask)
-    field = calculation_handler.calculate_field(base_simulation_parameters, lens_parameters, focus_parameters)
+    field = calculation_handler.calculate_2D_fields(base_simulation_parameters, lens_parameters, focus_parameters)
+
+def test_no_mask_focus_field_with_x_polarization():
+    do_a_precise_simulation_and_plot_it = False
+    base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
+        base_simulation_parameters = MainCalculationHandler.BasicParameters(
+                file_name='test_no_mask_focus_field', 
+                propagate_incident_field=False,
+                plot_incident_field=False, 
+                plot_focus_field_amplitude=do_a_precise_simulation_and_plot_it,
+                plot_focus_field_intensity=do_a_precise_simulation_and_plot_it
+            ),
+        precise_simulation=do_a_precise_simulation_and_plot_it,
+        polarization = PolarizationParameters(gamma=0, beta=0)
+        )
+    
+    calculation_handler = MainCalculationHandler(strategy=MaskType.no_mask)
+    field = calculation_handler.calculate_2D_fields(base_simulation_parameters, lens_parameters, focus_parameters)
 
 
 def test_VP_mask_focus_field():
@@ -74,7 +91,7 @@ def test_VP_mask_focus_field():
         )
     
     calculation_handler = MainCalculationHandler(strategy=MaskType.vortex_mask)
-    field = calculation_handler.calculate_field(base_simulation_parameters, lens_parameters, focus_parameters)
+    field = calculation_handler.calculate_2D_fields(base_simulation_parameters, lens_parameters, focus_parameters)
     
 def test_custom_mask_focus_field():
     do_a_precise_simulation_and_plot_it = False
@@ -92,17 +109,14 @@ def test_custom_mask_focus_field():
     calculation_handler = MainCalculationHandler(strategy=MaskType.custom_mask)
     mask_function = lambda rho, phi,w0,f,k: np.exp(1j*phi) 
     #mask_function = lambda rho, phi,w0,f,k: 1
-    field = calculation_handler.calculate_field(base_simulation_parameters, lens_parameters, focus_parameters, mask_function=mask_function)
+    field = calculation_handler.calculate_2D_fields(base_simulation_parameters, lens_parameters, focus_parameters, mask_function=mask_function)
 
-def test_custom_mask_objective_field():
-    ...
-    
 def test_interface_custom_mask_focus_field():
-    do_a_precise_simulation_and_plot_it = True
+    do_a_precise_simulation_and_plot_it = False
     interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
         base_simulation_parameters = MainCalculationHandler.BasicParameters(
-                file_name='test_custom_mask_focus_field', 
+                file_name='test_interface_custom_mask_focus_field', 
                 propagate_incident_field=False,
                 plot_incident_field=False, 
                 plot_focus_field_amplitude=do_a_precise_simulation_and_plot_it,
@@ -116,8 +130,24 @@ def test_interface_custom_mask_focus_field():
     
     mask_function = lambda rho, phi,w0,f,k: np.exp(1j*phi) 
     #mask_function = lambda rho, phi,w0,f,k: 1
-    field = calculation_handler.calculate_field(base_simulation_parameters, lens_parameters, focus_parameters, mask_function=mask_function)
+    field = calculation_handler.calculate_2D_fields(base_simulation_parameters, lens_parameters, focus_parameters, mask_function=mask_function)
 
 def test_interface_default_mask_focus_field():
     ...
 
+def test_3D_field_custom_mask():
+    do_a_precise_simulation_and_plot_it = True
+    base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
+        base_simulation_parameters = MainCalculationHandler.BasicParameters(
+                file_name='test_3D_field_custom_mask', 
+                propagate_incident_field=False,
+                plot_incident_field=False, 
+                plot_focus_field_amplitude=do_a_precise_simulation_and_plot_it,
+                plot_focus_field_intensity=do_a_precise_simulation_and_plot_it
+            ),
+        precise_simulation=do_a_precise_simulation_and_plot_it
+        )
+    
+    calculation_handler = MainCalculationHandler(strategy=MaskType.custom_mask)
+    field = calculation_handler.calculate_3D_fields(base_simulation_parameters, lens_parameters, focus_parameters)
+    
