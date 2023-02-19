@@ -142,7 +142,7 @@ def test_3D_field_custom_mask():
                 file_name='test_3D_field_custom_mask', 
                 propagate_incident_field=False,
                 plot_incident_field=False, 
-                plot_focus_field_amplitude=do_a_precise_simulation_and_plot_it,
+                plot_focus_field_amplitude=False,
                 plot_focus_field_intensity=do_a_precise_simulation_and_plot_it
             ),
         precise_simulation=do_a_precise_simulation_and_plot_it

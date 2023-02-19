@@ -14,7 +14,19 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
     XY_FIELD_DESCRIPTION = 'Custom Mask calculation along XY plane'
     XZ_FIELD_DESCRIPTION = 'Custom Mask calculation along XZ plane'
     
-    def calculate(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, mask_function):
+    def calculate_3D_field(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, mask_function: callable):
+        custom_field_function=lambda rho, phi,w0,f,k: (gaussian_rho(w0))(rho)* mask_function(rho, phi,w0,f,k)
+        ex_lens,ey_lens=self._generate_rotated_incident_field(custom_field_function, focus_field_parameters)
+        Ex,Ey,Ez = [np.zeros(focus_field_parameters.z_step_count, focus_field_parameters.r_step_count, focus_field_parameters.r_step_count) for _ in range(3)]
+        
+        axial_positions = np.linspace(-focus_field_parameters.z_range,focus_field_parameters.z_range,focus_field_parameters.z_step_count)
+        for index, axial_distance in enumerate(axial_positions):
+            focus_field_parameters.z = axial_distance
+            Ex[index,:,:], Ey[index,:,:], Ez[index,:,:] = self._calculate_field_along_XY_plane(ex_lens,ey_lens, focus_field_parameters)
+        
+        return self.FieldAtFocus3D(Ex,Ey,Ez)
+    
+    def calculate(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, mask_function: callable):
         
         # Generar campo incidente y rotarlo para ya hacer el cálculo. Si tambien se plotea campo incidente armar otra funcion que lo calcule y lo plotee, no meterse aca
         custom_field_function=lambda rho, phi,w0,f,k: (gaussian_rho(w0))(rho)* mask_function(rho, phi,w0,f,k)

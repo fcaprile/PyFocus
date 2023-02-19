@@ -19,6 +19,7 @@ from plot_functions import PlotParameters
 
 from plot_functions.plot_objective_field import plot_objective_field
 from plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_intensity_at_focus
+from plot_functions.plot_at_focus_3D import plot_3D_amplitude_and_phase_at_focus, plot_3D_intensity_at_focus
 
 class MainCalculationHandler:
     _STRATEGY_MAPPER: Dict[MaskType, Tuple[Type[FreePropagationCalculator], Type[FocusFieldCalculator], bool]] = {
@@ -101,11 +102,11 @@ class MainCalculationHandler:
         
         if basic_parameters.plot_focus_field_intensity == True:
             plot_params=PlotParameters(name=basic_parameters.focus_field_intensity_figure_name) #TODO añadir el size
-            plot_intensity_at_focus(fields, focus_field_parameters, params=plot_params, acount_for_pixel_width=self.acount_for_pixel_width)
+            plot_3D_intensity_at_focus(fields, focus_field_parameters, params=plot_params, acount_for_pixel_width=self.acount_for_pixel_width)
         
         if basic_parameters.plot_focus_field_amplitude == True:
             plot_params=PlotParameters(name=basic_parameters.focus_field_amplitude_figure_name)
-            plot_amplitude_and_phase_at_focus(focus_field, focus_field_parameters, params=plot_params, acount_for_pixel_width=self.acount_for_pixel_width)
+            plot_3D_amplitude_and_phase_at_focus(fields, focus_field_parameters, params=plot_params, acount_for_pixel_width=self.acount_for_pixel_width)
         
         plt.show()
         return fields

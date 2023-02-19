@@ -1,7 +1,7 @@
 from abc import ABC, abstractclassmethod
 from copy import deepcopy
 from pydantic import BaseModel, StrictFloat, StrictInt
-from custom_typing import Matrix
+from custom_typing import Matrix, Matrix3D
 
 import functools
 from typing import Any, Dict, Tuple, Union
@@ -31,6 +31,18 @@ class FocusFieldCalculator(ABC):
         
         def calculate_intensity_along_x(self):
             self.Intensity_along_x=self.Intensity_XY[int(np.shape(self.Intensity_XY)[0]/2),:]
+
+    @dataclass
+    class FieldAtFocus3D:
+        Ex: Matrix3D | None = None # Ex component at the XY plane
+        Ey: Matrix3D | None = None # Ey component at the XY plane
+        Ez: Matrix3D | None = None # Ez component at the XY plane
+        
+        def calculate_intensity(self):
+            self.Intensity = np.abs(self.Ex)**2+np.abs(self.Ey)**2+np.abs(self.Ez)**2
+        
+        def calculate_intensity_along_x(self, axial_position: int):
+            self.Intensity_along_x=self.Intensity[axial_position,int(np.shape(self.Intensity)[1]/2),:]
     
     class FocusFieldParameters(BaseModel):
         '''Parameters for the simulation of the field near the focus'''
