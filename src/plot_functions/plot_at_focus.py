@@ -3,9 +3,9 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 import numpy as np
 from matplotlib import pyplot as plt
-from plot_functions.plot_polarization_elipses import polarization_elipse
-from model.focus_field_calculators.base import FocusFieldCalculator
-from plot_functions import PlotParameters
+from ..plot_functions.plot_polarization_elipses import polarization_elipse
+from ..model.focus_field_calculators.base import FocusFieldCalculator
+from ..plot_functions import PlotParameters
 
 def plot_polarization_elipses_on_ax(ax, xmax, ex_values, ey_values, intensity_values):
     x_pos=np.linspace(-xmax*0.95,xmax*0.95,10)

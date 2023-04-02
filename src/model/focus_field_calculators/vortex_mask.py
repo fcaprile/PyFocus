@@ -1,9 +1,9 @@
 ﻿"""
 Functions for the simulation of the foci obtained by a VP mask
 """
-from equations.vortex_phase_mask import load_vortex_mask_functions
-from equations.helpers import cart2pol
-from model.focus_field_calculators.base import FocusFieldCalculator
+from ...equations.vortex_phase_mask import load_vortex_mask_functions
+from ...equations.helpers import cart2pol
+from ...model.focus_field_calculators.base import FocusFieldCalculator
 
 import numpy as np
 

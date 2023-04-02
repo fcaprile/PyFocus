@@ -1,17 +1,17 @@
 from abc import ABC, abstractclassmethod
 from copy import deepcopy
 from pydantic import BaseModel, StrictFloat, StrictInt
-from custom_typing import Matrix, Matrix3D
+from ...custom_typing import Matrix, Matrix3D
 
 import functools
 from typing import Any, Dict, Tuple, Union
 import numpy as np
-from equations.complex_quadrature import complex_quadrature
+from ...equations.complex_quadrature import complex_quadrature
 from tqdm import tqdm
 
-from custom_dataclasses.interface_parameters import InterfaceParameters
-from custom_dataclasses.field_parameters import FieldParameters
-from custom_dataclasses.custom_mask import CustomMaskParameters
+from ...custom_dataclasses.interface_parameters import InterfaceParameters
+from ...custom_dataclasses.field_parameters import FieldParameters
+from ...custom_dataclasses.custom_mask import CustomMaskParameters
 from dataclasses import dataclass
 
 class FocusFieldCalculator(ABC):
@@ -133,5 +133,5 @@ class FocusFieldCalculator(ABC):
         E2=np.sqrt(parameters.field_parameters.I_0)*np.sin(parameters.field_parameters.polarization.gamma)/parameters.field_parameters.wavelength*np.pi*parameters.f*np.exp(1j*parameters.field_parameters.polarization.beta)
         return E1, E2
     
-    def calculate_3D_field(self, *args, **kwargs):
+    def calculate_3D_field(self, *args, **kwargs) -> FieldAtFocus3D:
         raise NotImplementedError

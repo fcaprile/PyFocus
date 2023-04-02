@@ -1,25 +1,25 @@
 import traceback
 from typing import Dict, Tuple, Type
-from custom_dataclasses.mask import MaskType
+from ..custom_dataclasses.mask import MaskType
 from pydantic import BaseModel, StrictBool, StrictStr
 from matplotlib import pyplot as plt
 
-from model.focus_field_calculators.propagated_vortex_mask import PropagatedVortexMaskFocusFieldCalculator
-from model.focus_field_calculators.no_mask import NoMaskFocusFieldCalculator
-from model.focus_field_calculators.vortex_mask import VortexMaskFocusFieldCalculator
-from model.focus_field_calculators.base import FocusFieldCalculator
-from model.focus_field_calculators.custom_mask import CustomMaskFocusFieldCalculator
-from model.free_propagation_calculators.custom_mask import CustomMaskFreePropagationCalculator
+from ..model.focus_field_calculators.propagated_vortex_mask import PropagatedVortexMaskFocusFieldCalculator
+from ..model.focus_field_calculators.no_mask import NoMaskFocusFieldCalculator
+from ..model.focus_field_calculators.vortex_mask import VortexMaskFocusFieldCalculator
+from ..model.focus_field_calculators.base import FocusFieldCalculator
+from ..model.focus_field_calculators.custom_mask import CustomMaskFocusFieldCalculator
+from ..model.free_propagation_calculators.custom_mask import CustomMaskFreePropagationCalculator
 
-from model.free_propagation_calculators.vortex_mask import VortexMaskFreePropagationCalculator
-from model.free_propagation_calculators.no_mask import NoMaskFreePropagationCalculator
-from model.free_propagation_calculators.vortex_mask import VortexMaskFreePropagationCalculator
-from model.free_propagation_calculators.base import FreePropagationCalculator
-from plot_functions import PlotParameters
+from ..model.free_propagation_calculators.vortex_mask import VortexMaskFreePropagationCalculator
+from ..model.free_propagation_calculators.no_mask import NoMaskFreePropagationCalculator
+from ..model.free_propagation_calculators.vortex_mask import VortexMaskFreePropagationCalculator
+from ..model.free_propagation_calculators.base import FreePropagationCalculator
+from ..plot_functions import PlotParameters
 
-from plot_functions.plot_objective_field import plot_objective_field
-from plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_intensity_at_focus
-from plot_functions.plot_at_focus_3D import plot_3D_amplitude_and_phase_at_focus, plot_3D_intensity_at_focus
+from ..plot_functions.plot_objective_field import plot_objective_field
+from ..plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_intensity_at_focus
+from ..plot_functions.plot_at_focus_3D import plot_3D_amplitude_and_phase_at_focus, plot_3D_intensity_at_focus
 
 class MainCalculationHandler:
     _STRATEGY_MAPPER: Dict[MaskType, Tuple[Type[FreePropagationCalculator], Type[FocusFieldCalculator], bool]] = {

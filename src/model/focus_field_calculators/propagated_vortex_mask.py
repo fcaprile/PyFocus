@@ -1,6 +1,6 @@
 
-from model.focus_field_calculators.base import FocusFieldCalculator
-from equations.helpers import cart2pol
+from ...model.focus_field_calculators.base import FocusFieldCalculator
+from ...equations.helpers import cart2pol
 
 import numpy as np
 from tqdm import tqdm

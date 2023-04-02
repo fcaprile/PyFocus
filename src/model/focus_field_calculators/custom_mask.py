@@ -1,25 +1,25 @@
 """
 Functions for the simulation of the field obtained by focuisng a gaussian beam
 """
-from custom_dataclasses.custom_mask import PlotPlanes
-from model.focus_field_calculators.base import FocusFieldCalculator
+from ...custom_dataclasses.custom_mask import PlotPlanes
+from ...model.focus_field_calculators.base import FocusFieldCalculator
 
 import numpy as np
 from tqdm import tqdm
-from equations.gaussian_profile import gaussian_rho
-from plot_functions.plot_objective_field import plot_in_cartesian
-from equations.tmm_core import coh_tmm
+from ...equations.gaussian_profile import gaussian_rho
+from ...plot_functions.plot_objective_field import plot_in_cartesian
+from ...equations.tmm_core import coh_tmm
 
 class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
     XY_FIELD_DESCRIPTION = 'Custom Mask calculation along XY plane'
     XZ_FIELD_DESCRIPTION = 'Custom Mask calculation along XZ plane'
     
-    def calculate_3D_field(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, mask_function: callable):
+    def calculate_3D_field(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, mask_function: callable) -> FocusFieldCalculator.FieldAtFocus3D:
         custom_field_function=lambda rho, phi,w0,f,k: (gaussian_rho(w0))(rho)* mask_function(rho, phi,w0,f,k)
         ex_lens,ey_lens=self._generate_rotated_incident_field(custom_field_function, focus_field_parameters)
-        Ex,Ey,Ez = [np.zeros(focus_field_parameters.z_step_count, focus_field_parameters.r_step_count, focus_field_parameters.r_step_count) for _ in range(3)]
-        
-        axial_positions = np.linspace(-focus_field_parameters.z_range,focus_field_parameters.z_range,focus_field_parameters.z_step_count)
+        Ex,Ey,Ez = [np.zeros((focus_field_parameters.z_step_count, focus_field_parameters.r_step_count, focus_field_parameters.r_step_count)) for _ in range(3)]
+        axial_positions = focus_field_parameters.z_steps * (np.arange(focus_field_parameters.z_step_count) - focus_field_parameters.z_step_count // 2)
+        # axial_positions = np.linspace(-focus_field_parameters.z_range,focus_field_parameters.z_range,focus_field_parameters.z_step_count)
         for index, axial_distance in enumerate(axial_positions):
             focus_field_parameters.z = axial_distance
             Ex[index,:,:], Ey[index,:,:], Ez[index,:,:] = self._calculate_field_along_XY_plane(ex_lens,ey_lens, focus_field_parameters)

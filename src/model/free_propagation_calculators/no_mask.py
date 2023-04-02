@@ -1,19 +1,19 @@
 """
 Functions for the simulation of the field obtained by focuisng a gaussian beam
 """
-import functools
-from scipy import interpolate
-from typing import Dict, Tuple
+# import functools
+# from scipy import interpolate
+# from typing import Dict, Tuple
 
-from equations.complex_quadrature import complex_quadrature
-from equations.no_phase_mask import load_no_mask_functions
-from equations.helpers import cart2pol
+# from equations.complex_quadrature import complex_quadrature
+# from equations.no_phase_mask import load_no_mask_functions
+# from equations.helpers import cart2pol
 
-import numpy as np
-from tqdm import tqdm
-from equations.gaussian_profile import gaussian_rho
+# import numpy as np
+# from tqdm import tqdm
+# from equations.gaussian_profile import gaussian_rho
 
-from model.free_propagation_calculators.base import FreePropagationCalculator
+from ...model.free_propagation_calculators.base import FreePropagationCalculator
 
 
 class NoMaskFreePropagationCalculator(FreePropagationCalculator):

@@ -1,9 +1,9 @@
 ﻿"""
 Functions for the simulation of the foci obtained by a VP mask
 """
-from equations.complex_quadrature import complex_quadrature
-from equations.gaussian_profile import gaussian_rho
-from model.free_propagation_calculators.base import FreePropagationCalculator
+from ...equations.complex_quadrature import complex_quadrature
+from ...equations.gaussian_profile import gaussian_rho
+from ...model.free_propagation_calculators.base import FreePropagationCalculator
 
 import numpy as np
 from scipy.special import jv

@@ -4,11 +4,11 @@ from typing import Dict, Tuple
 import numpy as np
 from pydantic import BaseModel
 
-from equations.complex_quadrature import complex_quadrature
+from ...equations.complex_quadrature import complex_quadrature
 from tqdm import tqdm
 
-from equations.helpers import cart2pol
-from custom_dataclasses.field_parameters import FieldParameters
+from ...equations.helpers import cart2pol
+from ...custom_dataclasses.field_parameters import FieldParameters
 
 
 class FreePropagationCalculator(ABC):

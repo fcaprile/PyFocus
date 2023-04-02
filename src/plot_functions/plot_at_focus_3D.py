@@ -3,9 +3,9 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 import numpy as np
 from matplotlib import pyplot as plt
-from plot_functions.plot_polarization_elipses import polarization_elipse
-from model.focus_field_calculators.base import FocusFieldCalculator
-from plot_functions import PlotParameters
+from ..plot_functions.plot_polarization_elipses import polarization_elipse
+from ..model.focus_field_calculators.base import FocusFieldCalculator
+from ..plot_functions import PlotParameters
 
 def plot_polarization_elipses_on_ax(ax, xmax, ex_values, ey_values, intensity_values):
     x_pos=np.linspace(-xmax*0.95,xmax*0.95,10)
@@ -44,7 +44,7 @@ def color_plot_on_ax(fig: Figure, ax: Axes, title: str, values: list[list], exte
     if square_axis:
         ax.axis('square')
 
-def plot_2D_intensity_at_focus(axial_position: int, focus_field: FocusFieldCalculator.FieldAtFocus, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> Figure:
+def plot_2D_intensity_at_focus(axial_position: int, focus_field: FocusFieldCalculator.FieldAtFocus3D, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> Figure:
     plt.rcParams['font.size']=14
 
     #For pasage from (mW/cm^2) to (kW/cm^2) the intensity will be divided by 10**6
@@ -86,14 +86,14 @@ def plot_2D_intensity_at_focus(axial_position: int, focus_field: FocusFieldCalcu
     return fig
 
 
-def plot_3D_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> list[Figure]:
+def plot_3D_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus3D, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> list[Figure]:
     figs = []
     for axial_position in range(focus_field_parameters.z_step_count):
         fig = plot_2D_intensity_at_focus(axial_position=axial_position, focus_field=focus_field, focus_field_parameters=focus_field_parameters, params=params, acount_for_pixel_width=acount_for_pixel_width)
         figs.append(fig)
     return figs
 
-def plot_3D_amplitude_and_phase_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> Figure:
+def plot_3D_amplitude_and_phase_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus3D, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> Figure:
     # TODO
     xmax=focus_field_parameters.x_range/2
     if acount_for_pixel_width:
