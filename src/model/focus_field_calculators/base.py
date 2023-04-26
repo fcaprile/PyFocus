@@ -34,9 +34,9 @@ class FocusFieldCalculator(ABC):
 
     @dataclass
     class FieldAtFocus3D:
-        Ex: Matrix3D | None = None # Ex component at the XY plane
-        Ey: Matrix3D | None = None # Ey component at the XY plane
-        Ez: Matrix3D | None = None # Ez component at the XY plane
+        Ex: Matrix3D | None = None # Ex component
+        Ey: Matrix3D | None = None # Ey component
+        Ez: Matrix3D | None = None # Ez component
         
         def calculate_intensity(self):
             self.Intensity = np.abs(self.Ex)**2+np.abs(self.Ey)**2+np.abs(self.Ez)**2

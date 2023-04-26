@@ -31,7 +31,7 @@ def line_plot_on_ax(ax: Axes, title: str, values: list[list], extent: list, hori
     ax.set_xlabel(horizontal_label)
     ax.set_ylabel(vertical_label) 
 
-def color_plot_on_ax(fig: Figure, ax: Axes, title: str, values: list[list], extent: Tuple[int, int], horizontal_label: str, vertical_label: str, colorbar_label: str, square_axis: bool, pad: int = 20, alpha=1, colorbar_ticks: Optional[list] = None):
+def color_plot_on_ax(fig: Figure, ax: Axes, title: str, values: list[list], extent: Tuple[int, int], horizontal_label: str, vertical_label: str, colorbar_label: str, square_axis: bool, pad: int = 20, alpha: float=1, colorbar_ticks: Optional[list] = None):
     pos=ax.imshow(values,extent=extent, interpolation='none', aspect='equal', alpha=alpha)
     ax.set_title(title)
     ax.set_xlabel(horizontal_label)
@@ -104,7 +104,7 @@ def plot_amplitude_and_phase_at_focus(focus_field: FocusFieldCalculator.FieldAtF
     Amp_max=np.abs(np.max([np.max(np.abs(focus_field.Ex_XY)),np.max(np.abs(focus_field.Ey_XY)),np.max(np.abs(focus_field.Ez_XY))]))**2
     angles_ticks = [5, 90,180,270,355]
     
-    fig, ((ax_x1,ax_y1,ax_z1),(ax_x2,ax_y2,ax_z2)) = plt.subplots(num='hola',figsize=params.size,nrows=2, ncols=3)
+    fig, ((ax_x1,ax_y1,ax_z1),(ax_x2,ax_y2,ax_z2)) = plt.subplots(num=params.name,figsize=params.size,nrows=2, ncols=3)
     
     #Ex
     color_plot_on_ax(fig, ax_x1, '$|E_{f_x}|^2$', np.abs(focus_field.Ex_XY)**2/Amp_max, extent_XY, 'x (nm)', 'y (nm)', 'Relative intensity', True)

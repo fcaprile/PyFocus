@@ -17,11 +17,12 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
     def calculate_3D_field(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, mask_function: callable) -> FocusFieldCalculator.FieldAtFocus3D:
         custom_field_function=lambda rho, phi,w0,f,k: (gaussian_rho(w0))(rho)* mask_function(rho, phi,w0,f,k)
         ex_lens,ey_lens=self._generate_rotated_incident_field(custom_field_function, focus_field_parameters)
-        Ex,Ey,Ez = [np.zeros((focus_field_parameters.z_step_count, focus_field_parameters.r_step_count, focus_field_parameters.r_step_count)) for _ in range(3)]
+        Ex,Ey,Ez = [np.zeros((focus_field_parameters.z_step_count, focus_field_parameters.r_step_count, focus_field_parameters.r_step_count),dtype=complex) for _ in range(3)]
         axial_positions = focus_field_parameters.z_steps * (np.arange(focus_field_parameters.z_step_count) - focus_field_parameters.z_step_count // 2)
         # axial_positions = np.linspace(-focus_field_parameters.z_range,focus_field_parameters.z_range,focus_field_parameters.z_step_count)
         for index, axial_distance in enumerate(axial_positions):
             focus_field_parameters.z = axial_distance
+            print(f"Calculating the field at z={axial_distance}nm")
             Ex[index,:,:], Ey[index,:,:], Ez[index,:,:] = self._calculate_field_along_XY_plane(ex_lens,ey_lens, focus_field_parameters)
         
         return self.FieldAtFocus3D(Ex,Ey,Ez)
