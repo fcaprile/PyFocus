@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 
 class PropagatedVortexMaskFocusFieldCalculator(FocusFieldCalculator):
+    """Currently not implemented"""
     MATRIX_AMOUNT: int = 5
     DESCRIPTION: str = 'Rotation simmetry mask calulation'
     
@@ -51,3 +52,5 @@ class PropagatedVortexMaskFocusFieldCalculator(FocusFieldCalculator):
         Ez=ezx + ezy
 
         return self.FieldAtFocus(None, None, None, Ex,Ey,Ez)
+    def calculate_3D_field(self, *args, **kwargs):
+        raise NotImplementedError

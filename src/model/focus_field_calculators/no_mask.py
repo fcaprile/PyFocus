@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 
 class NoMaskFocusFieldCalculator(FocusFieldCalculator):
+    """Class that performs the calculation of the field near the focus for an incident gaussian beam"""
     MATRIX_AMOUNT: int = 3
     DESCRIPTION: str = 'No mask calulation'
     
@@ -68,3 +69,5 @@ class NoMaskFocusFieldCalculator(FocusFieldCalculator):
         
         return self.FieldAtFocus(Ex,Ey,Ez,Ex2,Ey2,Ez2)
 
+    def calculate_3D_field(self, *args, **kwargs):
+        raise NotImplementedError

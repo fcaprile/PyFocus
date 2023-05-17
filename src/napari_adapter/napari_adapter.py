@@ -29,7 +29,7 @@ class PyFocusSimulator:
         
         self._add_zernike_aberration = False
         self._add_cylindrical_lens = False
-        self.calculator = MainCalculationHandler(strategy=MaskType.custom_mask)
+        self.calculator = MainCalculationHandler(mask_type=MaskType.custom_mask)
         
         # Inner variables for later plotting
         self.x = self.y = self.dr * (np.arange(self.Nxy) - self.Nxy // 2)
@@ -64,7 +64,7 @@ class PyFocusSimulator:
     def generate_3D_PSF(self):
         basic_parameters = MainCalculationHandler.BasicParameters(file_name='',propagate_incident_field=False,plot_incident_field=False,plot_focus_field_intensity=False,plot_focus_field_amplitude=False)
         polarization = PolarizationParameters(gamma=self.gamma, beta=self.beta)
-        field_parameters = FieldParameters(w0=50, wavelength=self.wavelength, I_0=1, polarization=polarization)
+        field_parameters = FieldParameters(w0=1000, wavelength=self.wavelength, I_0=1, polarization=polarization)
         objective_field_parameters = FreePropagationCalculator.ObjectiveFieldParameters(L=50, R=10, field_parameters=field_parameters)
         self.focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=self.NA, n=self.n, h=3, x_steps=self.dr, z_steps=self.dz, x_range=self.radial_FOV, z_range=self.axial_FOV, z=0, phip=0, field_parameters=field_parameters, interface_parameters=self.interface_parameters)
         
@@ -74,7 +74,10 @@ class PyFocusSimulator:
 
         self.field = fields
         self.PSF3D = fields.Intensity
-    
+        for i in range(len(self.PSF3D[:,0,0])):
+            print(f"Para {i=}")
+            print(np.mean(self.PSF3D[i,:,:]))
+        
     def _generate_mask_function(self):
         if self.custom_mask:
             self.add_custom_phase_function()
@@ -86,10 +89,11 @@ class PyFocusSimulator:
             return self.base_mask_function
     
     def add_slab_scalar(self, n1, thickness, alpha):
+        self.wavelength/=self.n
         self.thickness = thickness
         self.n1 = n1
         self.interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((n1, self.n)), ds=np.array((np.inf, np.inf)))
-        self.interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
+        self.interface_parameters = InterfaceParameters(axial_position=-10000, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
     
     def add_custom_phase_function(self):
         """Adds the custom mask function to the base_mask_function"""

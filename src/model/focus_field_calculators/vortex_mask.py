@@ -9,6 +9,7 @@ import numpy as np
 
 
 class VortexMaskFocusFieldCalculator(FocusFieldCalculator):
+    """Class that performs the calculation of the field near the focus for a vortex phase mask"""
     MATRIX_AMOUNT: int = 5
     DESCRIPTION: str = 'Vortex mask calulation'
     
@@ -64,4 +65,6 @@ class VortexMaskFocusFieldCalculator(FocusFieldCalculator):
 
         return self.FieldAtFocus(Ex,Ey,Ez,Ex2,Ey2,Ez2)
 
+    def calculate_3D_field(self, *args, **kwargs):
+        raise NotImplementedError
 

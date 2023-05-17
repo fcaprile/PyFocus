@@ -1,6 +1,11 @@
+import logging
 import pytest 
 import os
 import sys
+
+from .plot_2D import plot_along_z_and_x
+from ...src.log_config import logger
+
 sys.path.append(os.path.abspath("./src"))
 
 from ...src.model.focus_field_calculators.base import FocusFieldCalculator
@@ -44,6 +49,7 @@ def create_base_parameters(base_simulation_parameters=None, field_parameters=Non
 
 
 def test_no_mask_focus_field():
+    logger.setLevel(logging.INFO)
     do_a_precise_simulation_and_plot_it = False
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
         base_simulation_parameters = MainCalculationHandler.BasicParameters(
@@ -56,10 +62,11 @@ def test_no_mask_focus_field():
         precise_simulation=do_a_precise_simulation_and_plot_it
         )
     
-    calculation_handler = MainCalculationHandler(strategy=MaskType.no_mask)
+    calculation_handler = MainCalculationHandler(mask_type=MaskType.no_mask)
     field = calculation_handler.calculate_2D_fields(base_simulation_parameters, lens_parameters, focus_parameters)
 
 def test_with_napari_parameters():
+    logger.setLevel(logging.INFO)
     do_a_precise_simulation_and_plot_it = False
     polarization = PolarizationParameters(gamma=45, beta=90)
     field_parameters = FieldParameters(w0=50, wavelength=532*1.33, I_0=1, polarization=polarization)
@@ -76,11 +83,12 @@ def test_with_napari_parameters():
         focus_parameters=focus_parameters
         )
     
-    calculation_handler = MainCalculationHandler(strategy=MaskType.custom_mask)
+    calculation_handler = MainCalculationHandler(mask_type=MaskType.custom_mask)
     mask_function = lambda rho, phi,w0,f,k: 1
     field = calculation_handler.calculate_2D_fields(base_simulation_parameters, lens_parameters, focus_parameters, mask_function=mask_function)
 
 def test_no_mask_focus_field_with_x_polarization():
+    logger.setLevel(logging.INFO)
     do_a_precise_simulation_and_plot_it = False
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
         base_simulation_parameters = MainCalculationHandler.BasicParameters(
@@ -94,11 +102,12 @@ def test_no_mask_focus_field_with_x_polarization():
         polarization = PolarizationParameters(gamma=0, beta=0)
         )
     
-    calculation_handler = MainCalculationHandler(strategy=MaskType.no_mask)
+    calculation_handler = MainCalculationHandler(mask_type=MaskType.no_mask)
     field = calculation_handler.calculate_2D_fields(base_simulation_parameters, lens_parameters, focus_parameters)
 
 
 def test_VP_mask_focus_field():
+    logger.setLevel(logging.INFO)
     do_a_precise_simulation_and_plot_it = False
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
         base_simulation_parameters = MainCalculationHandler.BasicParameters(
@@ -111,10 +120,11 @@ def test_VP_mask_focus_field():
         precise_simulation=do_a_precise_simulation_and_plot_it
         )
     
-    calculation_handler = MainCalculationHandler(strategy=MaskType.vortex_mask)
+    calculation_handler = MainCalculationHandler(mask_type=MaskType.vortex_mask)
     field = calculation_handler.calculate_2D_fields(base_simulation_parameters, lens_parameters, focus_parameters)
     
 def test_custom_mask_focus_field():
+    logger.setLevel(logging.INFO)
     do_a_precise_simulation_and_plot_it = False
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
         base_simulation_parameters = MainCalculationHandler.BasicParameters(
@@ -127,12 +137,13 @@ def test_custom_mask_focus_field():
         precise_simulation=do_a_precise_simulation_and_plot_it
         )
     
-    calculation_handler = MainCalculationHandler(strategy=MaskType.custom_mask)
+    calculation_handler = MainCalculationHandler(mask_type=MaskType.custom_mask)
     mask_function = lambda rho, phi,w0,f,k: np.exp(1j*phi) 
     # mask_function = lambda rho, phi,w0,f,k: 1
     field = calculation_handler.calculate_2D_fields(base_simulation_parameters, lens_parameters, focus_parameters, mask_function=mask_function)
 
 def test_interface_custom_mask_focus_field():
+    logger.setLevel(logging.INFO)
     do_a_precise_simulation_and_plot_it = False
     interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
@@ -147,7 +158,7 @@ def test_interface_custom_mask_focus_field():
         interface_parameters=interface_parameters
         )
     
-    calculation_handler = MainCalculationHandler(strategy=MaskType.custom_mask)
+    calculation_handler = MainCalculationHandler(mask_type=MaskType.custom_mask)
     
     mask_function = lambda rho, phi,w0,f,k: np.exp(1j*phi) 
     #mask_function = lambda rho, phi,w0,f,k: 1
@@ -157,14 +168,16 @@ def test_interface_default_mask_focus_field():
     ...
 
 def test_3D_field_custom_mask():
+    logger.setLevel(logging.DEBUG)
+    plot = False
     polarization = PolarizationParameters(gamma=45, beta=90)
     wavelength_0 = 532
     dr = 30
-    dz = 200
+    dz = 50
     Nxy = 51
-    Nz = 3
-    field_parameters = FieldParameters(w0=50, wavelength=wavelength_0*1.33, I_0=1, polarization=polarization)
-    focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=0.65, n=1.33, h=3, x_steps=dr/2**0.5, z_steps=200, x_range=dr*Nxy, z_range=dz*Nz, z=0, phip=0, field_parameters=field_parameters, interface_parameters=None)
+    Nz = 1
+    field_parameters = FieldParameters(w0=50, wavelength=wavelength_0, I_0=1, polarization=polarization)
+    focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=0.65, n=1.5, h=3, x_steps=dr, z_steps=dz, x_range=dr*Nxy*2**0.5, z_range=dz*Nz*2, z=0, phip=0, field_parameters=field_parameters, interface_parameters=None)
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
         base_simulation_parameters = MainCalculationHandler.BasicParameters(
                 file_name='test_3D_field_custom_mask', 
@@ -177,64 +190,25 @@ def test_3D_field_custom_mask():
         focus_parameters=focus_parameters
         )
     
-    calculation_handler = MainCalculationHandler(strategy=MaskType.custom_mask)
+    calculation_handler = MainCalculationHandler(mask_type=MaskType.custom_mask)
     mask_function = lambda rho, phi,w0,f,k: 1
     # mask_function = lambda rho, phi,w0,f,k: np.exp(1j*phi) 
     field = calculation_handler.calculate_3D_fields(base_simulation_parameters, lens_parameters, focus_parameters, mask_function=mask_function)
-    import matplotlib.pyplot as plt
-    fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=False)
-    char_size = 12
-    sup_title =  f'NA = {focus_parameters.NA}, n = {focus_parameters.n}'
-    fig.suptitle(sup_title, size=char_size*0.8)
-    field.calculate_intensity()
-    PSF = field.Intensity
-    Nz, Ny, Nx = PSF.shape
-    print(PSF.shape)
-    # psf_to_show = PSF.take(indices=Nlist[idx]//2 , axis=idx)
-    psf_to_show_x = PSF[Nz//2,Ny//2,:]
-    
-    psf_to_show_z = PSF[:,Ny//2,Nx//2]
-    
-    wavelength = wavelength_0
-    NA = focus_parameters.NA
-    n=focus_parameters.n
-    DeltaX = wavelength/NA/2 # Abbe resolution
-    x = y = dr * (np.arange(Nxy) - Nxy // 2)
-    z = dz * (np.arange(Nz) - Nz // 2)
-    ax[0].plot(x, psf_to_show_x,
-                linewidth=1.5)
-    ax[0].set_xlabel('x ($\mu$m)',size=char_size)
-    ax[0].set_ylabel('PSF', size=char_size)
-    ax[0].grid()
-    ax[0].plot(np.array([0.,DeltaX,1.22*DeltaX]),
-                np.array([0.,0.,0.]),
-                'o', markersize=2)
-                
-    
-    ax[1].plot( z, psf_to_show_z,
-                linewidth=1.5)
-    ax[1].set_xlabel('z ($\mu$m)', size=char_size)
-    # ax[1].set_ylabel('PSF')    
-    ax[1].grid()
-    DeltaZ = wavelength/n/(1-np.sqrt(1-NA**2/n**2)) # Diffraction limited axial resolution
-    ax[1].plot(DeltaZ, 0., 'o', markersize=2)
-    
-    for idx in (0,1):
-        ax[idx].xaxis.set_tick_params(labelsize=char_size*0.5)
-        ax[idx].yaxis.set_tick_params(labelsize=char_size*0.5)
-    
-    plt.show()
+    if plot: plot_along_z_and_x(field=field, focus_parameters=focus_parameters, wavelength_0=wavelength_0, dr=dr, dz=dz, Nxy=Nxy)
+
 
 def test_3D_field_custom_mask_with_interface():
-    interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
+    logger.setLevel(logging.DEBUG)
+    plot = False
+    interface_parameters = InterfaceParameters(axial_position=-1000, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
     polarization = PolarizationParameters(gamma=45, beta=90)
     wavelength_0 = 532
     dr = 30
-    dz = 60
+    dz = 50
     Nxy = 51
-    Nz = 11
-    field_parameters = FieldParameters(w0=50, wavelength=wavelength_0*1.33, I_0=1, polarization=polarization)
-    focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=0.65, n=1.33, h=3, x_steps=dr/2**0.5, z_steps=200, x_range=dr*Nxy, z_range=dz*Nz, z=0, phip=0, field_parameters=field_parameters, interface_parameters=None)
+    Nz = 1
+    field_parameters = FieldParameters(w0=50, wavelength=wavelength_0, I_0=1, polarization=polarization)
+    focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=0.65, n=1.5, h=3, x_steps=dr, z_steps=dz, x_range=dr*Nxy*2**0.5, z_range=dz*Nz*2, z=0, phip=0, field_parameters=field_parameters, interface_parameters=interface_parameters)
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(
         base_simulation_parameters = MainCalculationHandler.BasicParameters(
                 file_name='test_3D_field_custom_mask', 
@@ -248,51 +222,8 @@ def test_3D_field_custom_mask_with_interface():
         interface_parameters=interface_parameters
         )
     
-    calculation_handler = MainCalculationHandler(strategy=MaskType.custom_mask)
+    calculation_handler = MainCalculationHandler(mask_type=MaskType.custom_mask)
     mask_function = lambda rho, phi,w0,f,k: 1
-    mask_function = lambda rho, phi,w0,f,k: np.exp(1j*phi) 
+    # mask_function = lambda rho, phi,w0,f,k: np.exp(1j*phi) 
     field = calculation_handler.calculate_3D_fields(base_simulation_parameters, lens_parameters, focus_parameters, mask_function=mask_function)
-    import matplotlib.pyplot as plt
-    fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=False)
-    char_size = 12
-    sup_title =  f'NA = {focus_parameters.NA}, n = {focus_parameters.n}'
-    fig.suptitle(sup_title, size=char_size*0.8)
-    field.calculate_intensity()
-    PSF = field.Intensity
-    Nz, Ny, Nx = PSF.shape
-    print(PSF.shape)
-    # psf_to_show = PSF.take(indices=Nlist[idx]//2 , axis=idx)
-    psf_to_show_x = PSF[Nz//2,Ny//2,:]
-    
-    psf_to_show_z = PSF[:,Ny//2,Nx//2]
-    
-    wavelength = wavelength_0
-    NA = focus_parameters.NA
-    n=focus_parameters.n
-    DeltaX = wavelength/NA/2 # Abbe resolution
-    x = y = dr * (np.arange(Nxy) - Nxy // 2)
-    z = dz * (np.arange(Nz) - Nz // 2)
-    ax[0].plot(x, psf_to_show_x,
-                linewidth=1.5)
-    ax[0].set_xlabel('x ($\mu$m)',size=char_size)
-    ax[0].set_ylabel('PSF', size=char_size)
-    ax[0].grid()
-    ax[0].plot(np.array([0.,DeltaX,1.22*DeltaX]),
-                np.array([0.,0.,0.]),
-                'o', markersize=2)
-                
-    
-    ax[1].plot( z, psf_to_show_z,
-                linewidth=1.5)
-    ax[1].set_xlabel('z ($\mu$m)', size=char_size)
-    # ax[1].set_ylabel('PSF')    
-    ax[1].grid()
-    DeltaZ = wavelength/n/(1-np.sqrt(1-NA**2/n**2)) # Diffraction limited axial resolution
-    ax[1].plot(DeltaZ, 0., 'o', markersize=2)
-    
-    for idx in (0,1):
-        ax[idx].xaxis.set_tick_params(labelsize=char_size*0.5)
-        ax[idx].yaxis.set_tick_params(labelsize=char_size*0.5)
-    
-    plt.show()
-
+    if plot: plot_along_z_and_x(field=field, focus_parameters=focus_parameters, wavelength_0=wavelength_0, dr=dr, dz=dz, Nxy=Nxy)

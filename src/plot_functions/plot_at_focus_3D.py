@@ -64,8 +64,7 @@ def plot_2D_intensity_at_focus(axial_position: int, focus_field: FocusFieldCalcu
     xmax=focus_field_parameters.x_range/2
     extent_XY = [-xmax-radial_pixel_width,xmax-radial_pixel_width,-xmax+radial_pixel_width,xmax+radial_pixel_width]
     # extent_X_axis = np.linspace(-xmax-radial_pixel_width,xmax-radial_pixel_width,np.shape(focus_field.Intensity_XY)[0])
-    
-    color_plot_on_ax(fig, fig.add_subplot(spec[0, 0]), 'Intensity on the XZ plane', focus_field.Intensity[axial_position], extent_XY, 'x (nm)', 'y (nm)', 'Intensity (kW/cm\u00b2)', square_axis=True)
+    color_plot_on_ax(fig, fig.add_subplot(spec[0, 0]), 'Intensity on the XZ plane', focus_field.Intensity[axial_position,:,:], extent_XY, 'x (nm)', 'y (nm)', 'Intensity (kW/cm\u00b2)', square_axis=True)
     # color_plot_on_ax(fig, fig.add_subplot(spec[0, 1]), 'Intensity on the XY plane', focus_field.Intensity_XY, extent_XY, 'x (nm)', 'y (nm)', 'Intensity (kW/cm\u00b2)', square_axis=True)
     
     # line_plot_on_ax(fig.add_subplot(spec[0, 2]), 'Intensity along x', focus_field.Intensity_along_x, extent_X_axis, 'x (nm)', 'Intensity (kW/cm\u00b2)')

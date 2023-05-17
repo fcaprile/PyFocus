@@ -34,6 +34,8 @@ class FocusFieldCalculator(ABC):
 
     @dataclass
     class FieldAtFocus3D:
+        """Field near the focus. Contains the 3 components and the intensity. 
+        The positions of the matrix are given by: field[Nz, Ny, Nx] with Nz, Ny, Nx the index of the positions where the field was calculated for Z, Y, X"""
         Ex: Matrix3D | None = None # Ex component
         Ey: Matrix3D | None = None # Ey component
         Ez: Matrix3D | None = None # Ez component
@@ -96,7 +98,27 @@ class FocusFieldCalculator(ABC):
 
     @abstractclassmethod
     def calculate(focus_field_parameters: FocusFieldParameters) -> FieldAtFocus:
-        '''High level function for calculating the field near the focus'''
+        """Main function that calculates the field along the XY and XZ planes. Orchestrates the steps of the calculation.
+
+        Args:
+            :focus_field_parameters (FocusFieldCalculator.FocusFieldParameters): Parameters of the simulation
+            :maskfunction (Callable): Analytical function that defines the phase mask, must be a function of the 5 internal variables: rho, phi, w0, f and k, with:
+                
+                rho: Radial coordinate from 0 to the aperture radius of the objective.
+                
+                phi: Azimutal coordinate from 0 to 2pi.
+                
+                w0: Radius of the incident gaussian beam.
+                
+                f: Focal distane of the objective lens (mm)
+                
+                k: Wavenumber in the objective lens medium (mm)
+                
+                The real part defines the amplitude of the incident field
+
+        Returns:
+            FocusFieldCalculator.FieldAtFocus: Field near the focus on a plane. Contains the 3 components and the intensity
+        """
         raise NotImplementedError
     
     def _calculate_matrix_size(self, x_range: int, x_steps: int) -> Tuple[int, int]:
@@ -129,9 +151,35 @@ class FocusFieldCalculator(ABC):
         return matrixes
     
     def _calculate_amplitude_factors(self, parameters: FocusFieldParameters): #TODO actualziar parametros en llamada a funcion
+        """Calculates the base amplitude factors used in the calculation"""
         E1=np.sqrt(parameters.field_parameters.I_0)*np.cos(parameters.field_parameters.polarization.gamma)/parameters.field_parameters.wavelength*np.pi*parameters.f
         E2=np.sqrt(parameters.field_parameters.I_0)*np.sin(parameters.field_parameters.polarization.gamma)/parameters.field_parameters.wavelength*np.pi*parameters.f*np.exp(1j*parameters.field_parameters.polarization.beta)
         return E1, E2
     
+    @abstractclassmethod
     def calculate_3D_field(self, *args, **kwargs) -> FieldAtFocus3D:
+        """Main function that calculates the field along a 3D space by calculating it as slices of 2D XY planes. 
+        Orchestrates the steps of the calculation.
+
+        Args:
+            :focus_field_parameters (FocusFieldCalculator.FocusFieldParameters): Parameters of the simulation
+            :maskfunction (Callable): Analytical function that defines the phase mask, must be a function of the 5 internal variables: rho, phi, w0, f and k, with:
+                
+                rho: Radial coordinate from 0 to the aperture radius of the objective.
+                
+                phi: Azimutal coordinate from 0 to 2pi.
+                
+                w0: Radius of the incident gaussian beam.
+                
+                f: Focal distane of the objective lens (mm)
+                
+                k: Wavenumber in the objective lens medium (mm)
+                
+                The real part defines the amplitude of the incident field
+
+        Returns:
+            FocusFieldCalculator.FieldAtFocus3D: Field near the focus. Contains the 3 components and the intensity. 
+            The positions of the matrix are given by: field[Nz, Ny, Nx] with Nz, Ny, Nx the index of the positions where the field was calculated for Z, Y, X
+            For more information read the corresponding dataclass
+        """
         raise NotImplementedError
