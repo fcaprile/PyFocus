@@ -167,14 +167,14 @@ def test_interface_custom_mask_focus_field():
 def test_interface_default_mask_focus_field():
     ...
 
-def test_3D_field_custom_mask():
+def test_3D_field_custom_mask(): # Checked values with previous pyfocus version
     logger.setLevel(logging.DEBUG)
     plot = False
     polarization = PolarizationParameters(gamma=45, beta=90)
     wavelength_0 = 532
     dr = 30
-    dz = 50
-    Nxy = 51
+    dz = 200
+    Nxy = 1
     Nz = 1
     field_parameters = FieldParameters(w0=50, wavelength=wavelength_0, I_0=1, polarization=polarization)
     focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=0.65, n=1.5, h=3, x_steps=dr, z_steps=dz, x_range=dr*Nxy*2**0.5, z_range=dz*Nz*2, z=0, phip=0, field_parameters=field_parameters, interface_parameters=None)
@@ -199,14 +199,14 @@ def test_3D_field_custom_mask():
 
 def test_3D_field_custom_mask_with_interface():
     logger.setLevel(logging.DEBUG)
-    plot = False
-    interface_parameters = InterfaceParameters(axial_position=-1000, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
+    plot = True
+    interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
     polarization = PolarizationParameters(gamma=45, beta=90)
     wavelength_0 = 532
     dr = 30
-    dz = 50
-    Nxy = 51
-    Nz = 1
+    dz = 200
+    Nxy = 31
+    Nz = 11
     field_parameters = FieldParameters(w0=50, wavelength=wavelength_0, I_0=1, polarization=polarization)
     focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=0.65, n=1.5, h=3, x_steps=dr, z_steps=dz, x_range=dr*Nxy*2**0.5, z_range=dz*Nz*2, z=0, phip=0, field_parameters=field_parameters, interface_parameters=interface_parameters)
     base_simulation_parameters, lens_parameters, focus_parameters = create_base_parameters(

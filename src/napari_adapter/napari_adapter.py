@@ -102,8 +102,7 @@ class PyFocusSimulator:
         self.wavelength/=self.n
         self.thickness = thickness
         self.n1 = n1
-        self.interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((n1, self.n)), ds=np.array((np.inf, np.inf)))
-        self.interface_parameters = InterfaceParameters(axial_position=-10000, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
+        self.interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((self.n, n1)), ds=np.array((np.inf, np.inf)))
     
     def generate_custom_mask_function(self, incident_amplitude, incident_phase):
         """Generates self.base_mask_function as incident_amplitude*np.exp(1j*incident_phase). 

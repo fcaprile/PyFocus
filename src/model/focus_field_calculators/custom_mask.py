@@ -183,7 +183,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         parameters = (ex_lens,ey_lens,focus_field_parameters.alpha,focus_field_parameters.h,focus_field_parameters.field_parameters.wavelength,focus_field_parameters.z,focus_field_parameters.x_steps,focus_field_parameters.custom_mask_parameters.divisions_theta,focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.x_range)
         parameter_names = ("ex_lens","ey_lens","alpha","h","wavelength","zp0","resolution_x","divisions_theta","divisions_phi","x_range")
         for parameter, name in zip(parameters, parameter_names):
-            if isinstance(parameter, float) or isinstance(parameter, bool) or isinstance(parameter, int) or isinstance(parameter, np.int64) or len(parameter) < 5:
+            if isinstance(parameter, float) or isinstance(parameter, bool) or isinstance(parameter, int) or isinstance(parameter, np.int64) or isinstance(parameter, np.int32) or len(parameter) < 5:
                 logger.debug(f"{name}: {parameter}")
             else:
                 logger.debug(f"np.mean({name}): {np.mean(parameter)}")
@@ -215,24 +215,24 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         sin_phi=np.sin(phi)
         sin_phi_square=sin_phi**2
         
-        prefactor_general=cos_theta_sqrt*sin_theta
-        prefactor_x=prefactor_general*(cos_theta+(1-cos_theta)*sin_phi_square)
-        prefactor_y=prefactor_general*(1-cos_theta)*cos_phi*sin_phi
-        prefactor_z=prefactor_general*(-sin_theta*cos_phi)
-        
-        Axx=prefactor_x*ex_lens*weight_trapezoid
-        Axy=prefactor_y*ex_lens*weight_trapezoid
-        Axz=prefactor_z*ex_lens*weight_trapezoid
-
-        Ayx=prefactor_y*ey_lens*weight_trapezoid
-        Ayy=-prefactor_x*ey_lens*weight_trapezoid
-        Ayz=prefactor_z*ey_lens*weight_trapezoid
-        
         n1 = focus_field_parameters.interface_parameters.ns[0]
         n2 = focus_field_parameters.interface_parameters.ns[-1]
         k1=2*np.pi/focus_field_parameters.field_parameters.wavelength*n1
         k2=k1*n2/n1
+
+        prefactor_general=cos_theta_sqrt*sin_theta*k1
+        prefactor_x=prefactor_general*(cos_theta+(1-cos_theta)*sin_phi_square)
+        prefactor_y=prefactor_general*(1-cos_theta)*cos_phi*sin_phi
+        prefactor_z=prefactor_general*(-sin_theta*cos_phi)
         
+        Axx=-prefactor_x*ex_lens*weight_trapezoid
+        Axy=-prefactor_y*ex_lens*weight_trapezoid
+        Axz=-prefactor_z*ex_lens*weight_trapezoid
+
+        Ayx=-prefactor_y*ey_lens*weight_trapezoid
+        Ayy=prefactor_x*ey_lens*weight_trapezoid
+        Ayz=-prefactor_z*ey_lens*weight_trapezoid
+                
         #Calculus of the refraction and transmition coeficients
         rs_i_theta=np.zeros((focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.custom_mask_parameters.divisions_theta),dtype='complex')
         rp_i_theta=np.copy(rs_i_theta)
@@ -248,8 +248,8 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
             tp_t_theta[:,i]=tmm_p['t']
         
         #For integration of the reflected and transmited fields (Er and Et):
-        prefactor_x_r=prefactor_general*(rs_i_theta*sin_phi_square-rp_i_theta*cos_phi**2*cos_theta)
-        prefactor_y_r=prefactor_general*(-rs_i_theta-rp_i_theta*cos_theta)*cos_phi*sin_phi
+        prefactor_x_r=-prefactor_general*(-rs_i_theta*sin_phi_square+rp_i_theta*cos_phi**2*cos_theta)
+        prefactor_y_r=-prefactor_general*(rs_i_theta+rp_i_theta*cos_theta)*cos_phi*sin_phi
         prefactor_z_r=prefactor_general*rp_i_theta*(-sin_theta*cos_phi)
         
         phase_z_r=np.exp(2*1j*k1*np.cos(theta)*focus_field_parameters.interface_parameters.axial_position)
@@ -293,7 +293,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         parameters = (n1,n2,focus_field_parameters.interface_parameters.ns,focus_field_parameters.interface_parameters.ds,ex_lens,ey_lens,focus_field_parameters.alpha,focus_field_parameters.h,focus_field_parameters.field_parameters.wavelength,focus_field_parameters.interface_parameters.axial_position,focus_field_parameters.z,focus_field_parameters.x_steps,focus_field_parameters.custom_mask_parameters.divisions_theta,focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.x_range)
         parameter_names = ("n1","n2","n_list","d_list","ex_lens","ey_lens","alpha","h","wavelength","z_int","zp0","resolution_x","divisions_theta","divisions_phi","x_range")
         for parameter, name in zip(parameters, parameter_names):
-            if isinstance(parameter, float) or isinstance(parameter, bool) or isinstance(parameter, int) or isinstance(parameter, np.int64) or len(parameter) < 5:
+            if isinstance(parameter, float) or isinstance(parameter, bool) or isinstance(parameter, int) or isinstance(parameter, np.int64) or isinstance(parameter, np.int32) or len(parameter) < 5:
                 logger.debug(f"{name}: {parameter}")
             else:
                 logger.debug(f"np.mean({name}): {np.mean(parameter)}")
@@ -466,11 +466,11 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         elif plane_to_plot == PlotPlanes.XY:
             zp0 = focus_field_parameters.z
             kz=zp0*k1
+            kz_r=zp0*k1
             kz_t=zp0*k2
             phase_kz=np.exp(1j*cos_theta*kz)
+            phase_kz_r=np.exp(-1j*cos_theta*kz_r)
             phase_kz_t=np.exp(1j*cos_theta_t*kz_t)
-            logger.debug(f"{np.mean(phase_kz_t)=}")
-            phase_kz_r=np.exp(-1j*cos_theta*kz)
             for i in tqdm(range(focus_field_parameters.r_step_count),desc=description):
                 x=horizontal_values[i]
                 for j,y in enumerate(vertical_values):
@@ -551,20 +551,20 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         ex_lens*=np.cos(focus_field_parameters.field_parameters.polarization.gamma)*focus_field_parameters.field_parameters.I_0**0.5
         ey_lens*=np.sin(focus_field_parameters.field_parameters.polarization.gamma)*np.exp(1j*focus_field_parameters.field_parameters.polarization.beta)*focus_field_parameters.field_parameters.I_0**0.5
         
-        # logger.debug("Generating the field inciding on the lens:")
-        # logger.debug("Input:")
-        # parameters = (focus_field_parameters.alpha,focus_field_parameters.f,focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.custom_mask_parameters.divisions_theta,focus_field_parameters.field_parameters.polarization.gamma,focus_field_parameters.field_parameters.polarization.beta,focus_field_parameters.field_parameters.w0,focus_field_parameters.field_parameters.I_0,focus_field_parameters.field_parameters.wavelength)
-        # parameter_names = ("alpha","f","divisions_phi","divisions_theta","gamma","beta","w0","I0","wavelength")
-        # for parameter, name in zip(parameters, parameter_names):
-        #     if isinstance(parameter, float) or isinstance(parameter, bool) or isinstance(parameter, int) or len(parameter) < 5:
-        #         logger.debug(f"{name}: {parameter}")
-        #     else:
-        #         logger.debug(f"{name}: {np.mean(parameter)}")
-        # logger.debug("")
-        # logger.debug("Output:")
-        # logger.debug(f"{np.mean(ex_lens)=}")
-        # logger.debug(f"{np.mean(ey_lens)=}")
-        # logger.debug("")
+        logger.debug("Generating the field inciding on the lens:")
+        logger.debug("Input:")
+        parameters = (focus_field_parameters.alpha,focus_field_parameters.f,focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.custom_mask_parameters.divisions_theta,focus_field_parameters.field_parameters.polarization.gamma,focus_field_parameters.field_parameters.polarization.beta,focus_field_parameters.field_parameters.w0,focus_field_parameters.field_parameters.I_0,focus_field_parameters.field_parameters.wavelength)
+        parameter_names = ("alpha","f","divisions_phi","divisions_theta","gamma","beta","w0","I0","wavelength")
+        for parameter, name in zip(parameters, parameter_names):
+            if isinstance(parameter, float) or isinstance(parameter, bool) or isinstance(parameter, int) or len(parameter) < 5:
+                logger.debug(f"{name}: {parameter}")
+            else:
+                logger.debug(f"{name}: {np.mean(parameter)}")
+        logger.debug("")
+        logger.debug("Output:")
+        logger.debug(f"{np.mean(ex_lens)=}")
+        logger.debug(f"{np.mean(ey_lens)=}")
+        logger.debug("")
         
         return ex_lens,ey_lens
 

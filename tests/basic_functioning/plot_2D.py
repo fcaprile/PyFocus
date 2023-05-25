@@ -7,7 +7,7 @@ def plot_along_z_and_x(field, focus_parameters, wavelength_0, dr, dz, Nxy):
     sup_title =  f'NA = {focus_parameters.NA}, n = {focus_parameters.n}'
     fig.suptitle(sup_title, size=char_size*0.8)
     field.calculate_intensity()
-    PSF = field.Intensity
+    PSF = field.Intensity/10**6
     Nz, Ny, Nx = PSF.shape
     print(PSF.shape)
     # psf_to_show = PSF.take(indices=Nlist[idx]//2 , axis=idx)
@@ -43,4 +43,4 @@ def plot_along_z_and_x(field, focus_parameters, wavelength_0, dr, dz, Nxy):
         ax[idx].xaxis.set_tick_params(labelsize=char_size*0.5)
         ax[idx].yaxis.set_tick_params(labelsize=char_size*0.5)
     
-    # plt.show()
+    plt.show()

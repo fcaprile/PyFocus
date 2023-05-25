@@ -127,10 +127,7 @@ class MainCalculationHandler:
             FocusFieldCalculator.FieldAtFocus: Field near the focus on a plane. Contains the 3 components of the field and the intensity
         """
         logger.info("PyFocus: Performing a simulation in a 3D space")
-        
-        if focus_field_parameters.interface_parameters is None:
-            focus_field_parameters.field_parameters.wavelength /= focus_field_parameters.n
-        
+                
         focus_field_parameters.transform_input_parameter_units()
         fields = self._focus_field_calculator.calculate_3D_field(focus_field_parameters,**kwargs)
         fields.calculate_intensity()
