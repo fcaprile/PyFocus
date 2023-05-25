@@ -12,11 +12,11 @@ logFormatter = logging.Formatter(fmt=' %(levelname)s :: %(message)s')
 
 # create logger
 logger = logging.getLogger(loggerName)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # create console handler
 consoleHandler = logging.StreamHandler()
-consoleHandler.setLevel(logging.DEBUG)
+consoleHandler.setLevel(logging.INFO)
 consoleHandler.setFormatter(logFormatter)
 
 # Add console handler to logger
