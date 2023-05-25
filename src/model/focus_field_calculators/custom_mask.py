@@ -44,7 +44,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
             For more information read the corresponding dataclass
         """
         
-        custom_field_function=lambda rho, phi,w0,f,k: (gaussian_rho(w0))(rho)* mask_function(rho, phi,w0,f,k)
+        custom_field_function=lambda rho, phi,w0,f,k: mask_function(rho, phi,w0,f,k)
         ex_lens,ey_lens=self._generate_rotated_incident_field(custom_field_function, focus_field_parameters)
         Ex,Ey,Ez = [np.zeros((focus_field_parameters.z_step_count, focus_field_parameters.r_step_count, focus_field_parameters.r_step_count),dtype=complex) for _ in range(3)]
         axial_positions = focus_field_parameters.z_steps * (np.arange(focus_field_parameters.z_step_count) - focus_field_parameters.z_step_count // 2)
@@ -536,6 +536,8 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
 
         theta_values=np.linspace(0,focus_field_parameters.alpha,focus_field_parameters.custom_mask_parameters.divisions_theta)  #divisions of theta in which the trapezoidal 2D integration is done
         rho_values=np.sin(theta_values)*focus_field_parameters.f              #given by the sine's law
+        logger.debug(f"{min(rho_values)=}")
+        logger.debug(f"{max(rho_values)=}")
         phi_values_x=np.linspace(0,2*np.pi,focus_field_parameters.custom_mask_parameters.divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
         phi_values_y=np.linspace(np.pi/2,5*np.pi/2,focus_field_parameters.custom_mask_parameters.divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
         for i,phi in enumerate(phi_values_x):

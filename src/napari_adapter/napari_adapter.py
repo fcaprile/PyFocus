@@ -11,13 +11,19 @@ import numpy as np
 from ..model.main_calculation_handler import MainCalculationHandler
 from scipy.special import binom
 from matplotlib import pyplot as plt
+from ..log_config import logger
 class PyFocusSimulator:
+    """This class follows the design pattern 'Adapter', providing a bridge between PyFoucs and the Napari widget """
     
-    def __init__(self,NA, n, wavelength, Nxy, Nz, dr, dz, gamma, beta, custom_mask="", *args, **kwargs) -> None:
+    def __init__(self,NA: float, n: float, wavelength: float, lens_aperture: float, Nxy: int, Nz: int, dr: float, dz: float, gamma: float, beta: float, incident_amplitude: str ="1", incident_phase: str ="0", *args, **kwargs) -> None:
+        """Starts the class. 
+        incident_amplitude and incident_phase define the incident field as incident_field = incident_amplitude*np.exp(1j*incident_phase)
+        """
         self.NA = NA
         self.n = n
         self.alpha = np.arcsin(NA/n)
         self.wavelength = wavelength
+        self.lens_aperture = lens_aperture
         self.Nxy = Nxy
         self.Nz = Nz
         self.dr = dr
@@ -25,7 +31,6 @@ class PyFocusSimulator:
         self.incident_field = ...
         self.gamma = gamma
         self.beta = beta
-        self.custom_mask = custom_mask
         
         self._add_zernike_aberration = False
         self._add_cylindrical_lens = False
@@ -36,7 +41,14 @@ class PyFocusSimulator:
         self.z = self.dz * (np.arange(self.Nz) - self.Nz // 2)
         self.DeltaX = self.wavelength/self.NA/2 # Abbe resolution
         
-        self.base_mask_function = lambda rho, phi, w0,f,k : 1
+        logger.info(f"{self.beta=}")
+        logger.info(f"{self.gamma=}")
+        logger.info(f"{incident_amplitude=}")
+        logger.info(f"{incident_phase=}")
+        if incident_amplitude or incident_phase:
+            self.generate_custom_mask_function(incident_amplitude=incident_amplitude, incident_phase=incident_phase)
+        else:
+            self.base_mask_function = lambda rho, phi, w0,f,k : 1
         self.interface_parameters = None
         
         # Inner passage of units
@@ -66,7 +78,7 @@ class PyFocusSimulator:
         polarization = PolarizationParameters(gamma=self.gamma, beta=self.beta)
         field_parameters = FieldParameters(w0=1000, wavelength=self.wavelength, I_0=1, polarization=polarization)
         objective_field_parameters = FreePropagationCalculator.ObjectiveFieldParameters(L=50, R=10, field_parameters=field_parameters)
-        self.focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=self.NA, n=self.n, h=3, x_steps=self.dr, z_steps=self.dz, x_range=self.radial_FOV, z_range=self.axial_FOV, z=0, phip=0, field_parameters=field_parameters, interface_parameters=self.interface_parameters)
+        self.focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=self.NA, n=self.n, h=self.lens_aperture, x_steps=self.dr, z_steps=self.dz, x_range=self.radial_FOV, z_range=self.axial_FOV, z=0, phip=0, field_parameters=field_parameters, interface_parameters=self.interface_parameters)
         
         mask_function = self._generate_mask_function()
         fields = self.calculator.calculate_3D_fields(basic_parameters=basic_parameters, objective_field_parameters=objective_field_parameters, focus_field_parameters=self.focus_parameters, mask_function=mask_function)
@@ -79,8 +91,6 @@ class PyFocusSimulator:
             print(np.mean(self.PSF3D[i,:,:]))
         
     def _generate_mask_function(self):
-        if self.custom_mask:
-            self.add_custom_phase_function()
         if self._add_zernike_aberration is True:
             return lambda rho, phi, w0,f,k : self.base_mask_function(rho, phi, w0,f,k) *  self._nm_polynomial(n=self.N, m=self.M, normalized=False)(rho, phi, w0,f,k)
         elif self._add_cylindrical_lens is True:
@@ -95,9 +105,11 @@ class PyFocusSimulator:
         self.interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((n1, self.n)), ds=np.array((np.inf, np.inf)))
         self.interface_parameters = InterfaceParameters(axial_position=-10000, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
     
-    def add_custom_phase_function(self):
-        """Adds the custom mask function to the base_mask_function"""
-        aux='self.base_mask_function=lambda rho,phi,w0,f,k: '+self.custom_mask 
+    def generate_custom_mask_function(self, incident_amplitude, incident_phase):
+        """Generates self.base_mask_function as incident_amplitude*np.exp(1j*incident_phase). 
+        Called on class initialization. Default values in the init are such that the default mask function is 1
+        """
+        aux=f'self.base_mask_function=lambda rho,phi,w0,f,k: {incident_amplitude}*np.exp(1j*{incident_phase})' 
         exec(aux)
     
     def write_name(self, basename: str ='') -> str:
@@ -176,7 +188,6 @@ class PyFocusSimulator:
         '''
         plot the phase a the pupil along x and y
         '''
-        import matplotlib.pyplot as plt
         fig, ax = plt.subplots(1, 2, num="Intensity at the X and Z axes", figsize=(8, 4), tight_layout=False, dpi=dpi)
         char_size = 12
         sup_title =  f'NA = {self.NA}, n = {self.n}'
