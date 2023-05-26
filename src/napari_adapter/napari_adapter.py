@@ -41,10 +41,6 @@ class PyFocusSimulator:
         self.z = self.dz * (np.arange(self.Nz) - self.Nz // 2)
         self.DeltaX = self.wavelength/self.NA/2 # Abbe resolution
         
-        logger.info(f"{self.beta=}")
-        logger.info(f"{self.gamma=}")
-        logger.info(f"{incident_amplitude=}")
-        logger.info(f"{incident_phase=}")
         if incident_amplitude or incident_phase:
             self.generate_custom_mask_function(incident_amplitude=incident_amplitude, incident_phase=incident_phase)
         else:
@@ -86,9 +82,6 @@ class PyFocusSimulator:
 
         self.field = fields
         self.PSF3D = fields.Intensity
-        for i in range(len(self.PSF3D[:,0,0])):
-            print(f"Para {i=}")
-            print(np.mean(self.PSF3D[i,:,:]))
         
     def _generate_mask_function(self):
         if self._add_zernike_aberration is True:
@@ -98,12 +91,12 @@ class PyFocusSimulator:
         else:
             return self.base_mask_function
     
-    def add_slab_scalar(self, n1, thickness, alpha):
-        self.wavelength/=self.n
-        self.thickness = thickness
+    def add_interface(self, n1, axial_position):
+        self.wavelength/=self.n # TODO in a previous step it is multiplied by n. Fix
         self.n1 = n1
-        self.interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((self.n, n1)), ds=np.array((np.inf, np.inf)))
-    
+        self.axial_position = axial_position
+        self.interface_parameters = InterfaceParameters(axial_position=axial_position, ns=np.array((self.n, n1)), ds=np.array((np.inf, np.inf)))
+
     def generate_custom_mask_function(self, incident_amplitude, incident_phase):
         """Generates self.base_mask_function as incident_amplitude*np.exp(1j*incident_phase). 
         Called on class initialization. Default values in the init are such that the default mask function is 1
@@ -190,8 +183,8 @@ class PyFocusSimulator:
         fig, ax = plt.subplots(1, 2, num="Intensity at the X and Z axes", figsize=(8, 4), tight_layout=False, dpi=dpi)
         char_size = 12
         sup_title =  f'NA = {self.NA}, n = {self.n}'
-        if hasattr(self,'thickness'):
-             sup_title += f', slab thickness = {self.thickness} $\mu$m, n1 = {self.n1}, alpha = {self.alpha:.02f}'
+        if self.interface_parameters is not None:
+             sup_title += f', interface axial position = {self.axial_position} $\mu$m, n1 = {self.n1}'
         fig.suptitle(sup_title, size=char_size*0.8)
         PSF = self.PSF3D
         Nz, Ny, Nx = PSF.shape
