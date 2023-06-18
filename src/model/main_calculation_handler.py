@@ -132,13 +132,13 @@ class MainCalculationHandler:
         fields = self._focus_field_calculator.calculate_3D_field(focus_field_parameters,**kwargs)
         fields.calculate_intensity()
         
-        logger.debug("PyFocus: Obtained fields:")
-        shape = np.shape(fields.Intensity)
-        logger.debug(f"Intensity at the center: {fields.Intensity[shape[0]//2, shape[1]//2, shape[2]//2]}")
-        logger.debug(f"{np.mean(fields.Ex[shape[0]//2,:,:])=}")
-        logger.debug(f"{np.mean(fields.Ey[shape[0]//2,:,:])=}")
-        logger.debug(f"{np.mean(fields.Ez[shape[0]//2,:,:])=}")
-        logger.debug("")
+        # logger.debug("PyFocus: Obtained fields:")
+        # shape = np.shape(fields.Intensity)
+        # logger.debug(f"Intensity at the center: {fields.Intensity[shape[0]//2, shape[1]//2, shape[2]//2]}")
+        # logger.debug(f"{np.mean(fields.Ex[shape[0]//2,:,:])=}")
+        # logger.debug(f"{np.mean(fields.Ey[shape[0]//2,:,:])=}")
+        # logger.debug(f"{np.mean(fields.Ez[shape[0]//2,:,:])=}")
+        # logger.debug("")
         
         
         if basic_parameters.plot_focus_field_intensity == True:

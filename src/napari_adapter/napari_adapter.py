@@ -1,5 +1,6 @@
 import os
 import sys
+import inspect
 
 from ...src.plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_polarization_elipses_on_ax, color_plot_on_ax, PlotParameters
 from ..model.focus_field_calculators.base import FocusFieldCalculator
@@ -44,6 +45,7 @@ class PyFocusSimulator:
         if incident_amplitude or incident_phase:
             self.generate_custom_mask_function(incident_amplitude=incident_amplitude, incident_phase=incident_phase)
         else:
+            self.custom_mask_string = '1'
             self.base_mask_function = lambda rho, phi, w0,f,k : 1
         self.interface_parameters = None
         
@@ -77,6 +79,14 @@ class PyFocusSimulator:
         self.focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=self.NA, n=self.n, h=self.lens_aperture, x_steps=self.dr, z_steps=self.dz, x_range=self.radial_FOV, z_range=self.axial_FOV, z=0, phip=0, field_parameters=field_parameters, interface_parameters=self.interface_parameters)
         
         mask_function = self._generate_mask_function()
+        
+        logger.debug("Internal calculation parameters:")
+        logger.debug(f"{polarization=}")
+        logger.debug(f"{field_parameters=}")
+        logger.debug(f"{self.focus_parameters=}")
+        logger.debug(f"{self.selected_aberration=}")
+        logger.debug(f"{self.custom_mask_string=}")
+        
         fields = self.calculator.calculate_3D_fields(basic_parameters=basic_parameters, objective_field_parameters=objective_field_parameters, focus_field_parameters=self.focus_parameters, mask_function=mask_function)
         fields.calculate_intensity()
 
@@ -85,10 +95,13 @@ class PyFocusSimulator:
         
     def _generate_mask_function(self):
         if self._add_zernike_aberration is True:
-            return lambda rho, phi, w0,f,k : self.base_mask_function(rho, phi, w0,f,k) *  self._nm_polynomial(n=self.N, m=self.M, normalized=False)(rho, phi, w0,f,k)
+            self.selected_aberration = f'Zernike with n={self.N}, m={self.M}, weight={self.weight}'
+            return lambda rho, phi, w0,f,k : self.base_mask_function(rho, phi, w0,f,k) *  self._nm_polynomial(n=self.N, m=self.M, weight=self.weight, normalized=False)(rho, phi, w0,f,k)
         elif self._add_cylindrical_lens is True:
+            self.selected_aberration = 'None'
             return self.base_mask_function
         else:
+            self.selected_aberration = 'None'
             return self.base_mask_function
     
     def add_interface(self, n1, axial_position):
@@ -101,28 +114,25 @@ class PyFocusSimulator:
         """Generates self.base_mask_function as incident_amplitude*np.exp(1j*incident_phase). 
         Called on class initialization. Default values in the init are such that the default mask function is 1
         """
+        self.custom_mask_string = f'{incident_amplitude}*np.exp(1j*{incident_phase})' 
         aux=f'self.base_mask_function=lambda rho,phi,w0,f,k: {incident_amplitude}*np.exp(1j*{incident_phase})' 
         exec(aux)
     
     def write_name(self, basename: str ='') -> str:
         name = '_'.join([basename,
+                        'vectorial',
                         f'NA_{self.NA:.1f}',
                         f'n_{self.n:.1f}'])
+        if self._add_zernike_aberration:
+            name = '_'.join([name,
+                            'zernike_aberration',
+                            f'N{self.N}',
+                            f'M_{self.M}',
+                            f'w_{self.weight:.1f}'])
         
-        # if all(hasattr(self, attr) for attr in ["thickness","alpha","n1"]): # slab abberation is there
-        #     name = '_'.join([name,
-        #                     f'thk_{self.thickness:.0f}',
-        #                     f'alpha_{self.alpha:.0f}',
-        #                     f'n1_{self.n1:.1f}'])
-        
-        # if all(hasattr(self, attr) for attr in ["N","M","weight"]): # zernike aberration is there
-        #     name = '_'.join([name,
-        #                     f'N{self.N}',
-        #                     f'M_{self.M}',
-        #                     f'w_{self.weight:.1f}'])
         return name
     
-    def _nm_polynomial(self, n, m, normalized=True):
+    def _nm_polynomial(self, n, m, weight, normalized=True):
         '''Return the function of the zernike polynomial'''
         def nm_normalization(n, m):
             """the norm of the zernike mode n,m in born/wolf convetion
@@ -147,9 +157,9 @@ class PyFocusSimulator:
                 radial = radial * (rho <= 3.) 
 
             if normalized:
-                prefac = 1. / nm_normalization(n, m) * 2* np.pi* self.weight
+                prefac = 1. / nm_normalization(n, m) * 2* np.pi* weight
             else:
-                prefac = 0.5 * 2* np.pi* self.weight
+                prefac = 0.5 * 2* np.pi* weight
             if m >= 0:
                 return np.exp(1j*prefac * radial * np.cos(m0 * phi))
             else:
