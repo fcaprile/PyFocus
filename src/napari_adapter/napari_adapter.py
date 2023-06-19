@@ -1,7 +1,5 @@
-import os
-import sys
-import inspect
 
+from warnings import warn
 from ...src.plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_polarization_elipses_on_ax, color_plot_on_ax, PlotParameters
 from ..model.focus_field_calculators.base import FocusFieldCalculator
 from ..model.free_propagation_calculators.base import FreePropagationCalculator
@@ -61,7 +59,7 @@ class PyFocusSimulator:
         
     def _transform_units(self):
         ''' Performs a passage from um to nm and calculates the FOV'''
-        self.wavelength*=1000*self.n # TODO remover cuando se corrija tema que wavelength se toma dentro o fuera dle medio
+        self.wavelength*=1000
         self.dr *= 1000/2**0.5
         self.dz *= 1000
         self.radial_FOV = self.dr*self.Nxy*2**0.5
@@ -87,7 +85,7 @@ class PyFocusSimulator:
         logger.debug(f"{self.selected_aberration=}")
         logger.debug(f"{self.custom_mask_string=}")
         
-        fields = self.calculator.calculate_3D_fields(basic_parameters=basic_parameters, objective_field_parameters=objective_field_parameters, focus_field_parameters=self.focus_parameters, mask_function=mask_function)
+        fields = self.calculator.calculate_3D_fields(basic_parameters=basic_parameters, objective_field_parameters=objective_field_parameters, focus_field_parameters=self.focus_parameters, mask_function=mask_function, progress_callback = warn)
         fields.calculate_intensity()
 
         self.field = fields

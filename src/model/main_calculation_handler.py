@@ -114,6 +114,7 @@ class MainCalculationHandler:
             basic_parameters: BasicParameters, 
             objective_field_parameters: FreePropagationCalculator.ObjectiveFieldParameters, 
             focus_field_parameters: FocusFieldCalculator.FocusFieldParameters,
+            progress_callback: callable = None,
             **kwargs
         ) -> FocusFieldCalculator.FieldAtFocus3D:
         """Main function that calculates the field along a 3D space by calculating it as slices of 2D XY planes. Orchestrates the steps of the calculation, like handling the conversion between different units of measurement (mm to nm, degrees to radians, etc...).
@@ -129,7 +130,7 @@ class MainCalculationHandler:
         logger.info("PyFocus: Performing a simulation in a 3D space")
                 
         focus_field_parameters.transform_input_parameter_units()
-        fields = self._focus_field_calculator.calculate_3D_field(focus_field_parameters,**kwargs)
+        fields = self._focus_field_calculator.calculate_3D_field(focus_field_parameters, progress_callback=progress_callback,**kwargs)
         fields.calculate_intensity()
         
         # logger.debug("PyFocus: Obtained fields:")

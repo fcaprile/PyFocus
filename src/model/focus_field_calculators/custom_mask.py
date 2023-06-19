@@ -18,7 +18,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
     XY_FIELD_DESCRIPTION = 'Custom Mask calculation along XY plane'
     XZ_FIELD_DESCRIPTION = 'Custom Mask calculation along XZ plane'
     
-    def calculate_3D_field(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, mask_function: callable) -> FocusFieldCalculator.FieldAtFocus3D:
+    def calculate_3D_field(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, mask_function: callable, progress_callback: callable = None) -> FocusFieldCalculator.FieldAtFocus3D:
         """Main function that calculates the field along a 3D space by calculating it as slices of 2D XY planes. 
         Orchestrates the steps of the calculation.
 
@@ -46,11 +46,16 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         
         custom_field_function=lambda rho, phi,w0,f,k: mask_function(rho, phi,w0,f,k)
         ex_lens,ey_lens=self._generate_rotated_incident_field(custom_field_function, focus_field_parameters)
+        logger.debug(f"{focus_field_parameters.z_step_count=}, {focus_field_parameters.r_step_count=}")
         Ex,Ey,Ez = [np.zeros((focus_field_parameters.z_step_count, focus_field_parameters.r_step_count, focus_field_parameters.r_step_count),dtype=complex) for _ in range(3)]
         axial_positions = focus_field_parameters.z_steps * (np.arange(focus_field_parameters.z_step_count) - focus_field_parameters.z_step_count // 2)
         # axial_positions = np.linspace(-focus_field_parameters.z_range,focus_field_parameters.z_range,focus_field_parameters.z_step_count)
+        if progress_callback:
+            progress_callback("Simulation with vectorial propagation model has started")
         for index in tqdm(range(len(axial_positions)),desc='Calculating the field at each XY plane'):
             axial_distance = axial_positions[index]
+            if progress_callback:
+                progress_callback(f"Calculating the field at z={axial_distance}nm. Do not modify the simulation parameters.")
             focus_field_parameters.z = axial_distance
             # logger.info(f"Calculating the field at z={axial_distance}nm")
             Ex[index,:,:], Ey[index,:,:], Ez[index,:,:] = self._calculate_field_along_XY_plane(ex_lens,ey_lens, focus_field_parameters, verbose=False)
