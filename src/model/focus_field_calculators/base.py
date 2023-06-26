@@ -89,7 +89,7 @@ class FocusFieldCalculator(ABC):
             '''transforms units from degrees to radians and from milimeters to nanometers'''
             if self.interface_parameters is None:
                 self.field_parameters.wavelength /= self.n
-            self.field_parameters.transform_input_parameter_units(self.n, self.interface_parameters)
+            self.field_parameters.transform_input_parameter_units()
             
             self.f = self.h * self.n/ self.NA *10**6
             

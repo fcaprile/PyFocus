@@ -114,6 +114,7 @@ class MainCalculationHandler:
             basic_parameters: BasicParameters, 
             objective_field_parameters: FreePropagationCalculator.ObjectiveFieldParameters, 
             focus_field_parameters: FocusFieldCalculator.FocusFieldParameters,
+            progress_callback: callable = None,
             **kwargs
         ) -> FocusFieldCalculator.FieldAtFocus3D:
         """Main function that calculates the field along a 3D space by calculating it as slices of 2D XY planes. Orchestrates the steps of the calculation, like handling the conversion between different units of measurement (mm to nm, degrees to radians, etc...).
@@ -127,21 +128,18 @@ class MainCalculationHandler:
             FocusFieldCalculator.FieldAtFocus: Field near the focus on a plane. Contains the 3 components of the field and the intensity
         """
         logger.info("PyFocus: Performing a simulation in a 3D space")
-        
-        if focus_field_parameters.interface_parameters is None:
-            focus_field_parameters.field_parameters.wavelength /= focus_field_parameters.n
-        
+                
         focus_field_parameters.transform_input_parameter_units()
-        fields = self._focus_field_calculator.calculate_3D_field(focus_field_parameters,**kwargs)
+        fields = self._focus_field_calculator.calculate_3D_field(focus_field_parameters, progress_callback=progress_callback,**kwargs)
         fields.calculate_intensity()
         
-        logger.debug("PyFocus: Obtained fields:")
-        shape = np.shape(fields.Intensity)
-        logger.debug(f"Intensity at the center: {fields.Intensity[shape[0]//2, shape[1]//2, shape[2]//2]}")
-        logger.debug(f"{np.mean(fields.Ex[shape[0]//2,:,:])=}")
-        logger.debug(f"{np.mean(fields.Ey[shape[0]//2,:,:])=}")
-        logger.debug(f"{np.mean(fields.Ez[shape[0]//2,:,:])=}")
-        logger.debug("")
+        # logger.debug("PyFocus: Obtained fields:")
+        # shape = np.shape(fields.Intensity)
+        # logger.debug(f"Intensity at the center: {fields.Intensity[shape[0]//2, shape[1]//2, shape[2]//2]}")
+        # logger.debug(f"{np.mean(fields.Ex[shape[0]//2,:,:])=}")
+        # logger.debug(f"{np.mean(fields.Ey[shape[0]//2,:,:])=}")
+        # logger.debug(f"{np.mean(fields.Ez[shape[0]//2,:,:])=}")
+        # logger.debug("")
         
         
         if basic_parameters.plot_focus_field_intensity == True:

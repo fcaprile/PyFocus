@@ -1,6 +1,5 @@
-import os
-import sys
 
+from warnings import warn
 from ...src.plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_polarization_elipses_on_ax, color_plot_on_ax, PlotParameters
 from ..model.focus_field_calculators.base import FocusFieldCalculator
 from ..model.free_propagation_calculators.base import FreePropagationCalculator
@@ -11,13 +10,19 @@ import numpy as np
 from ..model.main_calculation_handler import MainCalculationHandler
 from scipy.special import binom
 from matplotlib import pyplot as plt
+from ..log_config import logger
 class PyFocusSimulator:
+    """This class follows the design pattern 'Adapter', providing a bridge between PyFoucs and the Napari widget """
     
-    def __init__(self,NA, n, wavelength, Nxy, Nz, dr, dz, gamma, beta, custom_mask="", *args, **kwargs) -> None:
+    def __init__(self,NA: float, n: float, wavelength: float, lens_aperture: float, Nxy: int, Nz: int, dr: float, dz: float, gamma: float, beta: float, incident_amplitude: str ="1", incident_phase: str ="0", *args, **kwargs) -> None:
+        """Starts the class. 
+        incident_amplitude and incident_phase define the incident field as incident_field = incident_amplitude*np.exp(1j*incident_phase)
+        """
         self.NA = NA
         self.n = n
         self.alpha = np.arcsin(NA/n)
         self.wavelength = wavelength
+        self.lens_aperture = lens_aperture
         self.Nxy = Nxy
         self.Nz = Nz
         self.dr = dr
@@ -25,7 +30,6 @@ class PyFocusSimulator:
         self.incident_field = ...
         self.gamma = gamma
         self.beta = beta
-        self.custom_mask = custom_mask
         
         self._add_zernike_aberration = False
         self._add_cylindrical_lens = False
@@ -36,7 +40,11 @@ class PyFocusSimulator:
         self.z = self.dz * (np.arange(self.Nz) - self.Nz // 2)
         self.DeltaX = self.wavelength/self.NA/2 # Abbe resolution
         
-        self.base_mask_function = lambda rho, phi, w0,f,k : 1
+        if incident_amplitude or incident_phase:
+            self.generate_custom_mask_function(incident_amplitude=incident_amplitude, incident_phase=incident_phase)
+        else:
+            self.custom_mask_string = '1'
+            self.base_mask_function = lambda rho, phi, w0,f,k : 1
         self.interface_parameters = None
         
         # Inner passage of units
@@ -51,7 +59,7 @@ class PyFocusSimulator:
         
     def _transform_units(self):
         ''' Performs a passage from um to nm and calculates the FOV'''
-        self.wavelength*=1000*self.n # TODO remover cuando se corrija tema que wavelength se toma dentro o fuera dle medio
+        self.wavelength*=1000
         self.dr *= 1000/2**0.5
         self.dz *= 1000
         self.radial_FOV = self.dr*self.Nxy*2**0.5
@@ -66,59 +74,63 @@ class PyFocusSimulator:
         polarization = PolarizationParameters(gamma=self.gamma, beta=self.beta)
         field_parameters = FieldParameters(w0=1000, wavelength=self.wavelength, I_0=1, polarization=polarization)
         objective_field_parameters = FreePropagationCalculator.ObjectiveFieldParameters(L=50, R=10, field_parameters=field_parameters)
-        self.focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=self.NA, n=self.n, h=3, x_steps=self.dr, z_steps=self.dz, x_range=self.radial_FOV, z_range=self.axial_FOV, z=0, phip=0, field_parameters=field_parameters, interface_parameters=self.interface_parameters)
+        self.focus_parameters = FocusFieldCalculator.FocusFieldParameters(NA=self.NA, n=self.n, h=self.lens_aperture, x_steps=self.dr, z_steps=self.dz, x_range=self.radial_FOV, z_range=self.axial_FOV, z=0, phip=0, field_parameters=field_parameters, interface_parameters=self.interface_parameters)
         
         mask_function = self._generate_mask_function()
-        fields = self.calculator.calculate_3D_fields(basic_parameters=basic_parameters, objective_field_parameters=objective_field_parameters, focus_field_parameters=self.focus_parameters, mask_function=mask_function)
+        
+        logger.debug("Internal calculation parameters:")
+        logger.debug(f"{polarization=}")
+        logger.debug(f"{field_parameters=}")
+        logger.debug(f"{self.focus_parameters=}")
+        logger.debug(f"{self.selected_aberration=}")
+        logger.debug(f"{self.custom_mask_string=}")
+        
+        fields = self.calculator.calculate_3D_fields(basic_parameters=basic_parameters, objective_field_parameters=objective_field_parameters, focus_field_parameters=self.focus_parameters, mask_function=mask_function, progress_callback = warn)
         fields.calculate_intensity()
 
         self.field = fields
         self.PSF3D = fields.Intensity
-        for i in range(len(self.PSF3D[:,0,0])):
-            print(f"Para {i=}")
-            print(np.mean(self.PSF3D[i,:,:]))
         
     def _generate_mask_function(self):
-        if self.custom_mask:
-            self.add_custom_phase_function()
         if self._add_zernike_aberration is True:
-            return lambda rho, phi, w0,f,k : self.base_mask_function(rho, phi, w0,f,k) *  self._nm_polynomial(n=self.N, m=self.M, normalized=False)(rho, phi, w0,f,k)
+            self.selected_aberration = f'Zernike with n={self.N}, m={self.M}, weight={self.weight}'
+            return lambda rho, phi, w0,f,k : self.base_mask_function(rho, phi, w0,f,k) *  self._nm_polynomial(n=self.N, m=self.M, weight=self.weight, normalized=False)(rho, phi, w0,f,k)
         elif self._add_cylindrical_lens is True:
+            self.selected_aberration = 'None'
             return self.base_mask_function
         else:
+            self.selected_aberration = 'None'
             return self.base_mask_function
     
-    def add_slab_scalar(self, n1, thickness, alpha):
-        self.wavelength/=self.n
-        self.thickness = thickness
+    def add_interface(self, n1, axial_position):
+        self.wavelength/=self.n # TODO in a previous step it is multiplied by n. Fix
         self.n1 = n1
-        self.interface_parameters = InterfaceParameters(axial_position=0, ns=np.array((n1, self.n)), ds=np.array((np.inf, np.inf)))
-        self.interface_parameters = InterfaceParameters(axial_position=-10000, ns=np.array((1.5,1.5)), ds=np.array((np.inf,np.inf)))
-    
-    def add_custom_phase_function(self):
-        """Adds the custom mask function to the base_mask_function"""
-        aux='self.base_mask_function=lambda rho,phi,w0,f,k: '+self.custom_mask 
+        self.axial_position = axial_position
+        self.interface_parameters = InterfaceParameters(axial_position=axial_position, ns=np.array((self.n, n1)), ds=np.array((np.inf, np.inf)))
+
+    def generate_custom_mask_function(self, incident_amplitude, incident_phase):
+        """Generates self.base_mask_function as incident_amplitude*np.exp(1j*incident_phase). 
+        Called on class initialization. Default values in the init are such that the default mask function is 1
+        """
+        self.custom_mask_string = f'{incident_amplitude}*np.exp(1j*{incident_phase})' 
+        aux=f'self.base_mask_function=lambda rho,phi,w0,f,k: {incident_amplitude}*np.exp(1j*{incident_phase})' 
         exec(aux)
     
     def write_name(self, basename: str ='') -> str:
         name = '_'.join([basename,
+                        'vectorial',
                         f'NA_{self.NA:.1f}',
                         f'n_{self.n:.1f}'])
+        if self._add_zernike_aberration:
+            name = '_'.join([name,
+                            'zernike_aberration',
+                            f'N{self.N}',
+                            f'M_{self.M}',
+                            f'w_{self.weight:.1f}'])
         
-        # if all(hasattr(self, attr) for attr in ["thickness","alpha","n1"]): # slab abberation is there
-        #     name = '_'.join([name,
-        #                     f'thk_{self.thickness:.0f}',
-        #                     f'alpha_{self.alpha:.0f}',
-        #                     f'n1_{self.n1:.1f}'])
-        
-        # if all(hasattr(self, attr) for attr in ["N","M","weight"]): # zernike aberration is there
-        #     name = '_'.join([name,
-        #                     f'N{self.N}',
-        #                     f'M_{self.M}',
-        #                     f'w_{self.weight:.1f}'])
         return name
     
-    def _nm_polynomial(self, n, m, normalized=True):
+    def _nm_polynomial(self, n, m, weight, normalized=True):
         '''Return the function of the zernike polynomial'''
         def nm_normalization(n, m):
             """the norm of the zernike mode n,m in born/wolf convetion
@@ -143,9 +155,9 @@ class PyFocusSimulator:
                 radial = radial * (rho <= 3.) 
 
             if normalized:
-                prefac = 1. / nm_normalization(n, m) * 2* np.pi* self.weight
+                prefac = 1. / nm_normalization(n, m) * 2* np.pi* weight
             else:
-                prefac = 0.5 * 2* np.pi* self.weight
+                prefac = 0.5 * 2* np.pi* weight
             if m >= 0:
                 return np.exp(1j*prefac * radial * np.cos(m0 * phi))
             else:
@@ -176,12 +188,11 @@ class PyFocusSimulator:
         '''
         plot the phase a the pupil along x and y
         '''
-        import matplotlib.pyplot as plt
         fig, ax = plt.subplots(1, 2, num="Intensity at the X and Z axes", figsize=(8, 4), tight_layout=False, dpi=dpi)
         char_size = 12
         sup_title =  f'NA = {self.NA}, n = {self.n}'
-        if hasattr(self,'thickness'):
-             sup_title += f', slab thickness = {self.thickness} $\mu$m, n1 = {self.n1}, alpha = {self.alpha:.02f}'
+        if self.interface_parameters is not None:
+             sup_title += f', interface axial position = {self.axial_position} $\mu$m, n1 = {self.n1}'
         fig.suptitle(sup_title, size=char_size*0.8)
         PSF = self.PSF3D
         Nz, Ny, Nx = PSF.shape

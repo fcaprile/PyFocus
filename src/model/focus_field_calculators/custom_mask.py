@@ -18,7 +18,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
     XY_FIELD_DESCRIPTION = 'Custom Mask calculation along XY plane'
     XZ_FIELD_DESCRIPTION = 'Custom Mask calculation along XZ plane'
     
-    def calculate_3D_field(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, mask_function: callable) -> FocusFieldCalculator.FieldAtFocus3D:
+    def calculate_3D_field(self, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, mask_function: callable, progress_callback: callable = None) -> FocusFieldCalculator.FieldAtFocus3D:
         """Main function that calculates the field along a 3D space by calculating it as slices of 2D XY planes. 
         Orchestrates the steps of the calculation.
 
@@ -44,15 +44,21 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
             For more information read the corresponding dataclass
         """
         
-        custom_field_function=lambda rho, phi,w0,f,k: (gaussian_rho(w0))(rho)* mask_function(rho, phi,w0,f,k)
+        custom_field_function=lambda rho, phi,w0,f,k: mask_function(rho, phi,w0,f,k)
         ex_lens,ey_lens=self._generate_rotated_incident_field(custom_field_function, focus_field_parameters)
+        logger.debug(f"{focus_field_parameters.z_step_count=}, {focus_field_parameters.r_step_count=}")
         Ex,Ey,Ez = [np.zeros((focus_field_parameters.z_step_count, focus_field_parameters.r_step_count, focus_field_parameters.r_step_count),dtype=complex) for _ in range(3)]
         axial_positions = focus_field_parameters.z_steps * (np.arange(focus_field_parameters.z_step_count) - focus_field_parameters.z_step_count // 2)
         # axial_positions = np.linspace(-focus_field_parameters.z_range,focus_field_parameters.z_range,focus_field_parameters.z_step_count)
-        for index, axial_distance in enumerate(axial_positions):
+        if progress_callback:
+            progress_callback("Simulation with vectorial propagation model has started")
+        for index in tqdm(range(len(axial_positions)),desc='Calculating the field at each XY plane'):
+            axial_distance = axial_positions[index]
+            if progress_callback:
+                progress_callback(f"Calculating the field at z={axial_distance}nm. Do not modify the simulation parameters.")
             focus_field_parameters.z = axial_distance
-            logger.info(f"Calculating the field at z={axial_distance}nm")
-            Ex[index,:,:], Ey[index,:,:], Ez[index,:,:] = self._calculate_field_along_XY_plane(ex_lens,ey_lens, focus_field_parameters)
+            # logger.info(f"Calculating the field at z={axial_distance}nm")
+            Ex[index,:,:], Ey[index,:,:], Ez[index,:,:] = self._calculate_field_along_XY_plane(ex_lens,ey_lens, focus_field_parameters, verbose=False)
         
         return self.FieldAtFocus3D(Ex,Ey,Ez)
     
@@ -81,12 +87,12 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
                 
         custom_field_function=lambda rho, phi,w0,f,k: (gaussian_rho(w0))(rho)* mask_function(rho, phi,w0,f,k)
         ex_lens,ey_lens=self._generate_rotated_incident_field(custom_field_function, focus_field_parameters)
-        Ex,Ey,Ez = self._calculate_field_along_XZ_plane(ex_lens,ey_lens, focus_field_parameters)
-        Ex2,Ey2,Ez2 = self._calculate_field_along_XY_plane(ex_lens,ey_lens, focus_field_parameters)
+        Ex,Ey,Ez = self._calculate_field_along_XZ_plane(ex_lens,ey_lens, focus_field_parameters, verbose=True)
+        Ex2,Ey2,Ez2 = self._calculate_field_along_XY_plane(ex_lens,ey_lens, focus_field_parameters, verbose=True)
         
         return self.FieldAtFocus(Ex,Ey,Ez,Ex2,Ey2,Ez2)
     
-    def _calculate_field_along_XY_plane(self, ex_lens,ey_lens, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
+    def _calculate_field_along_XY_plane(self, ex_lens,ey_lens, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, verbose: bool=True):
         """Intermediary function to calculate the field along the XY plane, separated for modularity of the code and simplicity"""
         return self._calculate_field_along_a_plane(
             ex_lens,
@@ -99,9 +105,10 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
             focus_field_parameters.r_step_count,
             focus_field_parameters, 
             description=self.XY_FIELD_DESCRIPTION,
-            plane_to_plot=PlotPlanes.XY)
+            plane_to_plot=PlotPlanes.XY,
+            verbose=verbose)
 
-    def _calculate_field_along_XZ_plane(self, ex_lens,ey_lens, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters):
+    def _calculate_field_along_XZ_plane(self, ex_lens,ey_lens, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, verbose: bool=True):
         """Intermediary function to calculate the field along the XZ plane, separated for modularity of the code and simplicity"""
         return self._calculate_field_along_a_plane(
             ex_lens,
@@ -114,7 +121,33 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
             focus_field_parameters.z_step_count,
             focus_field_parameters, 
             description=self.XZ_FIELD_DESCRIPTION,
-            plane_to_plot=PlotPlanes.XZ)
+            plane_to_plot=PlotPlanes.XZ,
+            verbose=verbose)
+    
+    def _calculate_field_along_a_plane(self, ex_lens, ey_lens, horizontal_max, vertical_max, horizontal_0, vertical_0, horizonal_steps, vertical_steps, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes, verbose: bool=True):
+        """Parent function that delegates the calculation to the corresponding functions.
+        Returns:
+            The 3 matrixes of each component of the field 
+        """
+                
+        horizontal_values, vertical_values = self._calculate_cartesian_coordinates(horizontal_max, vertical_max, horizontal_0, vertical_0, horizonal_steps, vertical_steps)
+        # logger.debug("Calculating the field algong a plane...")
+        # logger.debug(f"{focus_field_parameters.z=}")
+        # logger.debug(f"{focus_field_parameters.interface_parameters=}")
+        # logger.debug(f"{horizontal_max=}")
+        # logger.debug(f"{vertical_max=}")
+        # logger.debug(f"{horizontal_0=}")
+        # logger.debug(f"{vertical_0=}")
+        # logger.debug(f"{horizonal_steps=}")
+        # logger.debug(f"{vertical_steps=}")
+        if focus_field_parameters.interface_parameters is None:
+            factors = self._calculate_factors_without_interface(ex_lens, ey_lens, focus_field_parameters)
+            ex, ey, ez = self._integrate_without_interface(horizontal_values, vertical_values, factors, focus_field_parameters, description, plane_to_plot, verbose=verbose)
+        else:
+            factors = self._calculate_factors_with_interface(ex_lens, ey_lens, focus_field_parameters)
+            ex, ey, ez = self._integrate_with_interface(horizontal_values, vertical_values, factors, focus_field_parameters, description, plane_to_plot, verbose=verbose)
+                
+        return ex,ey,ez
     
     def _calculate_2D_trapezoidal_method_weight(self, alpha, divisions_theta, divisions_phi):
         """Calculates the numerical weights used in the numerical integration
@@ -177,28 +210,28 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
 
         cos_theta_kz=cos_theta*kz
         
-        logger.debug("Calculating intermediary factors:")
-        logger.debug("")
-        logger.debug("Input:")
-        parameters = (ex_lens,ey_lens,focus_field_parameters.alpha,focus_field_parameters.h,focus_field_parameters.field_parameters.wavelength,focus_field_parameters.z,focus_field_parameters.x_steps,focus_field_parameters.custom_mask_parameters.divisions_theta,focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.x_range)
-        parameter_names = ("ex_lens","ey_lens","alpha","h","wavelength","zp0","resolution_x","divisions_theta","divisions_phi","x_range")
-        for parameter, name in zip(parameters, parameter_names):
-            if isinstance(parameter, float) or isinstance(parameter, bool) or isinstance(parameter, int) or isinstance(parameter, np.int64) or len(parameter) < 5:
-                logger.debug(f"{name}: {parameter}")
-            else:
-                logger.debug(f"np.mean({name}): {np.mean(parameter)}")
-        logger.debug("")            
-        logger.debug("Output:")
-        logger.debug(f"{np.mean(Axx)=}")
-        logger.debug(f"{np.mean(Axy)=}")
-        logger.debug(f"{np.mean(Axz)=}")
-        logger.debug(f"{np.mean(Ayx)=}")
-        logger.debug(f"{np.mean(Ayy)=}")
-        logger.debug(f"{np.mean(Ayz)=}")
-        logger.debug(f"{np.mean(cos_theta_kz)=}")
-        logger.debug(f"{np.mean(cos_theta)=}")
-        logger.debug(f"{np.mean(sin_theta)=}")
-        logger.debug(f"{np.mean(phi)=}")
+        # logger.debug("Calculating intermediary factors:")
+        # logger.debug("")
+        # logger.debug("Input:")
+        # parameters = (ex_lens,ey_lens,focus_field_parameters.alpha,focus_field_parameters.h,focus_field_parameters.field_parameters.wavelength,focus_field_parameters.z,focus_field_parameters.x_steps,focus_field_parameters.custom_mask_parameters.divisions_theta,focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.x_range)
+        # parameter_names = ("ex_lens","ey_lens","alpha","h","wavelength","zp0","resolution_x","divisions_theta","divisions_phi","x_range")
+        # for parameter, name in zip(parameters, parameter_names):
+        #     if isinstance(parameter, float) or isinstance(parameter, bool) or isinstance(parameter, int) or isinstance(parameter, np.int64) or isinstance(parameter, np.int32) or len(parameter) < 5:
+        #         logger.debug(f"{name}: {parameter}")
+        #     else:
+        #         logger.debug(f"np.mean({name}): {np.mean(parameter)}")
+        # logger.debug("")            
+        # logger.debug("Output:")
+        # logger.debug(f"{np.mean(Axx)=}")
+        # logger.debug(f"{np.mean(Axy)=}")
+        # logger.debug(f"{np.mean(Axz)=}")
+        # logger.debug(f"{np.mean(Ayx)=}")
+        # logger.debug(f"{np.mean(Ayy)=}")
+        # logger.debug(f"{np.mean(Ayz)=}")
+        # logger.debug(f"{np.mean(cos_theta_kz)=}")
+        # logger.debug(f"{np.mean(cos_theta)=}")
+        # logger.debug(f"{np.mean(sin_theta)=}")
+        # logger.debug(f"{np.mean(phi)=}")
         
         return Axx, Axy, Axz, Ayx, Ayy, Ayz, cos_theta_kz, cos_theta, sin_theta, phi
     
@@ -215,24 +248,24 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         sin_phi=np.sin(phi)
         sin_phi_square=sin_phi**2
         
-        prefactor_general=cos_theta_sqrt*sin_theta
-        prefactor_x=prefactor_general*(cos_theta+(1-cos_theta)*sin_phi_square)
-        prefactor_y=prefactor_general*(1-cos_theta)*cos_phi*sin_phi
-        prefactor_z=prefactor_general*(-sin_theta*cos_phi)
-        
-        Axx=prefactor_x*ex_lens*weight_trapezoid
-        Axy=prefactor_y*ex_lens*weight_trapezoid
-        Axz=prefactor_z*ex_lens*weight_trapezoid
-
-        Ayx=prefactor_y*ey_lens*weight_trapezoid
-        Ayy=-prefactor_x*ey_lens*weight_trapezoid
-        Ayz=prefactor_z*ey_lens*weight_trapezoid
-        
         n1 = focus_field_parameters.interface_parameters.ns[0]
         n2 = focus_field_parameters.interface_parameters.ns[-1]
         k1=2*np.pi/focus_field_parameters.field_parameters.wavelength*n1
         k2=k1*n2/n1
+
+        prefactor_general=cos_theta_sqrt*sin_theta*k1
+        prefactor_x=prefactor_general*(cos_theta+(1-cos_theta)*sin_phi_square)
+        prefactor_y=prefactor_general*(1-cos_theta)*cos_phi*sin_phi
+        prefactor_z=prefactor_general*(-sin_theta*cos_phi)
         
+        Axx=-prefactor_x*ex_lens*weight_trapezoid
+        Axy=-prefactor_y*ex_lens*weight_trapezoid
+        Axz=-prefactor_z*ex_lens*weight_trapezoid
+
+        Ayx=-prefactor_y*ey_lens*weight_trapezoid
+        Ayy=prefactor_x*ey_lens*weight_trapezoid
+        Ayz=-prefactor_z*ey_lens*weight_trapezoid
+                
         #Calculus of the refraction and transmition coeficients
         rs_i_theta=np.zeros((focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.custom_mask_parameters.divisions_theta),dtype='complex')
         rp_i_theta=np.copy(rs_i_theta)
@@ -248,8 +281,8 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
             tp_t_theta[:,i]=tmm_p['t']
         
         #For integration of the reflected and transmited fields (Er and Et):
-        prefactor_x_r=prefactor_general*(rs_i_theta*sin_phi_square-rp_i_theta*cos_phi**2*cos_theta)
-        prefactor_y_r=prefactor_general*(-rs_i_theta-rp_i_theta*cos_theta)*cos_phi*sin_phi
+        prefactor_x_r=-prefactor_general*(-rs_i_theta*sin_phi_square+rp_i_theta*cos_phi**2*cos_theta)
+        prefactor_y_r=-prefactor_general*(rs_i_theta+rp_i_theta*cos_theta)*cos_phi*sin_phi
         prefactor_z_r=prefactor_general*rp_i_theta*(-sin_theta*cos_phi)
         
         phase_z_r=np.exp(2*1j*k1*np.cos(theta)*focus_field_parameters.interface_parameters.axial_position)
@@ -287,65 +320,40 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         Ayy_t=phase_z_t*prefactor_x_t*ey_lens*weight_trapezoid
         Ayz_t=phase_z_t*prefactor_z_t*ey_lens*weight_trapezoid
         
-        logger.debug("Calculating intermediary factors:")
-        logger.debug("")
-        logger.debug("Input:")
-        parameters = (n1,n2,focus_field_parameters.interface_parameters.ns,focus_field_parameters.interface_parameters.ds,ex_lens,ey_lens,focus_field_parameters.alpha,focus_field_parameters.h,focus_field_parameters.field_parameters.wavelength,focus_field_parameters.interface_parameters.axial_position,focus_field_parameters.z,focus_field_parameters.x_steps,focus_field_parameters.custom_mask_parameters.divisions_theta,focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.x_range)
-        parameter_names = ("n1","n2","n_list","d_list","ex_lens","ey_lens","alpha","h","wavelength","z_int","zp0","resolution_x","divisions_theta","divisions_phi","x_range")
-        for parameter, name in zip(parameters, parameter_names):
-            if isinstance(parameter, float) or isinstance(parameter, bool) or isinstance(parameter, int) or isinstance(parameter, np.int64) or len(parameter) < 5:
-                logger.debug(f"{name}: {parameter}")
-            else:
-                logger.debug(f"np.mean({name}): {np.mean(parameter)}")
-        logger.debug("")            
-        logger.debug("Output:")
-        logger.debug(f"{np.mean(prefactor_x_r)=}")
-        logger.debug(f"{np.mean(prefactor_y_r)=}")
-        logger.debug(f"{np.mean(prefactor_z_r)=}")
-        logger.debug(f"{np.mean(phase_z_r)=}")
-        logger.debug(f"{np.mean(Axx_r)=}")
-        logger.debug(f"{np.mean(Axy_r)=}")
-        logger.debug(f"{np.mean(Axz_r)=}")
-        logger.debug(f"{np.mean(Ayx_r)=}")
-        logger.debug(f"{np.mean(Ayy_r)=}")
-        logger.debug(f"{np.mean(Ayz_r)=}")
-        logger.debug(f"{np.mean(theta_values_complex)=}")
-        logger.debug(f"{np.mean(phi_values_complex)=}")
-        logger.debug(f"{np.mean(Axx_t)=}")
-        logger.debug(f"{np.mean(Axy_t)=}")
-        logger.debug(f"{np.mean(Axz_t)=}")
-        logger.debug(f"{np.mean(Ayx_t)=}")
-        logger.debug(f"{np.mean(Ayy_t)=}")
-        logger.debug(f"{np.mean(Ayz_t)=}")
+        # logger.debug("Calculating intermediary factors:")
+        # logger.debug("")
+        # logger.debug("Input:")
+        # parameters = (n1,n2,focus_field_parameters.interface_parameters.ns,focus_field_parameters.interface_parameters.ds,ex_lens,ey_lens,focus_field_parameters.alpha,focus_field_parameters.h,focus_field_parameters.field_parameters.wavelength,focus_field_parameters.interface_parameters.axial_position,focus_field_parameters.z,focus_field_parameters.x_steps,focus_field_parameters.custom_mask_parameters.divisions_theta,focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.x_range)
+        # parameter_names = ("n1","n2","n_list","d_list","ex_lens","ey_lens","alpha","h","wavelength","z_int","zp0","resolution_x","divisions_theta","divisions_phi","x_range")
+        # for parameter, name in zip(parameters, parameter_names):
+        #     if isinstance(parameter, float) or isinstance(parameter, bool) or isinstance(parameter, int) or isinstance(parameter, np.int64) or isinstance(parameter, np.int32) or len(parameter) < 5:
+        #         logger.debug(f"{name}: {parameter}")
+        #     else:
+        #         logger.debug(f"np.mean({name}): {np.mean(parameter)}")
+        # logger.debug("")            
+        # logger.debug("Output:")
+        # logger.debug(f"{np.mean(prefactor_x_r)=}")
+        # logger.debug(f"{np.mean(prefactor_y_r)=}")
+        # logger.debug(f"{np.mean(prefactor_z_r)=}")
+        # logger.debug(f"{np.mean(phase_z_r)=}")
+        # logger.debug(f"{np.mean(Axx_r)=}")
+        # logger.debug(f"{np.mean(Axy_r)=}")
+        # logger.debug(f"{np.mean(Axz_r)=}")
+        # logger.debug(f"{np.mean(Ayx_r)=}")
+        # logger.debug(f"{np.mean(Ayy_r)=}")
+        # logger.debug(f"{np.mean(Ayz_r)=}")
+        # logger.debug(f"{np.mean(theta_values_complex)=}")
+        # logger.debug(f"{np.mean(phi_values_complex)=}")
+        # logger.debug(f"{np.mean(Axx_t)=}")
+        # logger.debug(f"{np.mean(Axy_t)=}")
+        # logger.debug(f"{np.mean(Axz_t)=}")
+        # logger.debug(f"{np.mean(Ayx_t)=}")
+        # logger.debug(f"{np.mean(Ayy_t)=}")
+        # logger.debug(f"{np.mean(Ayz_t)=}")
         
         return Axx, Axy, Axz, Ayx, Ayy, Ayz, Axx_r, Axy_r, Axz_r, Ayx_r, Ayy_r, Ayz_r, Axx_t, Axy_t, Axz_t, Ayx_t, Ayy_t, Ayz_t, cos_theta, cos_theta_t, sin_theta, phi, k1, k2
     
-    def _calculate_field_along_a_plane(self, ex_lens, ey_lens, horizontal_max, vertical_max, horizontal_0, vertical_0, horizonal_steps, vertical_steps, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes):
-        """Parent function that delegates the calculation to the corresponding functions.
-        Returns:
-            The 3 matrixes of each component of the field 
-        """
-                
-        horizontal_values, vertical_values = self._calculate_cartesian_coordinates(horizontal_max, vertical_max, horizontal_0, vertical_0, horizonal_steps, vertical_steps)
-        logger.debug("Calculating the field algong a plane...")
-        logger.debug(f"{focus_field_parameters.z=}")
-        logger.debug(f"{focus_field_parameters.interface_parameters=}")
-        logger.debug(f"{horizontal_max=}")
-        logger.debug(f"{vertical_max=}")
-        logger.debug(f"{horizontal_0=}")
-        logger.debug(f"{vertical_0=}")
-        logger.debug(f"{horizonal_steps=}")
-        logger.debug(f"{vertical_steps=}")
-        if focus_field_parameters.interface_parameters is None:
-            factors = self._calculate_factors_without_interface(ex_lens, ey_lens, focus_field_parameters)
-            ex, ey, ez = self._integrate_without_interface(horizontal_values, vertical_values, factors, focus_field_parameters, description, plane_to_plot)
-        else:
-            factors = self._calculate_factors_with_interface(ex_lens, ey_lens, focus_field_parameters)
-            ex, ey, ez = self._integrate_with_interface(horizontal_values, vertical_values, factors, focus_field_parameters, description, plane_to_plot)
-                
-        return ex,ey,ez
-    
-    def _integrate_without_interface(self, horizontal_values: list[int], vertical_values: list[int], factors: list[any], focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes):
+    def _integrate_without_interface(self, horizontal_values: list[int], vertical_values: list[int], factors: list[any], focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes, verbose: bool=True):
         """Performs the numerical integration for the simmulation without an interface (a tipical simulation)
 
         Args:
@@ -362,9 +370,37 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         Returns:
             The 3 matrixes of each component of the field 
         """
-        logger.debug("Integrating without interface...")
         Axx, Axy, Axz, Ayx, Ayy, Ayz, cos_theta_kz, cos_theta, sin_theta, phi = factors
         ex, ey, ez = self._initialize_fields(len(vertical_values), len(horizontal_values))
+        def _integrate_XZ_or_YZ(j):
+            zp0=vertical_values[j]
+            for i,x in enumerate(horizontal_values):
+                rhop=np.abs(x)
+                phip=np.arctan2(0,x)
+                kr=rhop*2*np.pi/focus_field_parameters.field_parameters.wavelength
+                kz=zp0*2*np.pi/focus_field_parameters.field_parameters.wavelength
+                sin_theta_kr=sin_theta*kr
+                cos_theta_kz=cos_theta*kz
+                phase_inc_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip) + cos_theta_kz))#phase for the X incident component
+                phase_inc_y=np.exp(1j*(-sin_theta_kr*np.sin(phi - phip) + cos_theta_kz))#phase for the Y incident component
+                #now, the integration is made as the sum of the value of the integrand in each position of phi,theta:
+                ex[j,i]=np.sum(Axx*phase_inc_x)+np.sum(Ayx*phase_inc_y)
+                ey[j,i]=np.sum(Axy*phase_inc_x)+np.sum(Ayy*phase_inc_y)
+                ez[j,i]=np.sum(Axz*phase_inc_x)+np.sum(Ayz*phase_inc_y)
+        
+        def _integrate_XY(i):
+            x=horizontal_values[i]
+            for j,y in enumerate(vertical_values):
+                rhop=(x**2+y**2)**0.5
+                phip=np.arctan2(y,x)
+                kr=rhop*2*np.pi/focus_field_parameters.field_parameters.wavelength
+                sin_theta_kr=sin_theta*kr
+                phase_inc_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip) + cos_theta_kz))#phase for the X incident component
+                phase_inc_y=np.exp(1j*(-sin_theta_kr*np.sin(phi - phip) + cos_theta_kz))#phase for the Y incident component
+                #now, the integration is made as the sum of the value of the integrand in each position of phi,theta:
+                ex[j,i]=np.sum(Axx*phase_inc_x)+np.sum(Ayx*phase_inc_y)
+                ey[j,i]=np.sum(Axy*phase_inc_x)+np.sum(Ayy*phase_inc_y)
+                ez[j,i]=np.sum(Axz*phase_inc_x)+np.sum(Ayz*phase_inc_y)
         
         #Para mejorar la velocidad del calculo:
         #TODO prearmar los valores de rhop, phip, kr, sin_theta_kr
@@ -372,36 +408,19 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         #phip=np.arctan2(y_values,x_values)
         #now for each position in which i calculate the field i do the integration
         if plane_to_plot == PlotPlanes.XZ or plane_to_plot == PlotPlanes.YZ:
-            for j in tqdm(range(focus_field_parameters.z_step_count),desc=description):
-                zp0=vertical_values[j]
-                for i,x in enumerate(horizontal_values):
-                    rhop=np.abs(x)
-                    phip=np.arctan2(0,x)
-                    kr=rhop*2*np.pi/focus_field_parameters.field_parameters.wavelength
-                    kz=zp0*2*np.pi/focus_field_parameters.field_parameters.wavelength
-                    sin_theta_kr=sin_theta*kr
-                    cos_theta_kz=cos_theta*kz
-                    phase_inc_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip) + cos_theta_kz))#phase for the X incident component
-                    phase_inc_y=np.exp(1j*(-sin_theta_kr*np.sin(phi - phip) + cos_theta_kz))#phase for the Y incident component
-                    #now, the integration is made as the sum of the value of the integrand in each position of phi,theta:
-                    ex[j,i]=np.sum(Axx*phase_inc_x)+np.sum(Ayx*phase_inc_y)
-                    ey[j,i]=np.sum(Axy*phase_inc_x)+np.sum(Ayy*phase_inc_y)
-                    ez[j,i]=np.sum(Axz*phase_inc_x)+np.sum(Ayz*phase_inc_y)
-        
+            if verbose == True:
+                for j in tqdm(range(focus_field_parameters.z_step_count),desc=description):
+                    _integrate_XZ_or_YZ(j)
+            else:
+                for j in range(focus_field_parameters.z_step_count):
+                    _integrate_XZ_or_YZ(j)
         elif plane_to_plot == PlotPlanes.XY:
-            for i in tqdm(range(focus_field_parameters.r_step_count),desc=description):
-                x=horizontal_values[i]
-                for j,y in enumerate(vertical_values):
-                    rhop=(x**2+y**2)**0.5
-                    phip=np.arctan2(y,x)
-                    kr=rhop*2*np.pi/focus_field_parameters.field_parameters.wavelength
-                    sin_theta_kr=sin_theta*kr
-                    phase_inc_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip) + cos_theta_kz))#phase for the X incident component
-                    phase_inc_y=np.exp(1j*(-sin_theta_kr*np.sin(phi - phip) + cos_theta_kz))#phase for the Y incident component
-                    #now, the integration is made as the sum of the value of the integrand in each position of phi,theta:
-                    ex[j,i]=np.sum(Axx*phase_inc_x)+np.sum(Ayx*phase_inc_y)
-                    ey[j,i]=np.sum(Axy*phase_inc_x)+np.sum(Ayy*phase_inc_y)
-                    ez[j,i]=np.sum(Axz*phase_inc_x)+np.sum(Ayz*phase_inc_y)
+            if verbose == True:
+                for i in tqdm(range(focus_field_parameters.r_step_count),desc=description):
+                    _integrate_XY(i)
+            else:
+                for i in range(focus_field_parameters.r_step_count):
+                    _integrate_XY(i)
         else:
             raise NotImplementedError
         
@@ -411,7 +430,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         
         return ex, ey, ez
 
-    def _integrate_with_interface(self, horizontal_values: list[int], vertical_values: list[int], factors: list[any], focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes):
+    def _integrate_with_interface(self, horizontal_values: list[int], vertical_values: list[int], factors: list[any], focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes, verbose: bool=True):
         """Performs the numerical integration for the simmulation with an interface
 
         Args:
@@ -428,74 +447,87 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         Returns:
             The 3 matrixes of each component of the field 
         """
-        logger.debug("Integrating with interface...")
         Axx, Axy, Axz, Ayx, Ayy, Ayz, Axx_r, Axy_r, Axz_r, Ayx_r, Ayy_r, Ayz_r, Axx_t, Axy_t, Axz_t, Ayx_t, Ayy_t, Ayz_t, cos_theta, cos_theta_t, sin_theta, phi, k1, k2 = factors
         ex, ey, ez = self._initialize_fields(len(vertical_values), len(horizontal_values))
+
+        def _integrate_XZ_or_YZ(j):
+            zp0=vertical_values[j]
+            for i,x in enumerate(horizontal_values):
+                rhop=np.abs(x)
+                phip=np.arctan2(0,x)
+                kr=rhop*k1
+                sin_theta_kr=sin_theta*kr       #because of snell's law, this factor will be the same for the reflected and transmited fields
+                
+                phase_rho_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip)))
+                phase_rho_y=np.exp(1j*(-sin_theta_kr*np.sin(phi - phip)))
+                
+                if focus_field_parameters.interface_parameters.axial_position<=zp0:
+                    kz_t=zp0*k2
+                    phase_kz_t=np.exp(1j*cos_theta_t*kz_t)
+                    phase_inc_x=phase_rho_x*phase_kz_t      #phase for the X incident component of the transmited field
+                    phase_inc_y=phase_rho_y*phase_kz_t      #phase for the Y incident component of the transmited field
+                    ex[j,i]=np.sum(Axx_t*phase_inc_x)+np.sum(Ayx_t*phase_inc_y)
+                    ey[j,i]=np.sum(Axy_t*phase_inc_x)+np.sum(Ayy_t*phase_inc_y)
+                    ez[j,i]=np.sum(Axz_t*phase_inc_x)+np.sum(Ayz_t*phase_inc_y)
+                else:
+                    kz=zp0*k1
+                    phase_kz=np.exp(1j*cos_theta*kz)
+                    phase_kz_r=np.exp(-1j*cos_theta*kz)
+                    phase_inc_x=phase_rho_x*phase_kz        #phase for the X incident component of the transmited field
+                    phase_inc_y=phase_rho_y*phase_kz        #phase for the Y incident component of the transmited field
+                    phase_inc_x_r=phase_rho_x*phase_kz_r    #phase for the X incident component of the reflected field
+                    phase_inc_y_r=phase_rho_y*phase_kz_r    #phase for the Y incident component of the reflected field
+                    ex[j,i]=np.sum(Axx*phase_inc_x+Axx_r*phase_inc_x_r)+np.sum(Ayx*phase_inc_y+Ayx_r*phase_inc_y_r)
+                    ey[j,i]=np.sum(Axy*phase_inc_x+Axy_r*phase_inc_x_r)+np.sum(Ayy*phase_inc_y+Ayy_r*phase_inc_y_r)
+                    ez[j,i]=np.sum(Axz*phase_inc_x+Axz_r*phase_inc_x_r)+np.sum(Ayz*phase_inc_y+Ayz_r*phase_inc_y_r)
+
+        def _integrate_XY(i):
+            x=horizontal_values[i]
+            for j,y in enumerate(vertical_values):
+                rhop=(x**2+y**2)**0.5
+                phip=np.arctan2(y,x)
+                kr=rhop*k1
+                sin_theta_kr=sin_theta*kr
+                
+                phase_rho_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip)))
+                phase_rho_y=np.exp(1j*(-sin_theta_kr*np.sin(phi - phip)))
+                
+                if focus_field_parameters.interface_parameters.axial_position<=zp0:
+                    phase_inc_x=phase_rho_x*phase_kz_t      #phase for the X incident component of the transmited field
+                    phase_inc_y=phase_rho_y*phase_kz_t      #phase for the Y incident component of the transmited field
+                    ex[j,i]=np.sum(Axx_t*phase_inc_x)+np.sum(Ayx_t*phase_inc_y)
+                    ey[j,i]=np.sum(Axy_t*phase_inc_x)+np.sum(Ayy_t*phase_inc_y)
+                    ez[j,i]=np.sum(Axz_t*phase_inc_x)+np.sum(Ayz_t*phase_inc_y)
+                else:
+                    phase_inc_x=phase_rho_x*phase_kz        #phase for the X incident component of the transmited field
+                    phase_inc_y=phase_rho_y*phase_kz        #phase for the Y incident component of the transmited field
+                    phase_inc_x_r=phase_rho_x*phase_kz_r    #phase for the X incident component of the reflected field
+                    phase_inc_y_r=phase_rho_y*phase_kz_r    #phase for the Y incident component of the reflected field
+                    ex[j,i]=np.sum(Axx*phase_inc_x+Axx_r*phase_inc_x_r)+np.sum(Ayx*phase_inc_y+Ayx_r*phase_inc_y_r)
+                    ey[j,i]=np.sum(Axy*phase_inc_x+Axy_r*phase_inc_x_r)+np.sum(Ayy*phase_inc_y+Ayy_r*phase_inc_y_r)
+                    ez[j,i]=np.sum(Axz*phase_inc_x+Axz_r*phase_inc_x_r)+np.sum(Ayz*phase_inc_y+Ayz_r*phase_inc_y_r)
+
         if plane_to_plot == PlotPlanes.XZ or plane_to_plot == PlotPlanes.YZ:
-            for j in tqdm(range(focus_field_parameters.z_step_count),desc=description):
-                zp0=vertical_values[j]
-                for i,x in enumerate(horizontal_values):
-                    rhop=np.abs(x)
-                    phip=np.arctan2(0,x)
-                    kr=rhop*k1
-                    sin_theta_kr=sin_theta*kr       #because of snell's law, this factor will be the same for the reflected and transmited fields
-                    
-                    phase_rho_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip)))
-                    phase_rho_y=np.exp(1j*(-sin_theta_kr*np.sin(phi - phip)))
-                    
-                    if focus_field_parameters.interface_parameters.axial_position<=zp0:
-                        kz_t=zp0*k2
-                        phase_kz_t=np.exp(1j*cos_theta_t*kz_t)
-                        phase_inc_x=phase_rho_x*phase_kz_t      #phase for the X incident component of the transmited field
-                        phase_inc_y=phase_rho_y*phase_kz_t      #phase for the Y incident component of the transmited field
-                        ex[j,i]=np.sum(Axx_t*phase_inc_x)+np.sum(Ayx_t*phase_inc_y)
-                        ey[j,i]=np.sum(Axy_t*phase_inc_x)+np.sum(Ayy_t*phase_inc_y)
-                        ez[j,i]=np.sum(Axz_t*phase_inc_x)+np.sum(Ayz_t*phase_inc_y)
-                    else:
-                        kz=zp0*k1
-                        phase_kz=np.exp(1j*cos_theta*kz)
-                        phase_kz_r=np.exp(-1j*cos_theta*kz)
-                        phase_inc_x=phase_rho_x*phase_kz        #phase for the X incident component of the transmited field
-                        phase_inc_y=phase_rho_y*phase_kz        #phase for the Y incident component of the transmited field
-                        phase_inc_x_r=phase_rho_x*phase_kz_r    #phase for the X incident component of the reflected field
-                        phase_inc_y_r=phase_rho_y*phase_kz_r    #phase for the Y incident component of the reflected field
-                        ex[j,i]=np.sum(Axx*phase_inc_x+Axx_r*phase_inc_x_r)+np.sum(Ayx*phase_inc_y+Ayx_r*phase_inc_y_r)
-                        ey[j,i]=np.sum(Axy*phase_inc_x+Axy_r*phase_inc_x_r)+np.sum(Ayy*phase_inc_y+Ayy_r*phase_inc_y_r)
-                        ez[j,i]=np.sum(Axz*phase_inc_x+Axz_r*phase_inc_x_r)+np.sum(Ayz*phase_inc_y+Ayz_r*phase_inc_y_r)
-        
+            if verbose == True:
+                for j in tqdm(range(focus_field_parameters.z_step_count),desc=description):
+                    _integrate_XZ_or_YZ(j)
+            else:
+                for j in range(focus_field_parameters.z_step_count):
+                    _integrate_XZ_or_YZ(j)
         elif plane_to_plot == PlotPlanes.XY:
             zp0 = focus_field_parameters.z
             kz=zp0*k1
+            kz_r=zp0*k1
             kz_t=zp0*k2
             phase_kz=np.exp(1j*cos_theta*kz)
+            phase_kz_r=np.exp(-1j*cos_theta*kz_r)
             phase_kz_t=np.exp(1j*cos_theta_t*kz_t)
-            logger.debug(f"{np.mean(phase_kz_t)=}")
-            phase_kz_r=np.exp(-1j*cos_theta*kz)
-            for i in tqdm(range(focus_field_parameters.r_step_count),desc=description):
-                x=horizontal_values[i]
-                for j,y in enumerate(vertical_values):
-                    rhop=(x**2+y**2)**0.5
-                    phip=np.arctan2(y,x)
-                    kr=rhop*k1
-                    sin_theta_kr=sin_theta*kr
-                    
-                    phase_rho_x=np.exp(1j*(sin_theta_kr*np.cos(phi - phip)))
-                    phase_rho_y=np.exp(1j*(-sin_theta_kr*np.sin(phi - phip)))
-                    
-                    if focus_field_parameters.interface_parameters.axial_position<=zp0:
-                        phase_inc_x=phase_rho_x*phase_kz_t      #phase for the X incident component of the transmited field
-                        phase_inc_y=phase_rho_y*phase_kz_t      #phase for the Y incident component of the transmited field
-                        ex[j,i]=np.sum(Axx_t*phase_inc_x)+np.sum(Ayx_t*phase_inc_y)
-                        ey[j,i]=np.sum(Axy_t*phase_inc_x)+np.sum(Ayy_t*phase_inc_y)
-                        ez[j,i]=np.sum(Axz_t*phase_inc_x)+np.sum(Ayz_t*phase_inc_y)
-                    else:
-                        phase_inc_x=phase_rho_x*phase_kz        #phase for the X incident component of the transmited field
-                        phase_inc_y=phase_rho_y*phase_kz        #phase for the Y incident component of the transmited field
-                        phase_inc_x_r=phase_rho_x*phase_kz_r    #phase for the X incident component of the reflected field
-                        phase_inc_y_r=phase_rho_y*phase_kz_r    #phase for the Y incident component of the reflected field
-                        ex[j,i]=np.sum(Axx*phase_inc_x+Axx_r*phase_inc_x_r)+np.sum(Ayx*phase_inc_y+Ayx_r*phase_inc_y_r)
-                        ey[j,i]=np.sum(Axy*phase_inc_x+Axy_r*phase_inc_x_r)+np.sum(Ayy*phase_inc_y+Ayy_r*phase_inc_y_r)
-                        ez[j,i]=np.sum(Axz*phase_inc_x+Axz_r*phase_inc_x_r)+np.sum(Ayz*phase_inc_y+Ayz_r*phase_inc_y_r)
+            if verbose == True:
+                for i in tqdm(range(focus_field_parameters.r_step_count),desc=description):
+                    _integrate_XY(i)
+            else:
+                for i in range(focus_field_parameters.r_step_count):
+                    _integrate_XY(i)
         else:
             raise NotImplementedError
                 
@@ -536,6 +568,8 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
 
         theta_values=np.linspace(0,focus_field_parameters.alpha,focus_field_parameters.custom_mask_parameters.divisions_theta)  #divisions of theta in which the trapezoidal 2D integration is done
         rho_values=np.sin(theta_values)*focus_field_parameters.f              #given by the sine's law
+        # logger.debug(f"{min(rho_values)=}")
+        # logger.debug(f"{max(rho_values)=}")
         phi_values_x=np.linspace(0,2*np.pi,focus_field_parameters.custom_mask_parameters.divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
         phi_values_y=np.linspace(np.pi/2,5*np.pi/2,focus_field_parameters.custom_mask_parameters.divisions_phi)   #divisions of phi in which the trapezoidal 2D integration is done
         for i,phi in enumerate(phi_values_x):
@@ -549,7 +583,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         ex_lens*=np.cos(focus_field_parameters.field_parameters.polarization.gamma)*focus_field_parameters.field_parameters.I_0**0.5
         ey_lens*=np.sin(focus_field_parameters.field_parameters.polarization.gamma)*np.exp(1j*focus_field_parameters.field_parameters.polarization.beta)*focus_field_parameters.field_parameters.I_0**0.5
         
-        # logger.debug("Generating the field inciding on the lens:")
+        logger.debug("Generating the field inciding on the lens...")
         # logger.debug("Input:")
         # parameters = (focus_field_parameters.alpha,focus_field_parameters.f,focus_field_parameters.custom_mask_parameters.divisions_phi,focus_field_parameters.custom_mask_parameters.divisions_theta,focus_field_parameters.field_parameters.polarization.gamma,focus_field_parameters.field_parameters.polarization.beta,focus_field_parameters.field_parameters.w0,focus_field_parameters.field_parameters.I_0,focus_field_parameters.field_parameters.wavelength)
         # parameter_names = ("alpha","f","divisions_phi","divisions_theta","gamma","beta","w0","I0","wavelength")
