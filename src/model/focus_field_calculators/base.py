@@ -4,7 +4,7 @@ from pydantic import BaseModel, StrictFloat, StrictInt
 from ...custom_typing import Matrix, Matrix3D
 
 import functools
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 import numpy as np
 from ...equations.complex_quadrature import complex_quadrature
 from tqdm import tqdm
@@ -18,12 +18,12 @@ class FocusFieldCalculator(ABC):
     
     @dataclass
     class FieldAtFocus:
-        Ex_XZ: Matrix | None = None # Ex component at the XZ plane
-        Ey_XZ: Matrix | None = None # Ey component at the XZ plane
-        Ez_XZ: Matrix | None = None # Ez component at the XZ plane
-        Ex_XY: Matrix | None = None # Ex component at the XY plane
-        Ey_XY: Matrix | None = None # Ey component at the XY plane
-        Ez_XY: Matrix | None = None # Ez component at the XY plane
+        Ex_XZ: Optional[Matrix] = None # Ex component at the XZ plane
+        Ey_XZ: Optional[Matrix] = None # Ey component at the XZ plane
+        Ez_XZ: Optional[Matrix] = None # Ez component at the XZ plane
+        Ex_XY: Optional[Matrix] = None # Ex component at the XY plane
+        Ey_XY: Optional[Matrix] = None # Ey component at the XY plane
+        Ez_XY: Optional[Matrix] = None # Ez component at the XY plane
         
         def calculate_intensity(self):
             self.Intensity_XZ = np.abs(self.Ex_XZ)**2+np.abs(self.Ey_XZ)**2+np.abs(self.Ez_XZ)**2
@@ -36,9 +36,9 @@ class FocusFieldCalculator(ABC):
     class FieldAtFocus3D:
         """Field near the focus. Contains the 3 components and the intensity. 
         The positions of the matrix are given by: field[Nz, Ny, Nx] with Nz, Ny, Nx the index of the positions where the field was calculated for Z, Y, X"""
-        Ex: Matrix3D | None = None # Ex component
-        Ey: Matrix3D | None = None # Ey component
-        Ez: Matrix3D | None = None # Ez component
+        Ex: Optional[Matrix3D] = None # Ex component
+        Ey: Optional[Matrix3D] = None # Ey component
+        Ez: Optional[Matrix3D] = None # Ez component
         
         def calculate_intensity(self):
             self.Intensity = np.abs(self.Ex)**2+np.abs(self.Ey)**2+np.abs(self.Ez)**2
@@ -48,20 +48,20 @@ class FocusFieldCalculator(ABC):
     
     class FocusFieldParameters(BaseModel):
         '''Parameters for the simulation of the field near the focus'''
-        NA: StrictFloat | StrictInt # Numerical aperture
-        n: StrictFloat | StrictInt # Refraction index for the medium of the optical system.
-        h: StrictFloat | StrictInt # Radius of aperture of the objective lens
-        f: StrictFloat | StrictInt = 0 # Focal distance
+        NA: Union[StrictFloat, StrictInt] # Numerical aperture
+        n: Union[StrictFloat, StrictInt] # Refraction index for the medium of the optical system.
+        h: Union[StrictFloat, StrictInt] # Radius of aperture of the objective lens
+        f: Union[StrictFloat, StrictInt] = 0 # Focal distance
         
-        x_steps: StrictFloat | StrictInt # Resolution in the X or Y coordinate for the focused field (nm)
-        z_steps: StrictFloat | StrictInt # Resolution in the axial coordinate (Z) for the focused field (nm)
-        x_range: StrictFloat | StrictInt # Field of view in the X or Y coordinate in which the focused field is calculated (nm)
-        z_range: StrictFloat | StrictInt # Field of view in the axial coordinate (z) in which the focused field is calculated (nm)
+        x_steps: Union[StrictFloat, StrictInt] # Resolution in the X or Y coordinate for the focused field (nm)
+        z_steps: Union[StrictFloat, StrictInt] # Resolution in the axial coordinate (Z) for the focused field (nm)
+        x_range: Union[StrictFloat, StrictInt] # Field of view in the X or Y coordinate in which the focused field is calculated (nm)
+        z_range: Union[StrictFloat, StrictInt] # Field of view in the axial coordinate (z) in which the focused field is calculated (nm)
         
-        z: StrictFloat | StrictInt = 0 # Axial position for the XY plane (nm)
-        phip: StrictFloat | StrictInt = 0 # Angle of rotation along the z axis when calculating the field
-        x0: StrictFloat | StrictInt = 0 # Position along X around wich to calculate the fielad near the focus (nm) 
-        y0: StrictFloat | StrictInt = 0 # Position along Y around wich to calculate the fielad near the focus (nm)
+        z: Union[StrictFloat, StrictInt] = 0 # Axial position for the XY plane (nm)
+        phip: Union[StrictFloat, StrictInt] = 0 # Angle of rotation along the z axis when calculating the field
+        x0: Union[StrictFloat, StrictInt] = 0 # Position along X around wich to calculate the fielad near the focus (nm) 
+        y0: Union[StrictFloat, StrictInt] = 0 # Position along Y around wich to calculate the fielad near the focus (nm)
         
         field_parameters: FieldParameters
         custom_mask_parameters: CustomMaskParameters = CustomMaskParameters()

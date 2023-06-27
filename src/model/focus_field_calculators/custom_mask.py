@@ -46,7 +46,6 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         
         custom_field_function=lambda rho, phi,w0,f,k: mask_function(rho, phi,w0,f,k)
         ex_lens,ey_lens=self._generate_rotated_incident_field(custom_field_function, focus_field_parameters)
-        logger.debug(f"{focus_field_parameters.z_step_count=}, {focus_field_parameters.r_step_count=}")
         Ex,Ey,Ez = [np.zeros((focus_field_parameters.z_step_count, focus_field_parameters.r_step_count, focus_field_parameters.r_step_count),dtype=complex) for _ in range(3)]
         axial_positions = focus_field_parameters.z_steps * (np.arange(focus_field_parameters.z_step_count) - focus_field_parameters.z_step_count // 2)
         # axial_positions = np.linspace(-focus_field_parameters.z_range,focus_field_parameters.z_range,focus_field_parameters.z_step_count)

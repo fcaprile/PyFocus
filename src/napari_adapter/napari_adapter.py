@@ -112,9 +112,16 @@ class PyFocusSimulator:
         """Generates self.base_mask_function as incident_amplitude*np.exp(1j*incident_phase). 
         Called on class initialization. Default values in the init are such that the default mask function is 1
         """
+        if not incident_amplitude:
+            incident_amplitude = '0'
+        if not incident_phase:
+            incident_phase = '0'
         self.custom_mask_string = f'{incident_amplitude}*np.exp(1j*{incident_phase})' 
         aux=f'self.base_mask_function=lambda rho,phi,w0,f,k: {incident_amplitude}*np.exp(1j*{incident_phase})' 
-        exec(aux)
+        try:
+            exec(aux)
+        except SyntaxError:
+            print(f"Invalid mask sintax: {incident_phase}")
     
     def write_name(self, basename: str ='') -> str:
         name = '_'.join([basename,
