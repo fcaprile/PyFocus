@@ -65,7 +65,7 @@ class FocusFieldCalculator(ABC):
         
         field_parameters: FieldParameters
         custom_mask_parameters: CustomMaskParameters = CustomMaskParameters()
-        interface_parameters: InterfaceParameters | None = None
+        interface_parameters: Optional[InterfaceParameters] = None
         
         @property
         def alpha(self) -> float:
