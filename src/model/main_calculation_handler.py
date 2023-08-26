@@ -152,3 +152,6 @@ class MainCalculationHandler:
         
         # plt.show()
         return fields
+
+    def calculate_incident_energy_ratio(self, lens_aperture, mask_function,w0,f,k):
+        return self._focus_field_calculator.calculate_incident_energy_ratio(lens_aperture, mask_function,w0,f,k)

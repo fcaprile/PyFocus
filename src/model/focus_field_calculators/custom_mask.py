@@ -599,3 +599,34 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         
         return ex_lens,ey_lens
 
+    def calculate_incident_energy_ratio(self, lens_aperture, mask_function,w0,f,k):
+        """Ratio between the energy inciding on the pupil from an uniform field of amplitude 1 (E_unif) 
+        and the inciding energy from the custom incident field (E_inc).
+        
+        The nergy inciding on the pupyl is calculated as the integral over the pupil's surface 
+        (in our case, a circle) of the inciding field.
+        """
+        lens_aperture*=10**6 #☺ Passage from mm to nm
+        E_unif = np.pi*(lens_aperture**2)
+
+        logger.debug(f"Calculating incident energy ratio for {lens_aperture=}...")
+        # For the incident field, we make a 2D numerical interation with the trapezoidal method
+        divisions = 300 # The higher the number of divisions the precision improvs but calculation time gets longer
+        weight_trapezoid = self._calculate_2D_trapezoidal_method_weight(lens_aperture, divisions, divisions)
+        
+        rho_values=np.linspace(0,lens_aperture,divisions, dtype=complex) #divisions of rho in which the trapezoidal 2D integration is done
+        phi_values=np.linspace(0,2*np.pi,divisions, dtype=complex) #divisions of phi in which the trapezoidal 2D integration is done
+        
+        # Function to integrate, the energy is the integral of the incident intensity
+        I_inc = np.zeros((divisions, divisions), dtype=complex)
+        for i,phi in enumerate(phi_values):
+            for j,rho in enumerate(rho_values):
+                I_inc[i,j]=np.abs(mask_function(rho,phi,w0,f,k))**2
+        
+        rho, phi = np.meshgrid(rho_values,phi_values)
+        E_inc = np.abs(np.sum(I_inc*rho*weight_trapezoid))
+        logger.debug(f"Result: {E_inc=}")
+        factor = np.real(E_inc/E_unif)
+        if 0.985 < factor/round(factor) < 1.015: # To avoid numerical errors
+            factor = round(factor)
+        return factor

@@ -11,6 +11,8 @@ from ..model.main_calculation_handler import MainCalculationHandler
 from scipy.special import binom
 from matplotlib import pyplot as plt
 from ..log_config import logger
+from scipy.integrate import quad
+
 class PyFocusSimulator:
     """This class follows the design pattern 'Adapter', providing a bridge between PyFoucs and the Napari widget """
     
@@ -69,6 +71,17 @@ class PyFocusSimulator:
         '''Generates the field inciding on the objective lens'''
         pass
     
+    @property
+    def incident_energy_ratio(self):
+        """Ratio between the energy inciding on the pupil from an uniform field of amplitude 1 (E_unif) 
+        and the inciding energy from the custom incident field (E_inc).
+        
+        The nergy inciding on the pupyl is calculated as the integral over the pupil's surface 
+        (in our case, a circle) of the inciding field.
+        """
+        mask_function = self._generate_mask_function()
+        return self.calculator.calculate_incident_energy_ratio(self.lens_aperture, mask_function, None, None, None)
+    
     def generate_3D_PSF(self):
         basic_parameters = MainCalculationHandler.BasicParameters(file_name='',propagate_incident_field=False,plot_incident_field=False,plot_focus_field_intensity=False,plot_focus_field_amplitude=False)
         polarization = PolarizationParameters(gamma=self.gamma, beta=self.beta)
@@ -103,7 +116,7 @@ class PyFocusSimulator:
             return self.base_mask_function
     
     def add_interface(self, n1, axial_position):
-        self.wavelength/=self.n # TODO in a previous step it is multiplied by n. Fix
+        self.wavelength/=self.n # In a previous step it is multiplied by n to obtain the wavelength at the medium. For the following calculus we need the wavelength at vacuum . Fix
         self.n1 = n1
         self.axial_position = axial_position
         self.interface_parameters = InterfaceParameters(axial_position=axial_position, ns=np.array((self.n, n1)), ds=np.array((np.inf, np.inf)))
@@ -116,9 +129,10 @@ class PyFocusSimulator:
             incident_amplitude = '0'
         if not incident_phase:
             incident_phase = '0'
-        self.custom_mask_string = f'{incident_amplitude}*np.exp(1j*{incident_phase})' 
-        aux=f'self.base_mask_function=lambda rho,phi,w0,f,k: {incident_amplitude}*np.exp(1j*{incident_phase})' 
+        self.custom_mask_string = f'({incident_amplitude})*np.exp(1j*({incident_phase}))' 
+        aux=f'self.base_mask_function=lambda rho,phi,w0,f,k: {self.custom_mask_string}' 
         try:
+            logger.debug(f"Custom mask function: {aux[24:]}")
             exec(aux)
         except SyntaxError:
             print(f"Invalid mask sintax: {incident_phase}")
