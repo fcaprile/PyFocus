@@ -1,5 +1,7 @@
 
 from warnings import warn
+
+from ...src.equations.normalize_intensity import calculate_normalizing_factor
 from ...src.plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_polarization_elipses_on_ax, color_plot_on_ax, PlotParameters
 from ..model.focus_field_calculators.base import FocusFieldCalculator
 from ..model.free_propagation_calculators.base import FreePropagationCalculator
@@ -32,6 +34,7 @@ class PyFocusSimulator:
         self.incident_field = ...
         self.gamma = gamma
         self.beta = beta
+        self.use_energy_ratio = False # Boolean for when the user wants to normalize the Intensity
         
         self._add_zernike_aberration = False
         self._add_cylindrical_lens = False
@@ -71,8 +74,7 @@ class PyFocusSimulator:
         '''Generates the field inciding on the objective lens'''
         pass
     
-    @property
-    def incident_energy_ratio(self):
+    def get_incident_energy_ratio(self):
         """Ratio between the energy inciding on the pupil from an uniform field of amplitude 1 (E_unif) 
         and the inciding energy from the custom incident field (E_inc).
         
@@ -80,7 +82,8 @@ class PyFocusSimulator:
         (in our case, a circle) of the inciding field.
         """
         mask_function = self._generate_mask_function()
-        return self.calculator.calculate_incident_energy_ratio(self.lens_aperture, mask_function, None, None, None)
+        self.incident_energy_ratio = self.calculator.calculate_incident_energy_ratio(self.lens_aperture, mask_function, None, None, None)
+        return self.incident_energy_ratio
     
     def generate_3D_PSF(self):
         basic_parameters = MainCalculationHandler.BasicParameters(file_name='',propagate_incident_field=False,plot_incident_field=False,plot_focus_field_intensity=False,plot_focus_field_amplitude=False)
@@ -99,10 +102,27 @@ class PyFocusSimulator:
         logger.debug(f"{self.custom_mask_string=}")
         
         fields = self.calculator.calculate_3D_fields(basic_parameters=basic_parameters, objective_field_parameters=objective_field_parameters, focus_field_parameters=self.focus_parameters, mask_function=mask_function, progress_callback = warn)
+        fields = self.normalize_fields(fields)
         fields.calculate_intensity()
 
         self.field = fields
         self.PSF3D = fields.Intensity
+    
+    def normalize_fields(self, fields: FocusFieldCalculator.FieldAtFocus3D):
+        fields.calculate_intensity()
+        normalizing_factor = calculate_normalizing_factor(fields.Intensity, max(self.x), max(self.x), self.lens_aperture*1000000)
+        print(f"{normalizing_factor=}")
+        print(f"{self.incident_energy_ratio=}")
+        print(f"{self.use_energy_ratio=}")
+        if self.use_energy_ratio:
+            ratio = self.incident_energy_ratio
+        else:
+            ratio = 1
+        print(f"{ratio=}")
+        fields.Ex*=(normalizing_factor*ratio)**0.5
+        fields.Ey*=(normalizing_factor*ratio)**0.5
+        fields.Ez*=(normalizing_factor*ratio)**0.5
+        return fields
         
     def _generate_mask_function(self):
         if self._add_zernike_aberration is True:

@@ -625,7 +625,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         
         rho, phi = np.meshgrid(rho_values,phi_values)
         E_inc = np.abs(np.sum(I_inc*rho*weight_trapezoid))
-        logger.debug(f"Result: {E_inc=}")
+        # logger.debug(f"Result: {E_inc=}")
         factor = np.real(E_inc/E_unif)
         if 0.985 < factor/round(factor) < 1.015: # To avoid numerical errors
             factor = round(factor)
