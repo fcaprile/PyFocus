@@ -4,7 +4,7 @@ from pydantic import BaseModel, StrictFloat, StrictInt
 from ...custom_typing import Matrix, Matrix3D
 
 import functools
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union, List
 import numpy as np
 from ...equations.complex_quadrature import complex_quadrature
 from tqdm import tqdm
@@ -124,7 +124,7 @@ class FocusFieldCalculator(ABC):
     def _calculate_matrix_size(self, x_range: int, x_steps: int) -> Tuple[int, int]:
         return int(np.rint(x_range/x_steps/2-1)*2), int(np.rint(x_range/x_steps/2-1)*2)
     
-    def _initialize_fields(self, x_size: int, y_size: int) -> list[list]:
+    def _initialize_fields(self, x_size: int, y_size: int) -> List[list]:
         '''Returns empty matrixes to fill with the values of the field'''
         return [np.zeros((x_size, y_size),dtype=complex) for _ in range(6)]
 

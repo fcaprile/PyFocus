@@ -1,0 +1,33 @@
+Metadata-Version: 2.1
+Name: PyCustomFocus
+Version: 3.3.1
+Summary: Full vectorial calculation of focused electromagnetic fields moduled by a custom phase mask
+Home-page: https://github.com/fcaprile/PyFocus
+Author: Caprile Fernando
+Author-email: fcaprile@gmail.com
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3.9
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENCE.txt
+
+# PyFocus
+
+Author: Fernando Caprile (fcaprile@gmail.com)
+
+Supervisors: Luciano A. Masullo (lmasullo@df.uba.ar), Fernando D. Stefani (fernando.stefani@df.uba.ar)
+
+Affiliation: Physics Department, Faculty of Natural and Exact Sciences, University of Buenos Aires and Center for Bionanoscience Research (CIBION), National Scientific and Technical Research Council (CONICET)
+
+This is PyFocus, a Python package that provides high-level functions and an user interface to perform full vectorial calculations of the focus of an electromagnetic field that has been modulated by a custom phase mask, while providing the option of simulating the free propagation of these fields under the paraxial approximation and the focus through an interface or a multilayer system.
+
+You can find detailed information about the theorical calculations used in this package and a full description of many common use cases in the following paper: https://doi.org/10.1016/j.cpc.2022.108315. If use this package for your research, please cite this work.
+
+For a quick windows executable program, download and run "PyFocus.exe"
+
+See the full documentation and installation tutorial at: https://pyfocus.readthedocs.io/en/latest/
+
+

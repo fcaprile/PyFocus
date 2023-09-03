@@ -1,4 +1,4 @@
-﻿from typing import Optional, Tuple
+﻿from typing import Optional, Tuple, List
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 import numpy as np
@@ -24,14 +24,14 @@ def plot_polarization_elipses_on_ax(ax, xmax, ex_values, ey_values, intensity_va
                     y_index+=1
                 polarization_elipse(ax,x_coor,y_coor,ex_values[y_index,x_index],ey_values[y_index,x_index],AMP)
 
-def line_plot_on_ax(ax: Axes, title: str, values: list[list], extent: list, horizontal_label: str, vertical_label: str, pad: int = 20):
+def line_plot_on_ax(ax: Axes, title: str, values: List[list], extent: list, horizontal_label: str, vertical_label: str, pad: int = 20):
     ax.set_title(title,pad=pad)
     ax.plot(extent,values)
     ax.grid(True)
     ax.set_xlabel(horizontal_label)
     ax.set_ylabel(vertical_label) 
 
-def color_plot_on_ax(fig: Figure, ax: Axes, title: str, values: list[list], extent: Tuple[int, int], horizontal_label: str, vertical_label: str, colorbar_label: str, square_axis: bool, pad: int = 20, alpha=1, colorbar_ticks: Optional[list] = None):
+def color_plot_on_ax(fig: Figure, ax: Axes, title: str, values: List[list], extent: Tuple[int, int], horizontal_label: str, vertical_label: str, colorbar_label: str, square_axis: bool, pad: int = 20, alpha=1, colorbar_ticks: Optional[list] = None):
     pos=ax.imshow(values,extent=extent, interpolation='none', aspect='equal', alpha=alpha)
     ax.set_title(title)
     ax.set_xlabel(horizontal_label)

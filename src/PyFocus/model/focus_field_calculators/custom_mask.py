@@ -1,7 +1,7 @@
 """
 Functions for the simulation of the field obtained by focuisng a gaussian beam
 """
-from typing import Callable
+from typing import Callable, List
 from ...custom_dataclasses.custom_mask import PlotPlanes
 from ...model.focus_field_calculators.base import FocusFieldCalculator
 from ...log_config import logger
@@ -161,7 +161,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         weight_trapezoid_phi[-1]=h_phi/2
         return weight_trapezoid_rho*np.vstack(weight_trapezoid_phi)#represents the area of each trapezoid for each position in phi,theta
 
-    def _initialize_fields(self, x_size: int, y_size: int) -> list[list]:
+    def _initialize_fields(self, x_size: int, y_size: int) -> List[list]:
         """Returns 3 empty arrays that are later filled with the calculated values of the field
         """
         return [np.zeros((x_size, y_size),dtype=complex) for _ in range(3)]
