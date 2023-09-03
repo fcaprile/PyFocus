@@ -1,8 +1,8 @@
 
 from warnings import warn
 
-from ...src.equations.normalize_intensity import calculate_normalizing_factor
-from ...src.plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_polarization_elipses_on_ax, color_plot_on_ax, PlotParameters
+from ..equations.normalize_intensity import calculate_normalizing_factor
+from ..plot_functions.plot_at_focus import plot_amplitude_and_phase_at_focus, plot_polarization_elipses_on_ax, color_plot_on_ax, PlotParameters
 from ..model.focus_field_calculators.base import FocusFieldCalculator
 from ..model.free_propagation_calculators.base import FreePropagationCalculator
 from ..custom_dataclasses.field_parameters import FieldParameters, PolarizationParameters
