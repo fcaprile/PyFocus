@@ -352,13 +352,13 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         
         return Axx, Axy, Axz, Ayx, Ayy, Ayz, Axx_r, Axy_r, Axz_r, Ayx_r, Ayy_r, Ayz_r, Axx_t, Axy_t, Axz_t, Ayx_t, Ayy_t, Ayz_t, cos_theta, cos_theta_t, sin_theta, phi, k1, k2
     
-    def _integrate_without_interface(self, horizontal_values: list[int], vertical_values: list[int], factors: list[any], focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes, verbose: bool=True):
+    def _integrate_without_interface(self, horizontal_values: List[int], vertical_values: List[int], factors: List[any], focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes, verbose: bool=True):
         """Performs the numerical integration for the simmulation without an interface (a tipical simulation)
 
         Args:
-            horizontal_values (list[int]): Values for the horizontal axis of the simulation
-            vertical_values (list[int]): Values for the vertical axis of the simulation
-            factors (list[any]): Numerical values calculated previously that are used in the calculation
+            horizontal_values (List[int]): Values for the horizontal axis of the simulation
+            vertical_values (List[int]): Values for the vertical axis of the simulation
+            factors (List[any]): Numerical values calculated previously that are used in the calculation
             focus_field_parameters (FocusFieldCalculator.FocusFieldParameters): Parameters of the simulation
             description (str): Text that is displayed while the integral is being performed
             plane_to_plot (PlotPlanes): Plane along which to integrate (XZ, YZ or XY)
@@ -429,12 +429,12 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         
         return ex, ey, ez
 
-    def _integrate_with_interface(self, horizontal_values: list[int], vertical_values: list[int], factors: list[any], focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes, verbose: bool=True):
+    def _integrate_with_interface(self, horizontal_values: List[int], vertical_values: List[int], factors: List[any], focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, description: str, plane_to_plot: PlotPlanes, verbose: bool=True):
         """Performs the numerical integration for the simmulation with an interface
 
         Args:
-            horizontal_values (list[int]): Values for the horizontal axis of the simulation
-            vertical_values (list[int]): Values for the vertical axis of the simulation
+            horizontal_values (List[int]): Values for the horizontal axis of the simulation
+            vertical_values (List[int]): Values for the vertical axis of the simulation
             factors (list[any]): Numerical values calculated previously that are used in the calculation
             focus_field_parameters (FocusFieldCalculator.FocusFieldParameters): Parameters of the simulation
             description (str): Text that is displayed while the integral is being performed

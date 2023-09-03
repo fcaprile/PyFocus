@@ -1,7 +1,8 @@
+from typing import Callable, List
 import numpy as np
 from scipy.special import jv
 
-def load_radial_simmetry_mask_functions(E_theta) -> list[callable]:
+def load_radial_simmetry_mask_functions(E_theta) -> List[Callable]:
     
     fun1=lambda theta, kr, kz: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)*(1 + np.cos(theta))*jv(1,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))
     fun2=lambda theta, kr, kz: E_theta(theta)*np.cos(theta)**0.5*np.sin(theta)*(1 - np.cos(theta))*jv(1,kr*np.sin(theta))*np.exp(1j*kz*np.cos(theta))

@@ -53,7 +53,7 @@ def plot_2D_intensity_at_focus(axial_position: int, focus_field: FocusFieldCalcu
     focus_field.calculate_intensity_along_x(axial_position)
     
     fig = plt.figure(num=params.name+str(axial_position),figsize=params.size)
-    # spec = fig.add_gridspec(ncols=3, nrows=2) # TODO
+    # spec = fig.add_gridspec(ncols=3, nrows=2)
     spec = fig.add_gridspec(ncols=1, nrows=1)
     
     if acount_for_pixel_width:
@@ -85,7 +85,7 @@ def plot_2D_intensity_at_focus(axial_position: int, focus_field: FocusFieldCalcu
     return fig
 
 
-def plot_3D_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus3D, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> list[Figure]:
+def plot_3D_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus3D, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> ist[Figure]:
     figs = []
     for axial_position in range(focus_field_parameters.z_step_count):
         fig = plot_2D_intensity_at_focus(axial_position=axial_position, focus_field=focus_field, focus_field_parameters=focus_field_parameters, params=params, acount_for_pixel_width=acount_for_pixel_width)
@@ -93,7 +93,6 @@ def plot_3D_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus3D,
     return figs
 
 def plot_3D_amplitude_and_phase_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus3D, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> Figure:
-    # TODO
     xmax=focus_field_parameters.x_range/2
     if acount_for_pixel_width:
         radial_pixel_width=focus_field_parameters.x_range*2**0.5/2/np.shape(focus_field.Ex_XZ)[1]#value used to show the pixels centered at the radial position at which they are calculated

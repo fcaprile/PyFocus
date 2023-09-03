@@ -5,7 +5,7 @@ with open("README.md", "r", encoding = "utf-8") as fh:
 
 setuptools.setup(
     name = "PyCustomFocus",
-    version = "3.3.2",
+    version = "3.3.3",
     author = "Caprile Fernando",
     author_email = "fcaprile@gmail.com",
     description = 'Full vectorial calculation of focused electromagnetic fields moduled by a custom phase mask',   
