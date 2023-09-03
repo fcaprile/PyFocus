@@ -111,14 +111,10 @@ class PyFocusSimulator:
     def normalize_fields(self, fields: FocusFieldCalculator.FieldAtFocus3D):
         fields.calculate_intensity()
         normalizing_factor = calculate_normalizing_factor(fields.Intensity, max(self.x), max(self.x), self.lens_aperture*1000000)
-        print(f"{normalizing_factor=}")
-        print(f"{self.incident_energy_ratio=}")
-        print(f"{self.use_energy_ratio=}")
         if self.use_energy_ratio:
             ratio = self.incident_energy_ratio
         else:
             ratio = 1
-        print(f"{ratio=}")
         fields.Ex*=(normalizing_factor*ratio)**0.5
         fields.Ey*=(normalizing_factor*ratio)**0.5
         fields.Ez*=(normalizing_factor*ratio)**0.5
