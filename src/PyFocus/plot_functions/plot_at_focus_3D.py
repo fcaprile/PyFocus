@@ -85,7 +85,7 @@ def plot_2D_intensity_at_focus(axial_position: int, focus_field: FocusFieldCalcu
     return fig
 
 
-def plot_3D_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus3D, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> ist[Figure]:
+def plot_3D_intensity_at_focus(focus_field: FocusFieldCalculator.FieldAtFocus3D, focus_field_parameters: FocusFieldCalculator.FocusFieldParameters, params: PlotParameters, acount_for_pixel_width: bool) -> List[Figure]:
     figs = []
     for axial_position in range(focus_field_parameters.z_step_count):
         fig = plot_2D_intensity_at_focus(axial_position=axial_position, focus_field=focus_field, focus_field_parameters=focus_field_parameters, params=params, acount_for_pixel_width=acount_for_pixel_width)
