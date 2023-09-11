@@ -13,7 +13,6 @@ from src.PyFocus.custom_dataclasses.mask import MaskType
 
 def test_normalization_of_uniform_beam():
     logger.setLevel(logging.INFO)
-    do_a_precise_simulation_and_plot_it = False
     
     calculation_handler = MainCalculationHandler(mask_type=MaskType.custom_mask)
     lens_apperture = 3
@@ -23,10 +22,20 @@ def test_normalization_of_uniform_beam():
 
 def test_normalization_of_custom_beam():
     logger.setLevel(logging.INFO)
-    do_a_precise_simulation_and_plot_it = False
     
     calculation_handler = MainCalculationHandler(mask_type=MaskType.custom_mask)
     lens_apperture = 3
-    mask_function = lambda rho, phi, w0,f,k : (rho)**0.5*np.exp(1j*phi)
+    mask_function = lambda rho, phi, w0,f,k : (rho/(3*10**6))**0.5*np.exp(1j*phi)
     ratio = calculation_handler.calculate_incident_energy_ratio(lens_apperture, mask_function, None, None, None)
     print(ratio)
+
+def test_normalization_of_gaussian_beam():
+    logger.setLevel(logging.INFO)
+    
+    calculation_handler = MainCalculationHandler(mask_type=MaskType.custom_mask)
+    lens_apperture = 3
+    waist_values = [0.05,0.1,0.5,1,2,3,5,10]
+    for waist in waist_values:
+        mask_function = lambda rho, phi, w0,f,k : (lens_apperture/waist)*np.exp(-(rho/(waist*10**6))**2/2)
+        ratio = calculation_handler.calculate_incident_energy_ratio(lens_apperture, mask_function, None, None, None)
+        print(f"{waist=}, {ratio=}")
