@@ -606,7 +606,6 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         The nergy inciding on the pupyl is calculated as the integral over the pupil's surface 
         (in our case, a circle) of the inciding field.
         """
-        lens_aperture*=10**6 #☺ Passage from mm to nm
         E_unif = np.pi*(lens_aperture**2)
 
         logger.debug(f"Calculating incident energy ratio for {lens_aperture=}...")

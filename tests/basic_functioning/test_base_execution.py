@@ -4,19 +4,18 @@ import os
 import sys
 
 from .plot_2D import plot_along_z_and_x
-from ...src.log_config import logger
 
-sys.path.append(os.path.abspath("./src"))
+sys.path.append(os.path.abspath("../../src"))
 
-from ...src.model.focus_field_calculators.base import FocusFieldCalculator
-from ...src.model.free_propagation_calculators.base import FreePropagationCalculator
-from ...src.custom_dataclasses.field_parameters import FieldParameters, PolarizationParameters
-from ...src.custom_dataclasses.mask import MaskType
-from ...src.custom_dataclasses.interface_parameters import InterfaceParameters
-from ...src.model.main_calculation_handler import MainCalculationHandler
+from PyFocus.log_config import logger
+from PyFocus.model.focus_field_calculators.base import FocusFieldCalculator
+from PyFocus.model.free_propagation_calculators.base import FreePropagationCalculator
+from PyFocus.custom_dataclasses.field_parameters import FieldParameters, PolarizationParameters
+from PyFocus.custom_dataclasses.mask import MaskType
+from PyFocus.custom_dataclasses.interface_parameters import InterfaceParameters
+from PyFocus.model.main_calculation_handler import MainCalculationHandler
 import numpy as np
 
-#TODO Numpy broadcast, chat gpt de openAI
 
 def create_base_parameters(base_simulation_parameters=None, field_parameters=None, polarization=None, lens_parameters=None, focus_parameters=None, interface_parameters=None, precise_simulation:bool = False):
     if not base_simulation_parameters:
