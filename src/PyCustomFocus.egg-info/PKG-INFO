@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: PyCustomFocus
-Version: 3.3.5
+Version: 3.3.6
 Summary: Full vectorial calculation of focused electromagnetic fields moduled by a custom phase mask
 Home-page: https://github.com/fcaprile/PyFocus
 Author: Caprile Fernando

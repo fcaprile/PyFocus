@@ -260,6 +260,7 @@ class PyFocusSimulator:
         for idx in (0,1):
             ax[idx].xaxis.set_tick_params(labelsize=char_size*0.5)
             ax[idx].yaxis.set_tick_params(labelsize=char_size*0.5)
+        fig.tight_layout()
         
         plt.rcParams['font.size']=14
         field_at_focus = FocusFieldCalculator.FieldAtFocus(
@@ -275,4 +276,6 @@ class PyFocusSimulator:
         plot_polarization_elipses_on_ax(ax, xmax=xmax, ex_values=field_at_focus.Ex_XY, ey_values=field_at_focus.Ey_XY, intensity_values=field_at_focus.Intensity_XY)
         
         plot_amplitude_and_phase_at_focus(focus_field=field_at_focus, focus_field_parameters=self.focus_parameters, params=PlotParameters(name="Amplitude and phase on the XY plane", size=(16,8)), acount_for_pixel_width=True)
+        fig2.tight_layout()
+        
         plt.show()
