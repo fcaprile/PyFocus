@@ -401,11 +401,12 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
                 ey[j,i]=np.sum(Axy*phase_inc_x)+np.sum(Ayy*phase_inc_y)
                 ez[j,i]=np.sum(Axz*phase_inc_x)+np.sum(Ayz*phase_inc_y)
         
-        #Para mejorar la velocidad del calculo:
-        #TODO prearmar los valores de rhop, phip, kr, sin_theta_kr
+        #Ideas para mejorar la velocidad del calculo:
+        #prearmar los valores de rhop, phip, kr, sin_theta_kr
         #rhop = (x_values**2+y_values**2)**0.5
         #phip=np.arctan2(y_values,x_values)
         #now for each position in which i calculate the field i do the integration
+        
         if plane_to_plot == PlotPlanes.XZ or plane_to_plot == PlotPlanes.YZ:
             if verbose == True:
                 for j in tqdm(range(focus_field_parameters.z_step_count),desc=description):
@@ -603,7 +604,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         """Ratio between the energy inciding on the pupil from an uniform field of amplitude 1 (E_unif) 
         and the inciding energy from the custom incident field (E_inc). 
         
-        IMPORTANT: mask_function must be in nm, so keep in mind passage from mm to nm
+        IMPORTANT: mask_function must be in nm, so keep in mind the passage from mm to nm
         
         The energy inciding on the pupyl is calculated as the integral over the pupil's surface 
         (in our case, a circle) of the inciding field.
@@ -629,6 +630,7 @@ class CustomMaskFocusFieldCalculator(FocusFieldCalculator):
         E_inc = np.abs(np.sum(I_inc*rho*weight_trapezoid))
         # logger.debug(f"Result: {E_inc=}")
         factor = np.real(E_inc/E_unif)
+        if round(factor) == 0: return factor
         if 0.985 < factor/round(factor) < 1.015: # To avoid numerical errors
             factor = round(factor)
         return factor

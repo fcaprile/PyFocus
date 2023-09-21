@@ -178,27 +178,29 @@ class PyFocusSimulator:
         if abs(m) > n:
             raise ValueError(" |m| <= n ! ( %s <= %s)" % (m, n))
 
-
         def polynomial(rho, phi, w0,f,k):
-            rho/=np.sin(self.alpha)*f # Normalization: the given parameter rho goes from 0 to np.sin(self.alpha)*f, and this formula takes a normalized rho from 0 to 1
-            if (n - m) % 2 == 1:
+            try:
+                rho/=np.sin(self.alpha)*f # Normalization to (0,1): the given parameter rho goes from 0 to np.sin(self.alpha)*f, and this formula takes a normalized rho from 0 to 1
+                if (n - m) % 2 == 1:
+                    return 0
+                
+                radial = 0
+                m0 = abs(m)
+                for k_pol in range((n - m0) // 2 + 1):
+                    radial += (-1.) ** k_pol * binom(n - k_pol, k_pol) * binom(n - 2 * k_pol, (n - m0) // 2 - k_pol) * rho ** (n - 2 * k_pol)
+
+                    radial = radial * (rho <= 1.) 
+
+                if normalized:
+                    prefac = 1. / nm_normalization(n, m) * 2* np.pi* weight
+                else:
+                    prefac = 0.5 * 2* np.pi* weight
+                if m >= 0:
+                    return np.exp(-1j*prefac * radial * np.cos(m0 * phi))
+                else:
+                    return np.exp(1j*prefac * radial * np.sin(m0 * phi))
+            except TypeError: # Workarround for not successfull initialization
                 return 0
-            
-            radial = 0
-            m0 = abs(m)
-            for k_pol in range((n - m0) // 2 + 1):
-                radial += (-1.) ** k_pol * binom(n - k_pol, k_pol) * binom(n - 2 * k_pol, (n - m0) // 2 - k_pol) * rho ** (n - 2 * k_pol)
-
-                radial = radial * (rho <= 3.) 
-
-            if normalized:
-                prefac = 1. / nm_normalization(n, m) * 2* np.pi* weight
-            else:
-                prefac = 0.5 * 2* np.pi* weight
-            if m >= 0:
-                return np.exp(1j*prefac * radial * np.cos(m0 * phi))
-            else:
-                return np.exp(1j*prefac * radial * np.sin(m0 * phi))
         return polynomial
     
     def add_Zernike_aberration(self, N, M, weight):
@@ -208,9 +210,8 @@ class PyFocusSimulator:
         self.weight = weight
     
     def _cylindrical_lens_phase(f_cyl, f):
-        def aux(rho, phi,w0,f,k):
-            return 2*np.pi * (self.kx)**2 /2/f_cyl * f
-        return aux
+        # Not implemented
+        raise NotImplementedError
 
     def add_cylindrical_lens(self, f_cyl, f):
         """introduce astigmatism placing a thin lens in the pupil
