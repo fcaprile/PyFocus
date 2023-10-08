@@ -9,6 +9,8 @@ src/PyCustomFocus.egg-info/dependency_links.txt
 src/PyCustomFocus.egg-info/top_level.txt
 src/PyFocus/__init__.py
 src/PyFocus/log_config.py
+src/PyFocus/plot.py
+src/PyFocus/sim.py
 src/PyFocus/custom_dataclasses/__init__.py
 src/PyFocus/custom_dataclasses/custom_mask.py
 src/PyFocus/custom_dataclasses/field_parameters.py
@@ -55,4 +57,6 @@ src/PyFocus/user_interface/user_interface.py
 src/PyFocus/user_interface/mask_selection/__init__.py
 src/PyFocus/user_interface/mask_selection/mask_selection.py
 src/PyFocus/user_interface/mask_selection/mask_selection2.py
+src/PyFocus/user_interface/mask_selection/mask_selection2_ui.py
 src/PyFocus/user_interface/mask_selection/mask_selection_modified.py
+src/PyFocus/user_interface/mask_selection/mask_selection_ui.py
