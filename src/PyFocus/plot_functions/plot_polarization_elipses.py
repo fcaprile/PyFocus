@@ -41,11 +41,11 @@ def polarization_elipse(ax: Axis,x_center,y_center,Ex,Ey,Amp):
     else:
         Amp/=2.5
         if np.abs(beta)<np.pi/2: #it should be =0
-            ax.arrow(x_center-1/2*Amp*np.cos(theta),y_center-1/2*Amp*np.sin(theta),Amp*np.cos(theta),Amp*np.sin(theta),width=0.01,color="k",head_width=Amp*0.35,head_length=Amp*0.58)
-            ax.arrow(x_center+1/2*Amp*np.cos(theta),y_center+1/2*Amp*np.sin(theta),-Amp*np.cos(theta),-Amp*np.sin(theta),width=0.01,color="k",head_width=Amp*0.35,head_length=Amp*0.58)
+            ax.arrow(x_center-1/2*Amp*np.cos(theta),y_center-1/2*Amp*np.sin(theta),Amp*np.cos(theta),Amp*np.sin(theta),width=0.005,color="k",head_width=Amp*0.45,head_length=Amp*0.58)
+            ax.arrow(x_center+1/2*Amp*np.cos(theta),y_center+1/2*Amp*np.sin(theta),-Amp*np.cos(theta),-Amp*np.sin(theta),width=0.005,color="k",head_width=Amp*0.45,head_length=Amp*0.58)
         else:
-            ax.arrow(x_center+1/2*Amp*np.cos(theta),y_center-1/2*Amp*np.sin(theta),-Amp*np.cos(theta),Amp*np.sin(theta),width=0.01,color="k",head_width=Amp*0.35,head_length=Amp*0.58)
-            ax.arrow(x_center-1/2*Amp*np.cos(theta),y_center+1/2*Amp*np.sin(theta),Amp*np.cos(theta),-Amp*np.sin(theta),width=0.01,color="k",head_width=Amp*0.35,head_length=Amp*0.58)
+            ax.arrow(x_center+1/2*Amp*np.cos(theta),y_center-1/2*Amp*np.sin(theta),-Amp*np.cos(theta),Amp*np.sin(theta),width=0.005,color="k",head_width=Amp*0.45,head_length=Amp*0.58)
+            ax.arrow(x_center-1/2*Amp*np.cos(theta),y_center+1/2*Amp*np.sin(theta),Amp*np.cos(theta),-Amp*np.sin(theta),width=0.005,color="k",head_width=Amp*0.45,head_length=Amp*0.58)
 
     #draw 1 arrow
 if __name__ == '__main__':    

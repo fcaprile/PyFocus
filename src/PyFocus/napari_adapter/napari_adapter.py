@@ -55,7 +55,15 @@ class PyFocusSimulator:
         # Inner passage of units
         self._transform_units()
         
-
+        self._PSF3D = None # Internal variable containing the 3D field, defaults to none inorder to be able to raise an exception if the generator was reinitialized
+    
+    @property
+    def PSF3D(self):
+        if self._PSF3D is None:
+            raise Exception("Can not show field, simulation parameters were changed.")
+        else:
+            return self._PSF3D
+            
     def re_init(self,*args,**kwargs):
         """
         Reinitializes the attributes of the PSFsimulator object wihout creating a new instance (__new__ is not executed)
@@ -106,7 +114,7 @@ class PyFocusSimulator:
         fields.calculate_intensity()
 
         self.field = fields
-        self.PSF3D = fields.Intensity
+        self._PSF3D = fields.Intensity
     
     def normalize_fields(self, fields: FocusFieldCalculator.FieldAtFocus3D):
         fields.calculate_intensity()
@@ -232,7 +240,7 @@ class PyFocusSimulator:
         if self.interface_parameters is not None:
              sup_title += f', interface axial position = {self.axial_position} $\mu$m, n1 = {self.n1}'
         fig.suptitle(sup_title, size=char_size*0.8)
-        PSF = self.PSF3D
+        PSF = self._PSF3D
         Nz, Ny, Nx = PSF.shape
     
         # psf_to_show = PSF.take(indices=Nlist[idx]//2 , axis=idx)
@@ -273,10 +281,11 @@ class PyFocusSimulator:
         radial_pixel_width=max(self.x)*2**0.5/2/np.shape(self.field.Ex)[1]
         xmax=max(self.x)/2
         extent = [-xmax-radial_pixel_width,xmax-radial_pixel_width,-xmax+radial_pixel_width,xmax+radial_pixel_width]
-        color_plot_on_ax(fig, ax, 'Polarization on the XY plane', field_at_focus.Intensity_XY, extent, 'x (nm)', 'y (nm)', 'Intensity (kW/cm\u00b2)', square_axis=True, alpha=0.5)
+        color_plot_on_ax(fig, ax, 'Polarization on the XY plane', field_at_focus.Intensity_XY, extent, 'x (nm)', 'y (nm)', 'Intensity (kW/nm\u00b2)', square_axis=True, alpha=0.5)
         plot_polarization_elipses_on_ax(ax, xmax=xmax, ex_values=field_at_focus.Ex_XY, ey_values=field_at_focus.Ey_XY, intensity_values=field_at_focus.Intensity_XY)
-        
-        plot_amplitude_and_phase_at_focus(focus_field=field_at_focus, focus_field_parameters=self.focus_parameters, params=PlotParameters(name="Amplitude and phase on the XY plane", size=(16,8)), acount_for_pixel_width=True)
         fig2.tight_layout()
+        
+        fig3 = plot_amplitude_and_phase_at_focus(focus_field=field_at_focus, focus_field_parameters=self.focus_parameters, params=PlotParameters(name="Amplitude and phase on the XY plane", size=(16,8)), acount_for_pixel_width=True)
+        fig3.tight_layout()
         
         plt.show()

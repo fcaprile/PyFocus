@@ -12,7 +12,7 @@ def plot_polarization_elipses_on_ax(ax, xmax, ex_values, ey_values, intensity_va
     y_pos=np.linspace(-xmax*0.95,xmax*0.95,10)
     x_values=np.linspace(-xmax,xmax,np.shape(intensity_values)[0])
     y_values=np.linspace(xmax,-xmax,np.shape(intensity_values)[0])
-    AMP=np.abs(xmax/6)
+    AMP=np.abs(xmax/5)
     for x_coor in x_pos:
         for y_coor in y_pos:
             x_index = (np.abs(x_values - x_coor)).argmin()
