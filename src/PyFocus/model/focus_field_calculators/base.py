@@ -49,7 +49,7 @@ class FocusFieldCalculator(ABC):
     class FocusFieldParameters(BaseModel):
         '''Parameters for the simulation of the field near the focus'''
         NA: Union[StrictFloat, StrictInt] # Numerical aperture
-        n: Union[StrictFloat, StrictInt] # Refraction index for the medium of the optical system.
+        n: Union[StrictFloat, StrictInt, Any] # Refraction index for the medium of the optical system. 
         h: Union[StrictFloat, StrictInt] # Radius of aperture of the objective lens
         f: Union[StrictFloat, StrictInt] = 0 # Focal distance
         
@@ -91,7 +91,10 @@ class FocusFieldCalculator(ABC):
                 self.field_parameters.wavelength /= self.n
             self.field_parameters.transform_input_parameter_units()
             
-            self.f = self.h * self.n/ self.NA *10**6
+            if isinstance(self.n, (int,float)): # Compatibility with pyfocus<3.0
+                self.f = self.h * self.n/ self.NA *10**6
+            else:
+                self.f = self.h * self.n[0]/ self.NA *10**6
             
             #transform to radians:
             self.phip /= 180*np.pi
